@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --color-ocean: #1B6B93;
+  --color-ocean-dark: #0F4C6B;
+  --color-ocean-light: #4FA3C7;
+  --color-sand: #F5E6D3;
+  --color-sand-light: #FFF8F0;
+  --color-sand-dark: #E8D5C0;
+  --color-sunset: #FF6B35;
+  --color-sunset-light: #FF8F5E;
+  --color-warm: #FF7F50;
+  --color-cream: #FFFCF8;
+  --color-charcoal: #2D2D2D;
+  --color-stone: #5C5C5C;
+  --color-soft-gray: #F0F0F0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--color-charcoal);
+  background-color: var(--color-cream);
+  overflow-x: hidden;
+}
+
+.font-serif {
+  font-family: 'Playfair Display', serif;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.image-hover-zoom {
+  overflow: hidden;
+}
+.image-hover-zoom img {
+  transition: transform 0.5s ease;
+}
+.image-hover-zoom:hover img {
+  transform: scale(1.05);
+}
