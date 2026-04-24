@@ -11,6 +11,11 @@ import About from "./pages/About";
 import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import BookNow from "./pages/BookNow";
+import Surf from "./pages/Surf";
+import Experiences from "./pages/Experiences";
+import Faq from "./pages/Faq";
+import PackageBedAndBreakfast from "./pages/PackageBedAndBreakfast";
+import PackageSurfCamp from "./pages/PackageSurfCamp";
 
 function App() {
   return (
@@ -21,9 +26,14 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/rooms" element={<Rooms />} />
+            <Route path="/surf" element={<Surf />} />
+            <Route path="/experiences" element={<Experiences />} />
             <Route path="/packages" element={<Packages />} />
+            <Route path="/packages/bed-and-breakfast" element={<PackageBedAndBreakfast />} />
+            <Route path="/packages/surf-camp" element={<PackageSurfCamp />} />
             <Route path="/about" element={<About />} />
             <Route path="/gallery" element={<Gallery />} />
+            <Route path="/faq" element={<Faq />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/book" element={<BookNow />} />
           </Routes>

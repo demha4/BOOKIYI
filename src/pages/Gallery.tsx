@@ -11,46 +11,40 @@ export default function Gallery() {
   const filtered = filter === "All" ? galleryImages : galleryImages.filter((g) => g.category === filter);
 
   const nextImage = () => {
-    if (selected !== null) {
-      setSelected((selected + 1) % filtered.length);
-    }
+    if (selected !== null) setSelected((selected + 1) % filtered.length);
   };
 
   const prevImage = () => {
-    if (selected !== null) {
-      setSelected((selected - 1 + filtered.length) % filtered.length);
-    }
+    if (selected !== null) setSelected((selected - 1 + filtered.length) % filtered.length);
   };
 
   return (
-    <div className="pt-20">
-      {/* Header */}
-      <section className="py-16 bg-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <p className="text-sunset font-medium text-sm tracking-wider uppercase mb-3">Visual Journey</p>
-            <h1 className="font-serif text-4xl sm:text-5xl font-bold text-charcoal mb-4">
-              Gallery & Experience
-            </h1>
-            <p className="text-stone max-w-2xl mx-auto text-lg">
-              A glimpse into life at Anza Surf House — the waves, the people, the moments.
-            </p>
-          </motion.div>
+    <div className="pt-20 bg-cream">
+      <section className="py-24 sm:py-28 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="kicker text-ocean mb-5">
+            Gallery
+          </motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="section-title text-charcoal mb-6">
+            See the atmosphere before you arrive.
+          </motion.h1>
+          <motion.p initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="section-copy text-stone max-w-3xl mx-auto">
+            The beach, the rooftop, the rooms, the coast, and the quieter moments in between. Enough to get a feel for the house before you book.
+          </motion.p>
         </div>
       </section>
 
-      {/* Filter */}
-      <section className="pb-8 bg-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap justify-center gap-2">
+      <section className="pb-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setFilter(cat)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`px-4 sm:px-5 py-2 rounded-full text-sm font-medium transition-all ${
                   filter === cat
                     ? "bg-charcoal text-white"
-                    : "bg-white text-stone hover:bg-charcoal hover:text-white border border-sand-dark/20"
+                    : "bg-white text-stone hover:bg-charcoal hover:text-white border border-stone-200"
                 }`}
               >
                 {cat}
@@ -60,35 +54,27 @@ export default function Gallery() {
         </div>
       </section>
 
-      {/* Gallery Grid */}
-      <section className="pb-20 bg-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+      <section className="pb-24 overflow-hidden">
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="gallery-grid">
             {filtered.map((img, i) => (
-              <motion.div
+              <motion.button
                 key={i}
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.96 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: (i % 3) * 0.1 }}
-                className="break-inside-avoid cursor-pointer group"
+                transition={{ delay: (i % 4) * 0.06 }}
+                className="gallery-item w-full text-left cursor-pointer group bg-white border border-stone-200 shadow-sm"
                 onClick={() => setSelected(i)}
               >
-                <div className="relative rounded-2xl overflow-hidden">
-                  <img
-                    src={img.src}
-                    alt={img.alt}
-                    className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-                </div>
-              </motion.div>
+                <img src={img.src} alt={img.alt} />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors" />
+              </motion.button>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Lightbox */}
       <AnimatePresence>
         {selected !== null && (
           <motion.div
@@ -98,13 +84,9 @@ export default function Gallery() {
             className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
             onClick={() => setSelected(null)}
           >
-            <button
-              className="absolute top-4 right-4 text-white/70 hover:text-white p-2"
-              onClick={() => setSelected(null)}
-            >
+            <button className="absolute top-4 right-4 text-white/70 hover:text-white p-2" onClick={() => setSelected(null)}>
               <X size={32} />
             </button>
-
             <button
               className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-2"
               onClick={(e) => {
@@ -114,7 +96,6 @@ export default function Gallery() {
             >
               <ChevronLeft size={40} />
             </button>
-
             <button
               className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-2"
               onClick={(e) => {
@@ -124,19 +105,17 @@ export default function Gallery() {
             >
               <ChevronRight size={40} />
             </button>
-
             <motion.img
               key={selected}
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.94 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
+              exit={{ opacity: 0, scale: 0.94 }}
               src={filtered[selected].src}
               alt={filtered[selected].alt}
               className="max-w-[90vw] max-h-[85vh] object-contain rounded-lg"
               onClick={(e) => e.stopPropagation()}
             />
-
-            <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/80 text-sm">
+            <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/80 text-sm sm:text-base text-center px-4">
               {filtered[selected].alt}
             </p>
           </motion.div>

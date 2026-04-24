@@ -3,22 +3,33 @@ import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar, Users, ChevronRight, Check, Bed, Package, Plus,
-  Minus, Shield, Clock, CreditCard, MessageCircle, ArrowLeft,
+  Minus, Shield, Clock, CreditCard, ArrowLeft,
   Waves, Sun, Plane, UtensilsCrossed, Dumbbell, Sparkles,
   User, Mail, Phone, FileText, Tag, Heart, X,
   ToggleLeft, ToggleRight, ChevronDown, AlertCircle, CheckCircle2,
-  Copy,
+  Copy, Loader2, Building2, Banknote, Timer, UserCheck,
 } from "lucide-react";
 import { useBooking, type GuestType, type GuestProfile } from "../contexts/BookingContext";
 import CustomCalendar from "../components/CustomCalendar";
-import { rooms, packages, getFilteredRooms } from "../data/content";
+import { rooms, packages } from "../data/content";
 import { submitBookingToBeds24 } from "../services/beds24";
 import { useLiveAvailability } from "../hooks/useLiveAvailability";
-import { LiveSyncIndicator, LiveSyncBanner } from "../components/LiveSyncIndicator";
-import { Wifi, WifiOff, Loader2, AlertTriangle } from "lucide-react";
+import { LiveSyncBanner } from "../components/LiveSyncIndicator";
+import { AlertTriangle } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════════
-   ADD-ONS CONFIGURATION
+   BANK TRANSFER CONFIG — update with real details
+   ═══════════════════════════════════════════════════════════════ */
+const BANK_DETAILS = {
+  bankName: "Attijariwafa Bank",
+  accountName: "TAMOUNT Surf House",
+  iban: "MA64 0211 1234 5678 9012 3456 789",
+  swift: "BCMAMAMC",
+  reference: "Booking deposit",
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   ADD-ONS
    ═══════════════════════════════════════════════════════════════ */
 interface AddonDef {
   id: string;
@@ -40,12 +51,21 @@ const ADDONS: AddonDef[] = [
 ];
 
 /* ═══════════════════════════════════════════════════════════════
-   GUEST TYPE HELPERS
+   GUEST TYPE CONFIG — lucide icons only
    ═══════════════════════════════════════════════════════════════ */
-const guestTypeConfig: Record<GuestType, { label: string; emoji: string; icon: React.ReactNode; color: string; bg: string; border: string; dot: string }> = {
-  male:   { label: "Male",   emoji: "👨", icon: <User size={16} />,  color: "text-blue-600", bg: "bg-blue-50",  border: "border-blue-200", dot: "bg-blue-500" },
-  female: { label: "Female", emoji: "👩", icon: <User size={16} />,  color: "text-pink-500", bg: "bg-pink-50",  border: "border-pink-200", dot: "bg-pink-500" },
-  couple: { label: "Couple", emoji: "💑", icon: <Heart size={16} />, color: "text-orange-600", bg: "bg-orange-50", border: "border-orange-200", dot: "bg-orange-500" },
+const guestConfig: Record<GuestType, {
+  label: string;
+  icon: React.ReactNode;
+  chipIcon: React.ReactNode;
+  color: string;
+  bg: string;
+  border: string;
+  dot: string;
+  showType: boolean;  // whether to show type badge in chip
+}> = {
+  male:   { label: "Male",   icon: <User size={16} />,   chipIcon: <User size={12} />,   color: "text-blue-700",   bg: "bg-blue-50",   border: "border-blue-300",   dot: "bg-blue-500",  showType: true },
+  female: { label: "Female", icon: <User size={16} />,   chipIcon: <User size={12} />,   color: "text-rose-600",   bg: "bg-rose-50",   border: "border-rose-300",   dot: "bg-rose-500",  showType: true },
+  couple: { label: "",       icon: <Heart size={16} />,  chipIcon: <User size={12} />,   color: "text-stone-700",  bg: "bg-stone-50",  border: "border-stone-300",  dot: "bg-stone-500", showType: false },
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -58,9 +78,9 @@ function usePriceBreakdown() {
     const roomMap = new Map<string, string[]>();
     booking.guests.forEach((g) => {
       if (g.roomId) {
-        const existing = roomMap.get(g.roomId) || [];
-        existing.push(g.id);
-        roomMap.set(g.roomId, existing);
+        const list = roomMap.get(g.roomId) || [];
+        list.push(g.id);
+        roomMap.set(g.roomId, list);
       }
     });
     const breakdown: { room: typeof rooms[0]; guestIds: string[]; subtotal: number }[] = [];
@@ -96,7 +116,10 @@ function usePriceBreakdown() {
     }, 0);
   }, [booking.addOns, nights]);
 
-  return { selectedPkg, roomBreakdown, accommodationTotal, addonsTotal, total: accommodationTotal + addonsTotal };
+  const total = accommodationTotal + addonsTotal;
+  const depositAmount = Math.ceil(total * 0.3);
+
+  return { selectedPkg, roomBreakdown, accommodationTotal, addonsTotal, total, depositAmount };
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -107,71 +130,20 @@ function fmtDate(d: string) {
   return new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
 
-function buildWhatsAppMessage(
-  booking: ReturnType<typeof useBooking>["booking"],
-  nights: number,
-  total: number,
-  roomBreakdown: ReturnType<typeof usePriceBreakdown>["roomBreakdown"]
-) {
-  const selectedPkg = packages.find((p) => p.id === booking.packageId);
-  let msg = `*New Booking Request — TAMOUNT Surf House*\n\n`;
-  msg += `*Dates:* ${fmtDate(booking.checkIn)} → ${fmtDate(booking.checkOut)} (${nights} nights)\n`;
-  msg += `*Guests:* ${booking.maleCount} Male, ${booking.femaleCount} Female, ${booking.coupleCount} Couple(s)\n\n`;
-
-  if (selectedPkg) {
-    msg += `*Package:* ${selectedPkg.name}\n`;
-  }
-
-  // Room assignments
-  if (roomBreakdown.length > 0) {
-    msg += `*Room Assignments:*\n`;
-    roomBreakdown.forEach((rb) => {
-      const guestLabels = rb.guestIds.map((gId) => {
-        const g = booking.guests.find((x) => x.id === gId);
-        return g ? `${guestTypeConfig[g.type].label} - ${g.label}` : gId;
-      }).join(", ");
-      msg += `• ${rb.room.name}: ${guestLabels} — €${rb.subtotal}\n`;
-    });
-  }
-
-  const addonLines = Object.entries(booking.addOns)
-    .filter(([, sel]) => sel.quantity > 0)
-    .map(([id, sel]) => {
-      const a = ADDONS.find((ad) => ad.id === id);
-      if (!a) return "";
-      if (sel.perGuest && Object.keys(sel.perGuest).length > 0) {
-        const details = Object.entries(sel.perGuest).filter(([, q]) => q > 0)
-          .map(([gId, q]) => { const g = booking.guests.find((x) => x.id === gId); return `${g?.label}: x${q}`; }).join(", ");
-        return `• ${a.name}: ${details}`;
-      }
-      return `• ${a.name} x${sel.quantity}`;
-    }).filter(Boolean);
-
-  if (addonLines.length) msg += `\n*Add-ons:*\n${addonLines.join("\n")}\n`;
-
-  msg += `\n*Contact:* ${booking.contactName || "—"}\n`;
-  msg += `*Email:* ${booking.contactEmail || "—"}\n`;
-  msg += `*Phone:* ${booking.contactPhone || "—"}\n`;
-  if (booking.specialRequests) msg += `\n*Requests:* ${booking.specialRequests}\n`;
-  msg += `\n*Estimated Total:* €${total}\n`;
-  msg += `\nPlease confirm availability 🏄`;
-  return msg;
-}
-
 /* ═══════════════════════════════════════════════════════════════
    STEPS
    ═══════════════════════════════════════════════════════════════ */
 const STEPS = [
-  { n: 1, label: "Package", icon: <Package size={16} /> },
-  { n: 2, label: "Rooms", icon: <Bed size={16} /> },
-  { n: 3, label: "Add-ons", icon: <Sparkles size={16} /> },
-  { n: 4, label: "Details", icon: <FileText size={16} /> },
-  { n: 5, label: "Confirm", icon: <Check size={16} /> },
+  { n: 1, label: "Package",  icon: <Package size={16} /> },
+  { n: 2, label: "Rooms",    icon: <Bed size={16} /> },
+  { n: 3, label: "Add-ons",  icon: <Sparkles size={16} /> },
+  { n: 4, label: "Details",  icon: <FileText size={16} /> },
+  { n: 5, label: "Payment",  icon: <CreditCard size={16} /> },
+  { n: 6, label: "Confirm",  icon: <Check size={16} /> },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
-   GUEST PICKER POPOVER (always accessible in top bar)
-   Like the screenshot: Couples +/-, Females +/-, Males +/-
+   GUEST PICKER — Male / Female / Couple
    ═══════════════════════════════════════════════════════════════ */
 function GuestPicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { booking, setGuestCounts } = useBooking();
@@ -187,10 +159,10 @@ function GuestPicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
 
   if (!isOpen) return null;
 
-  const rows: { key: GuestType; label: string; emoji: string; count: number }[] = [
-    { key: "couple", label: "Couples", emoji: "💑", count: booking.coupleCount },
-    { key: "female", label: "Females", emoji: "👩", count: booking.femaleCount },
-    { key: "male", label: "Males", emoji: "👨", count: booking.maleCount },
+  const rows: { key: GuestType; label: string; icon: React.ReactNode; count: number; note?: string }[] = [
+    { key: "male",   label: "Males",   icon: <User size={16} />,  count: booking.maleCount },
+    { key: "female", label: "Females", icon: <User size={16} />,  count: booking.femaleCount },
+    { key: "couple", label: "Couples", icon: <Heart size={16} />, count: booking.coupleCount, note: "2 guests each" },
   ];
 
   const total = booking.maleCount + booking.femaleCount + booking.coupleCount * 2;
@@ -198,30 +170,35 @@ function GuestPicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: -8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.95 }}
       className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-stone-200 p-5 w-72 z-[100]">
+      <p className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-4">Select guests</p>
       <div className="space-y-4">
         {rows.map((r) => (
           <div key={r.key} className="flex items-center justify-between">
             <span className="text-sm font-medium text-stone-700 flex items-center gap-2">
-              <span className="text-lg">{r.emoji}</span> {r.label}
+              <span className={guestConfig[r.key].color}>{r.icon}</span>
+              {r.label}
+              {r.note && <span className="text-[10px] text-stone-400">{r.note}</span>}
             </span>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => {
-                  if (r.key === "couple") setGuestCounts(booking.maleCount, booking.femaleCount, Math.max(0, r.count - 1));
-                  else if (r.key === "female") setGuestCounts(booking.maleCount, Math.max(0, r.count - 1), booking.coupleCount);
-                  else setGuestCounts(Math.max(0, r.count - 1), booking.femaleCount, booking.coupleCount);
+                  const { maleCount: m, femaleCount: f, coupleCount: c } = booking;
+                  if (r.key === "male") setGuestCounts(Math.max(0, m - 1), f, c);
+                  else if (r.key === "female") setGuestCounts(m, Math.max(0, f - 1), c);
+                  else setGuestCounts(m, f, Math.max(0, c - 1));
                 }}
                 disabled={r.count <= 0}
-                className="w-9 h-9 rounded-full border-2 border-stone-300 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:border-ocean hover:text-ocean transition-all"
+                className="w-9 h-9 rounded-full border-2 border-stone-300 flex items-center justify-center disabled:opacity-30 hover:border-ocean hover:text-ocean transition-all"
               >
                 <Minus size={14} />
               </button>
               <span className="w-6 text-center font-bold text-stone-800 text-lg">{r.count}</span>
               <button
                 onClick={() => {
-                  if (r.key === "couple") setGuestCounts(booking.maleCount, booking.femaleCount, r.count + 1);
-                  else if (r.key === "female") setGuestCounts(booking.maleCount, r.count + 1, booking.coupleCount);
-                  else setGuestCounts(r.count + 1, booking.femaleCount, booking.coupleCount);
+                  const { maleCount: m, femaleCount: f, coupleCount: c } = booking;
+                  if (r.key === "male") setGuestCounts(m + 1, f, c);
+                  else if (r.key === "female") setGuestCounts(m, f + 1, c);
+                  else setGuestCounts(m, f, c + 1);
                 }}
                 className="w-9 h-9 rounded-full border-2 border-stone-300 flex items-center justify-center hover:border-ocean hover:text-ocean transition-all"
               >
@@ -233,20 +210,20 @@ function GuestPicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
       </div>
 
       <div className="border-t border-stone-200 mt-4 pt-3 flex items-center justify-between">
-        <span className="text-sm font-semibold text-stone-700">Total</span>
-        <span className="font-bold text-ocean text-lg">{total}</span>
+        <span className="text-sm font-semibold text-stone-600">Total persons</span>
+        <span className="font-bold text-ocean text-xl">{total}</span>
       </div>
 
       <button onClick={onClose}
-        className="w-full mt-3 py-2 text-sm font-semibold text-ocean hover:bg-ocean/5 rounded-xl transition-all">
-        Close
+        className="w-full mt-3 py-2.5 text-sm font-semibold text-white bg-ocean rounded-xl hover:bg-ocean/90 transition-all">
+        Done
       </button>
     </motion.div>
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   DATE PICKER POPOVER (for the top bar)
+   DATE PICKER POPOVER
    ═══════════════════════════════════════════════════════════════ */
 function DatePicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { booking, setBooking } = useBooking();
@@ -268,7 +245,9 @@ function DatePicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
     : 0;
 
   const setQuickNights = (n: number) => {
-    const ci = booking.checkIn || new Date().toISOString().split("T")[0];
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const ci = booking.checkIn || tomorrow.toISOString().split("T")[0];
     const co = new Date(new Date(ci).getTime() + n * 86400000).toISOString().split("T")[0];
     setBooking({ checkIn: ci, checkOut: co });
   };
@@ -276,8 +255,6 @@ function DatePicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: -8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.95 }}
       className="absolute top-full right-0 md:left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-stone-200 p-5 w-[340px] z-[100]">
-      
-      {/* Quick nights */}
       <div className="flex flex-wrap gap-2 mb-4">
         {quickNights.map((n) => (
           <button key={n} onClick={() => setQuickNights(n)}
@@ -288,21 +265,14 @@ function DatePicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
           </button>
         ))}
       </div>
-
-      <CustomCalendar
-        checkIn={booking.checkIn}
-        checkOut={booking.checkOut}
-        onSelect={(ci, co) => setBooking({ checkIn: ci, checkOut: co })}
-      />
-
+      <CustomCalendar checkIn={booking.checkIn} checkOut={booking.checkOut}
+        onSelect={(ci, co) => setBooking({ checkIn: ci, checkOut: co })} />
       {nights > 0 && (
         <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-xl text-sm">
           <p className="font-semibold text-green-800">{fmtDate(booking.checkIn)} → {fmtDate(booking.checkOut)}</p>
           <p className="text-green-600 text-xs">{nights} night{nights > 1 ? "s" : ""}</p>
         </div>
       )}
-
-      {/* Promo Code */}
       <div className="mt-3">
         <div className="relative">
           <Tag size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
@@ -311,7 +281,6 @@ function DatePicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
             className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50 focus:ring-2 focus:ring-ocean/30 focus:border-ocean outline-none text-xs" />
         </div>
       </div>
-
       <button onClick={onClose}
         className="w-full mt-3 py-2 text-sm font-semibold text-ocean hover:bg-ocean/5 rounded-xl transition-all">
         Done
@@ -321,40 +290,25 @@ function DatePicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   INLINE GUEST CHIPS (assignment directly on room card)
-   No dropdown — all guests visible as tappable chips.
+   GUEST CHIP ASSIGNMENT — any guest to any room, no gender filter
    ═══════════════════════════════════════════════════════════════ */
 function GuestChipsAssignment({
-  roomId, roomName, roomGenderPolicy, guests, maxGuests, onAssignGuest, onUnassignGuest,
+  roomId, roomName, guests, maxGuests, onAssignGuest, onUnassignGuest,
 }: {
   roomId: string;
   roomName: string;
-  roomGenderPolicy: string;
   guests: GuestProfile[];
   maxGuests: number;
-  onAssignGuest: (guestId: string, roomId: string) => void;  // moves guest here (from anywhere)
-  onUnassignGuest: (guestId: string) => void;                // removes from any room
+  onAssignGuest: (guestId: string, roomId: string) => void;
+  onUnassignGuest: (guestId: string) => void;
 }) {
   const assignedHere = guests.filter((g) => g.roomId === roomId);
   const isFull = assignedHere.length >= maxGuests;
 
-  // Determine eligibility per guest based on gender policy
-  const isEligible = (g: GuestProfile) => {
-    switch (roomGenderPolicy) {
-      case "male": return g.type === "male";
-      case "female": return g.type === "female";
-      case "mixed": return g.type === "male" || g.type === "female";
-      case "any": return true;
-      default: return true;
-    }
-  };
-
-  const eligibleGuests = guests.filter(isEligible);
-
-  if (eligibleGuests.length === 0) {
+  if (guests.length === 0) {
     return (
       <div className="mt-3 p-3 bg-stone-50 rounded-xl text-center">
-        <p className="text-xs text-stone-500">No guests in your group can stay in this room type</p>
+        <p className="text-xs text-stone-400">Add guests above to assign them</p>
       </div>
     );
   }
@@ -362,85 +316,103 @@ function GuestChipsAssignment({
   return (
     <div className="mt-4 pt-4 border-t border-dashed border-stone-200">
       <div className="flex items-center justify-between mb-2.5">
-        <label className="text-xs font-semibold text-stone-600 uppercase tracking-wider">
-          Tap to assign guests
-        </label>
+        <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider flex items-center gap-1.5">
+          <UserCheck size={12} /> Assign guests
+        </span>
         <span className={`text-xs font-bold ${isFull ? "text-amber-600" : "text-stone-400"}`}>
           {assignedHere.length}/{maxGuests} {isFull && "· Full"}
         </span>
       </div>
-
       <div className="flex flex-wrap gap-2">
-        {eligibleGuests.map((g) => {
+        {guests.map((g) => {
           const isHere = g.roomId === roomId;
           const isElsewhere = g.roomId !== null && g.roomId !== roomId;
-          const cfg = guestTypeConfig[g.type];
-
-          // Disabled only if: room is full AND this guest isn't already in it
           const blocked = isFull && !isHere;
-
-          const handleClick = () => {
-            if (blocked) return;
-            if (isHere) onUnassignGuest(g.id);     // tap again to remove
-            else onAssignGuest(g.id, roomId);      // tap to assign (moves from elsewhere if needed)
-          };
+          const cfg = guestConfig[g.type];
 
           return (
             <button
               key={g.id}
-              onClick={handleClick}
+              onClick={() => {
+                if (blocked) return;
+                if (isHere) onUnassignGuest(g.id);
+                else onAssignGuest(g.id, roomId);
+              }}
               disabled={blocked}
-              title={
-                blocked ? "Room is full"
-                : isHere ? "Tap to remove from this room"
-                : isElsewhere ? `Currently in another room — tap to move here`
-                : "Tap to assign to this room"
-              }
-              className={`group inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-semibold border-2 transition-all active:scale-95 ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all active:scale-95 ${
                 isHere
                   ? `${cfg.bg} ${cfg.border} ${cfg.color} shadow-sm`
                   : blocked
                   ? "bg-stone-50 border-stone-200 text-stone-300 cursor-not-allowed"
                   : isElsewhere
-                  ? "bg-white border-stone-200 text-stone-400 hover:border-ocean/40 hover:text-stone-600"
+                  ? "bg-white border-stone-200 text-stone-400 hover:border-ocean/40"
                   : "bg-white border-stone-300 text-stone-600 hover:border-ocean hover:bg-ocean/5 hover:text-ocean"
               }`}
             >
-              {/* Status icon */}
-              {isHere ? (
-                <span className={`w-4 h-4 rounded-full ${cfg.dot} flex items-center justify-center text-white shrink-0`}>
-                  <Check size={10} strokeWidth={3} />
-                </span>
-              ) : (
-                <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                  blocked ? "border-stone-200" : isElsewhere ? "border-stone-300" : "border-stone-400 group-hover:border-ocean"
-                }`}>
-                  {!blocked && <Plus size={10} strokeWidth={3} className={isElsewhere ? "text-stone-300" : "text-stone-400 group-hover:text-ocean"} />}
-                </span>
-              )}
-
-              <span>{g.label}</span>
-
-              {/* Show where they are if elsewhere */}
-              {isElsewhere && (
-                <span className="text-[10px] text-stone-400 italic">→ move here</span>
-              )}
-
-              {/* Remove X when assigned here */}
-              {isHere && (
-                <X size={11} className="text-stone-500 hover:text-red-500 ml-0.5" />
-              )}
+              {isHere
+                ? <Check size={11} strokeWidth={3} />
+                : blocked
+                ? <X size={11} />
+                : <Plus size={11} />
+              }
+              {cfg.showType && <span className={cfg.color}>{cfg.chipIcon}</span>}
+              {g.label}
+              {isElsewhere && <span className="text-[9px] text-stone-400 italic ml-0.5">→ move</span>}
+              {isHere && <X size={10} className="ml-0.5 text-stone-400 hover:text-red-500" />}
             </button>
           );
         })}
       </div>
-
       {isFull && (
         <p className="text-[11px] text-amber-600 mt-2 flex items-center gap-1">
-          <AlertCircle size={11} /> {roomName} is full — remove a guest to add a different one
+          <AlertCircle size={11} /> {roomName} is full
         </p>
       )}
     </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PAYMENT OPTION CARD
+   ═══════════════════════════════════════════════════════════════ */
+function PaymentOptionCard({
+  selected, onClick, icon, title, badge, badgeColor, children,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  title: string;
+  badge: string;
+  badgeColor: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button onClick={onClick}
+      className={`w-full text-left border-2 rounded-2xl p-5 transition-all ${
+        selected ? "border-ocean bg-ocean/5 shadow-md shadow-ocean/10" : "border-stone-200 hover:border-stone-300 bg-white"
+      }`}>
+      <div className="flex items-start gap-4">
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+          selected ? "bg-ocean text-white" : "bg-stone-100 text-stone-500"
+        }`}>
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <span className="font-bold text-stone-800">{title}</span>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${badgeColor}`}>
+              {badge}
+            </span>
+          </div>
+          <div className="text-sm text-stone-500">{children}</div>
+        </div>
+        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${
+          selected ? "bg-ocean border-ocean text-white" : "border-stone-300"
+        }`}>
+          {selected && <Check size={14} />}
+        </div>
+      </div>
+    </button>
   );
 }
 
@@ -451,115 +423,79 @@ export default function BookNow() {
   const [step, setStep] = useState(1);
   const [searchParams] = useSearchParams();
   const ctx = useBooking();
-  const { booking, setBooking, setGuestCounts, updateGuest, setPackage, setAddonMode, setAddonGroupQty, setAddonGuestQty, nights, totalPersons } = ctx;
+  const { booking, setBooking, setGuestCounts, updateGuest, setPackage,
+    setAddonMode, setAddonGroupQty, setAddonGuestQty, nights, totalPersons } = ctx;
   const price = usePriceBreakdown();
 
-  // ─── LIVE Beds24 availability + prices with auto-refresh ───
-  const { 
-    liveData, 
-    loading: liveLoading, 
-    error: liveError, 
-    isLive,
-    lastUpdated,
-    refresh: refreshAvailability 
-  } = useLiveAvailability(
-    booking.checkIn, 
-    booking.checkOut, 
-    totalPersons || 1,
-    30000 // Auto-refresh every 30 seconds
-  );
+  const { liveData, loading: liveLoading, error: liveError, isLive, lastUpdated, refresh: refreshAvailability } =
+    useLiveAvailability(booking.checkIn, booking.checkOut, totalPersons || 1, 30000);
 
-  // Popovers
   const [guestPickerOpen, setGuestPickerOpen] = useState(false);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
-
   const closeGuestPicker = useCallback(() => setGuestPickerOpen(false), []);
   const closeDatePicker = useCallback(() => setDatePickerOpen(false), []);
 
-  // ─── Booking submission state ───
   const [submitting, setSubmitting] = useState(false);
   const [submitResult, setSubmitResult] = useState<{
-    success: boolean;
-    bookingIds?: string[];
-    errors?: string[];
-    fallback?: "whatsapp";
+    success: boolean; bookingIds?: string[]; errors?: string[];
   } | null>(null);
 
-  /**
-   * Build per-room aggregation: { roomId → numAdult }
-   * Multiple guests assigned to the same room get summed.
-   */
+  /* ─── All rooms shown regardless of guest type ─── */
+  const filteredRooms = useMemo(() => rooms, []);
+  const unassignedGuests = booking.guests.filter((g) => g.roomId === null);
+  const noGuests = totalPersons === 0;
+  const noDates = nights === 0;
+
+  /* ─── Room assignments for submission ─── */
   const buildRoomAssignments = () => {
     const map = new Map<string, number>();
     for (const g of booking.guests) {
       if (!g.roomId) continue;
       const room = rooms.find((r) => r.id === g.roomId);
-      if (!room) continue;
-      // Skip if no Beds24 ID (would fail server-side)
-      if (!room.beds24RoomId) continue;
+      if (!room?.beds24RoomId) continue;
       const count = g.type === "couple" ? 2 : 1;
       map.set(room.beds24RoomId, (map.get(room.beds24RoomId) || 0) + count);
     }
     return Array.from(map.entries()).map(([roomId, numAdult]) => ({ roomId, numAdult }));
   };
 
-  /**
-   * Submit booking to Beds24 via /api/beds24 proxy.
-   * On success → show confirmation screen.
-   * On failure or demo mode → fall back to WhatsApp.
-   */
+  /* ─── Submit booking ─── */
   const handleConfirmBooking = async () => {
     if (submitting) return;
     setSubmitting(true);
     setSubmitResult(null);
 
     const roomAssignments = buildRoomAssignments();
-
     if (roomAssignments.length === 0) {
       setSubmitting(false);
-      setSubmitResult({
-        success: false,
-        errors: ["No rooms assigned. Please go back and assign guests to rooms."],
-      });
+      setSubmitResult({ success: false, errors: ["No rooms assigned."] });
       return;
     }
 
-    // Split contact name into first + last (Beds24 wants both)
     const fullName = booking.contactName.trim();
     const parts = fullName.split(/\s+/);
     const guestFirstName = parts.length > 1 ? parts.slice(0, -1).join(" ") : "";
     const guestName = parts.length > 1 ? parts[parts.length - 1] : fullName;
 
-    // Build a notes block with package + add-ons context for the host
-    const notesLines: string[] = [];
-    if (booking.packageId) {
-      const pkg = packages.find((p) => p.id === booking.packageId);
-      if (pkg) notesLines.push(`Package: ${pkg.name}`);
-    }
-    notesLines.push(
-      `Guests: ${booking.guests
-        .map((g, i) => `${g.type === "couple" ? "Couple" : "Guest"} ${i + 1} (${g.type})`)
-        .join(", ")}`
-    );
-    // Add-ons summary
-    const addonQty = (id: string): number => {
-      const sel = booking.addOns[id];
-      if (!sel) return 0;
-      if (booking.addonMode === "group") return sel.quantity || 0;
-      return Object.values(sel.perGuest || {}).reduce(
-        (s: number, v) => s + (Number(v) || 0),
-        0
-      );
-    };
-    const activeAddons = ADDONS.filter((a) => addonQty(a.id) > 0);
-    if (activeAddons.length) {
-      notesLines.push(
-        `Add-ons (${booking.addonMode}): ` +
-          activeAddons.map((a) => `${a.name} ×${addonQty(a.id)}`).join(", ")
-      );
-    }
-    if (booking.specialRequests) notesLines.push(`Special: ${booking.specialRequests}`);
-    notesLines.push(`Estimated total: €${price.total}`);
+    const isDeposit = booking.paymentChoice === "deposit";
+    const selectedUpsellSummary = Object.entries(booking.addOns)
+      .filter(([, selection]) => selection.quantity > 0)
+      .map(([id, selection]) => {
+        const addon = ADDONS.find((item) => item.id === id);
+        return addon ? `${addon.name} x${selection.quantity}` : null;
+      })
+      .filter(Boolean)
+      .join(", ");
+
+    const notesLines = [
+      `Payment: ${isDeposit ? "30% deposit via bank transfer" : "Pay on arrival"}`,
+      booking.arrivalTime ? `Estimated arrival: ${booking.arrivalTime}` : "",
+      booking.packageId ? `Package: ${packages.find((p) => p.id === booking.packageId)?.name}` : "",
+      `Guests: ${booking.guests.map((g) => g.label).join(", ")}`,
+      selectedUpsellSummary ? `Extras: ${selectedUpsellSummary}` : "",
+      booking.specialRequests ? `Special requests: ${booking.specialRequests}` : "",
+      `Final total sent to Beds24: €${price.total}`,
+    ].filter(Boolean);
 
     const result = await submitBookingToBeds24({
       rooms: roomAssignments,
@@ -570,113 +506,75 @@ export default function BookNow() {
       guestEmail: booking.contactEmail,
       guestPhone: booking.contactPhone,
       notes: notesLines.join(" | "),
-      status: 0, // Request — host confirms before charging
+      status: isDeposit ? 1 : 0,
+      price: price.total,
     });
 
     setSubmitting(false);
     setSubmitResult(result);
-
-    // Auto-redirect to WhatsApp on demo mode / proxy failure
-    if (!result.success && result.fallback === "whatsapp") {
-      const msg = buildWhatsAppMessage(booking, nights, price.total, price.roomBreakdown);
-      window.open(
-        `https://wa.me/212612345678?text=${encodeURIComponent(msg)}`,
-        "_blank"
-      );
-    }
   };
 
-  // Pre-select from URL params
   useEffect(() => {
     const pkg = searchParams.get("package");
-    if (pkg) { setPackage(pkg); }
+    if (pkg) setPackage(pkg);
   }, [searchParams, setPackage]);
 
   /* ─── Navigation ─── */
   const canProceed = (s: number) => {
     switch (s) {
-      case 1: // Package — must have guests, dates, and a selection
-        return totalPersons > 0 && nights > 0 && (booking.packageId !== null || true); // package OR room-only
-      case 2: { // Rooms — all guests assigned
-        if (booking.packageId) return booking.guests.every((g) => g.roomId !== null);
-        return booking.guests.every((g) => g.roomId !== null);
-      }
-      case 3: return true; // Add-ons optional
+      case 1: return totalPersons > 0 && nights > 0;
+      case 2: return booking.guests.every((g) => g.roomId !== null);
+      case 3: return true;
       case 4: return booking.contactName.trim() !== "" && booking.contactEmail.trim() !== "";
+      case 5: return booking.paymentChoice !== null;
       default: return true;
     }
   };
 
-  const goNext = () => { if (canProceed(step) && step < 5) setStep(step + 1); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const goBack = () => { if (step > 1) setStep(step - 1); window.scrollTo({ top: 0, behavior: "smooth" }); };
-
-  /* ─── Guest room assignment handlers ─── */
-  // Assign a guest to a room (auto-moves them if they were in another room)
-  const assignGuestToRoom = (guestId: string, roomId: string) => {
-    updateGuest(guestId, { roomId });
+  const goNext = () => {
+    if (canProceed(step) && step < 6) {
+      setStep(step + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
-  // Remove a guest from any room (sets roomId to null)
-  const unassignGuest = (guestId: string) => {
-    updateGuest(guestId, { roomId: null });
+  const goBack = () => {
+    if (step > 1) { setStep(step - 1); window.scrollTo({ top: 0, behavior: "smooth" }); }
   };
 
-  /* ─── Filtered rooms based on all guest types ─── */
-  const filteredRooms = useMemo(() => {
-    const guestTypes = new Set(booking.guests.map((g) => g.type));
-    const allRoomIds = new Set<string>();
-    guestTypes.forEach((type) => {
-      getFilteredRooms(type).forEach((r) => allRoomIds.add(r.id));
-    });
-    return rooms.filter((r) => allRoomIds.has(r.id));
-  }, [booking.guests]);
-
-  /* ─── Unassigned guests ─── */
-  const unassignedGuests = booking.guests.filter((g) => g.roomId === null);
-
-  // Whether to show "you must add guests first" state
-  const noGuests = totalPersons === 0;
-  const noDates = nights === 0;
+  const assignGuestToRoom = (guestId: string, roomId: string) => updateGuest(guestId, { roomId });
+  const unassignGuest = (guestId: string) => updateGuest(guestId, { roomId: null });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cream to-white pt-20 pb-32">
-      <div className="max-w-5xl mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-b from-cream to-white pt-28 sm:pt-32 lg:pt-36 pb-28 sm:pb-32">
+      <div className="max-w-5xl mx-auto px-4 sm:px-5 lg:px-6">
 
-        {/* ═══ HEADER ═══ */}
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-6">
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-ocean mb-2">Book Your Stay</h1>
-          <p className="text-stone-500 text-sm">TAMOUNT Surf House — Anza, Agadir</p>
+        {/* HEADER */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8 sm:mb-10">
+          <h1 className="text-[2.2rem] sm:text-[2.8rem] md:text-5xl font-display font-bold text-ocean leading-[1.08] mb-2">Book Your Stay</h1>
+          <p className="text-stone-500 text-sm sm:text-base">TAMOUNT Surf House — Anza, Agadir</p>
         </motion.div>
 
-        {/* ═══ LIVE SYNC STATUS BANNER ═══ */}
+        {/* LIVE SYNC BANNER */}
         {isLive && (
-          <div className="mb-6">
-            <LiveSyncBanner
-              lastUpdated={lastUpdated}
-              loading={liveLoading}
-              error={liveError}
-              onRetry={refreshAvailability}
-            />
+          <div className="mb-8">
+            <LiveSyncBanner lastUpdated={lastUpdated} loading={liveLoading} error={liveError} onRetry={refreshAvailability} />
           </div>
         )}
 
-        {/* ═══ STICKY TOP BAR — Guests + Dates (always visible) ═══ */}
-        <div className="sticky top-16 md:top-20 z-40 mb-6">
+        {/* STICKY TOP BAR */}
+        <div className="sticky top-[5.6rem] sm:top-[6.35rem] lg:top-[6.8rem] z-40 mb-8">
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-            className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-lg border border-stone-200 p-3 md:p-4 flex items-center gap-3 flex-wrap">
-            
-            {/* Guest Picker Button */}
+            className="bg-white/96 backdrop-blur-lg rounded-[1.7rem] shadow-[0_16px_34px_rgba(15,42,58,0.10)] border border-stone-200 p-4 sm:p-5 flex items-center gap-3 sm:gap-4 flex-wrap">
+
+            {/* Guest Picker */}
             <div className="relative">
-              <button
-                onClick={() => { setGuestPickerOpen(!guestPickerOpen); setDatePickerOpen(false); }}
+              <button onClick={() => { setGuestPickerOpen(!guestPickerOpen); setDatePickerOpen(false); }}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 transition-all text-sm font-medium ${
-                  guestPickerOpen ? "border-ocean bg-ocean/5 text-ocean" : 
+                  guestPickerOpen ? "border-ocean bg-ocean/5 text-ocean" :
                   totalPersons > 0 ? "border-ocean/30 bg-ocean/5 text-ocean" : "border-stone-300 text-stone-600 hover:border-ocean"
-                }`}
-              >
+                }`}>
                 <Users size={18} />
-                <span className="font-semibold">
-                  {totalPersons > 0 ? `Guests: ${totalPersons}` : "Add Guests"}
-                </span>
+                <span className="font-semibold">{totalPersons > 0 ? `Guests: ${totalPersons}` : "Add Guests"}</span>
                 {totalPersons > 0 && (
                   <button onClick={(e) => { e.stopPropagation(); setGuestCounts(0, 0, 0); }}
                     className="ml-1 hover:text-red-500"><X size={14} /></button>
@@ -688,43 +586,38 @@ export default function BookNow() {
               </AnimatePresence>
             </div>
 
-            {/* Guest type pills */}
+            {/* Guest type mini pills */}
             {totalPersons > 0 && (
               <div className="hidden md:flex items-center gap-1.5">
                 {booking.maleCount > 0 && (
-                  <span className="text-[11px] px-2 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-600 font-semibold">
-                    👨 {booking.maleCount}
+                  <span className="text-[11px] px-2 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-semibold flex items-center gap-1">
+                    <User size={10} /> {booking.maleCount}M
                   </span>
                 )}
                 {booking.femaleCount > 0 && (
-                  <span className="text-[11px] px-2 py-1 rounded-full bg-pink-50 border border-pink-200 text-pink-500 font-semibold">
-                    👩 {booking.femaleCount}
+                  <span className="text-[11px] px-2 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-600 font-semibold flex items-center gap-1">
+                    <User size={10} /> {booking.femaleCount}F
                   </span>
                 )}
                 {booking.coupleCount > 0 && (
-                  <span className="text-[11px] px-2 py-1 rounded-full bg-orange-50 border border-orange-200 text-orange-600 font-semibold">
-                    💑 {booking.coupleCount}
+                  <span className="text-[11px] px-2 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 font-semibold flex items-center gap-1">
+                    <Heart size={10} /> {booking.coupleCount}C
                   </span>
                 )}
               </div>
             )}
 
-            {/* Divider */}
             <div className="hidden md:block w-px h-8 bg-stone-200" />
 
-            {/* Date Picker Button */}
+            {/* Date Picker */}
             <div className="relative">
-              <button
-                onClick={() => { setDatePickerOpen(!datePickerOpen); setGuestPickerOpen(false); }}
+              <button onClick={() => { setDatePickerOpen(!datePickerOpen); setGuestPickerOpen(false); }}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 transition-all text-sm font-medium ${
                   datePickerOpen ? "border-ocean bg-ocean/5 text-ocean" :
                   nights > 0 ? "border-ocean/30 bg-ocean/5 text-ocean" : "border-stone-300 text-stone-600 hover:border-ocean"
-                }`}
-              >
+                }`}>
                 <Calendar size={18} />
-                <span className="font-semibold">
-                  {nights > 0 ? `${fmtDate(booking.checkIn)} — ${nights}n` : "Select Dates"}
-                </span>
+                <span className="font-semibold">{nights > 0 ? `${fmtDate(booking.checkIn)} — ${nights}n` : "Select Dates"}</span>
                 <ChevronDown size={14} className={`transition-transform ${datePickerOpen ? "rotate-180" : ""}`} />
               </button>
               <AnimatePresence>
@@ -732,7 +625,6 @@ export default function BookNow() {
               </AnimatePresence>
             </div>
 
-            {/* Price display (right side) */}
             {price.total > 0 && (
               <div className="ml-auto text-right hidden md:block">
                 <p className="text-xl font-display font-bold text-ocean">€{price.total}</p>
@@ -742,7 +634,7 @@ export default function BookNow() {
           </motion.div>
         </div>
 
-        {/* ═══ ALERT: Need guests & dates ═══ */}
+        {/* ALERT: need setup */}
         {(noGuests || noDates) && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-3">
@@ -750,32 +642,29 @@ export default function BookNow() {
             <div>
               <p className="font-semibold text-amber-800 text-sm">
                 {noGuests && noDates ? "Select your guests and dates to get started" :
-                 noGuests ? "Add guests first using the selector above" :
-                 "Select your dates using the calendar above"}
+                 noGuests ? "Add guests using the selector above" : "Select dates using the calendar above"}
               </p>
               <p className="text-xs text-amber-600 mt-0.5">Use the buttons above to set up your booking</p>
             </div>
           </motion.div>
         )}
 
-        {/* ═══ PROGRESS BAR ═══ */}
+        {/* PROGRESS BAR */}
         {!noGuests && !noDates && (
           <div className="mb-8">
-            <div className="flex items-center justify-between max-w-xl mx-auto">
+            <div className="flex items-center justify-between max-w-2xl mx-auto">
               {STEPS.map((s, i) => (
                 <React.Fragment key={s.n}>
-                  <button
-                    onClick={() => { if (s.n < step) setStep(s.n); }}
+                  <button onClick={() => { if (s.n < step) setStep(s.n); }}
                     className={`flex flex-col items-center gap-1 transition-all ${
                       s.n === step ? "scale-110" : s.n < step ? "cursor-pointer" : "opacity-40"
-                    }`}
-                  >
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
+                    }`}>
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
                       s.n < step ? "bg-green-500 text-white" : s.n === step ? "bg-ocean text-white shadow-lg shadow-ocean/30" : "bg-stone-200 text-stone-400"
                     }`}>
-                      {s.n < step ? <Check size={16} /> : s.icon}
+                      {s.n < step ? <Check size={14} /> : s.icon}
                     </div>
-                    <span className={`text-[10px] md:text-xs font-semibold ${s.n === step ? "text-ocean" : "text-stone-400"}`}>{s.label}</span>
+                    <span className={`text-[9px] md:text-[10px] font-semibold ${s.n === step ? "text-ocean" : "text-stone-400"}`}>{s.label}</span>
                   </button>
                   {i < STEPS.length - 1 && (
                     <div className={`flex-1 h-0.5 mx-1 rounded ${s.n < step ? "bg-green-400" : "bg-stone-200"}`} />
@@ -786,33 +675,29 @@ export default function BookNow() {
           </div>
         )}
 
-        {/* ═══ LAYOUT: Main + Sidebar ═══ */}
+        {/* MAIN LAYOUT */}
         {!noGuests && !noDates && (
           <div className="flex flex-col lg:flex-row gap-6">
 
-            {/* ─── MAIN PANEL ─── */}
+            {/* MAIN PANEL */}
             <div className="flex-1">
               <AnimatePresence mode="wait">
-                <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
+                <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
 
-                  {/* ══════════════════════════════════════════
-                     STEP 1: PACKAGE — Choose Package or Room Only
-                     ══════════════════════════════════════════ */}
+                  {/* ── STEP 1: PACKAGE ── */}
                   {step === 1 && (
                     <div className="space-y-4">
                       <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-100">
                         <h2 className="text-xl font-display font-bold text-stone-800 mb-2 flex items-center gap-2">
                           <Package className="text-ocean" size={22} /> Choose your experience
                         </h2>
-                        <p className="text-stone-500 text-sm mb-6">Pick a surf package for the full experience, or go room-only for maximum flexibility</p>
+                        <p className="text-stone-500 text-sm mb-6">Pick a surf package or go room-only for maximum flexibility</p>
 
-                        {/* Room Only Card */}
-                        <motion.button
-                          onClick={() => setPackage(null)}
+                        {/* Room Only */}
+                        <motion.button onClick={() => setPackage(null)}
                           className={`w-full text-left border-2 rounded-2xl p-5 mb-4 transition-all ${
                             booking.packageId === null ? "border-ocean bg-ocean/5 shadow-md shadow-ocean/10" : "border-stone-200 hover:border-stone-300"
-                          }`}
-                        >
+                          }`}>
                           <div className="flex items-center gap-4">
                             <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${
                               booking.packageId === null ? "bg-ocean text-white" : "bg-stone-100 text-stone-400"
@@ -821,7 +706,7 @@ export default function BookNow() {
                             </div>
                             <div className="flex-1">
                               <h3 className="font-bold text-stone-800 text-lg">Room Only</h3>
-                              <p className="text-sm text-stone-500">Just accommodation — choose your room in the next step</p>
+                              <p className="text-sm text-stone-500">Just accommodation — choose rooms in the next step</p>
                             </div>
                             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                               booking.packageId === null ? "bg-ocean border-ocean text-white" : "border-stone-300"
@@ -831,28 +716,23 @@ export default function BookNow() {
                           </div>
                         </motion.button>
 
-                        {/* Divider */}
                         <div className="flex items-center gap-3 my-6">
                           <div className="flex-1 h-px bg-stone-200" />
                           <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider">Or choose a package</span>
                           <div className="flex-1 h-px bg-stone-200" />
                         </div>
 
-                        {/* Packages */}
                         <div className="space-y-4">
                           {packages.map((pkg) => {
                             const isSelected = booking.packageId === pkg.id;
                             const pkgPrice = pkg.priceUnit === "total"
                               ? pkg.priceFrom * totalPersons
                               : pkg.priceFrom * nights * totalPersons;
-
                             return (
-                              <motion.button key={pkg.id} layout
-                                onClick={() => setPackage(isSelected ? null : pkg.id)}
+                              <motion.button key={pkg.id} layout onClick={() => setPackage(isSelected ? null : pkg.id)}
                                 className={`w-full text-left border-2 rounded-2xl overflow-hidden transition-all ${
                                   isSelected ? "border-ocean shadow-md shadow-ocean/10" : "border-stone-200 hover:border-stone-300"
-                                }`}
-                              >
+                                }`}>
                                 <div className="flex flex-col md:flex-row">
                                   <div className="md:w-44 h-36 md:h-auto overflow-hidden relative">
                                     <img src={pkg.image} alt={pkg.name} className="w-full h-full object-cover" />
@@ -884,13 +764,10 @@ export default function BookNow() {
                                       ))}
                                       {pkg.includes.length > 4 && <li className="text-ocean font-semibold">+{pkg.includes.length - 4} more included</li>}
                                     </ul>
-
-                                    {/* Total for this group */}
                                     {isSelected && (
                                       <div className="mt-3 p-2 bg-ocean/10 rounded-lg">
                                         <p className="text-xs font-semibold text-ocean">
-                                          {totalPersons} person{totalPersons > 1 ? "s" : ""} × €{pkg.priceFrom}/{pkg.priceUnit === "total" ? "person" : "person/night"}
-                                          {pkg.priceUnit !== "total" ? ` × ${nights} nights` : ""} = <span className="text-sm">€{pkgPrice}</span>
+                                          {totalPersons} person{totalPersons > 1 ? "s" : ""} × €{pkg.priceFrom} = <span className="text-sm">€{pkgPrice}</span>
                                         </p>
                                       </div>
                                     )}
@@ -904,163 +781,100 @@ export default function BookNow() {
                     </div>
                   )}
 
-                  {/* ══════════════════════════════════════════
-                     STEP 2: ROOMS — Assign Guests to Rooms
-                     ══════════════════════════════════════════ */}
+                  {/* ── STEP 2: ROOMS ── */}
                   {step === 2 && (
                     <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-100">
                       <h2 className="text-xl font-display font-bold text-stone-800 mb-2 flex items-center gap-2">
                         <Bed className="text-ocean" size={22} /> Assign guests to rooms
                       </h2>
-                      <p className="text-stone-500 text-sm mb-2">
-                        {booking.packageId
-                          ? "Now assign each guest to their preferred room"
-                          : "Select a room for each guest — rooms are filtered by guest type"}
+                      <p className="text-stone-500 text-sm mb-4">
+                        All room types are available. Assign each guest freely — gender is for reference only.
                       </p>
 
-                      {/* Guest legend */}
-                      <div className="flex flex-wrap gap-2 mb-4 p-3 bg-stone-50 rounded-xl">
-                        <span className="text-xs font-semibold text-stone-500 mr-1">Your guests:</span>
+                      {/* Guest status legend */}
+                      <div className="flex flex-wrap gap-2 mb-4 p-3 bg-stone-50 rounded-xl border border-stone-100">
+                        <span className="text-xs font-semibold text-stone-500 mr-1 self-center">Guests:</span>
                         {booking.guests.map((g) => {
-                          const cfg = guestTypeConfig[g.type];
+                          const cfg = guestConfig[g.type];
                           const assigned = g.roomId !== null;
                           return (
-                            <span key={g.id} className={`text-[11px] px-2.5 py-1 rounded-full border font-semibold flex items-center gap-1 ${
+                            <span key={g.id} className={`text-[11px] px-2.5 py-1 rounded-full border font-semibold flex items-center gap-1.5 ${
                               assigned ? `${cfg.bg} ${cfg.border} ${cfg.color}` : "bg-amber-50 border-amber-200 text-amber-700"
                             }`}>
                               {assigned ? <Check size={10} /> : <AlertCircle size={10} />}
-                              {cfg.emoji} {g.label}
+                              {cfg.showType && <span className={cfg.color}>{cfg.chipIcon}</span>}
+                              {g.label}
                             </span>
                           );
                         })}
                       </div>
 
-                      {/* Unassigned Warning */}
                       {unassignedGuests.length > 0 && (
                         <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2">
                           <AlertCircle size={16} className="text-amber-500 mt-0.5 shrink-0" />
-                          <div>
-                            <p className="text-sm font-semibold text-amber-800">
-                              {unassignedGuests.length} guest{unassignedGuests.length > 1 ? "s" : ""} not assigned yet
-                            </p>
-                            <p className="text-xs text-amber-600 mt-0.5">
-                              Tap a guest chip on any room below to assign them
-                            </p>
-                          </div>
+                          <p className="text-sm text-amber-800">
+                            <strong>{unassignedGuests.length} guest{unassignedGuests.length > 1 ? "s" : ""}</strong> not assigned yet — tap chips on any room below.
+                          </p>
                         </div>
                       )}
 
-                      {/* Loading State */}
+                      {/* Loading */}
                       {liveLoading && (
                         <div className="text-center py-12">
-                          <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-ocean border-t-transparent mb-3"></div>
-                          <p className="text-stone-600 font-medium">Checking live availability from Beds24...</p>
-                          <p className="text-stone-400 text-sm mt-1">This takes a few seconds</p>
+                          <Loader2 className="inline-block animate-spin text-ocean mb-3" size={32} />
+                          <p className="text-stone-600 font-medium">Checking live availability…</p>
                         </div>
                       )}
 
-                      {/* No Rooms Available */}
+                      {/* No availability */}
                       {!liveLoading && filteredRooms.filter((room) => {
                         const live = liveData[room.beds24RoomId];
-                        const liveAvail = live?.available ?? 0;
-                        const hasLiveAvailData = isLive && live && typeof liveAvail === "number";
-                        return hasLiveAvailData && liveAvail > 0;
+                        return live && (live.available ?? 0) > 0;
                       }).length === 0 && booking.guests.length > 0 && (
                         <div className="text-center py-12 bg-stone-50 rounded-2xl border-2 border-dashed border-stone-200">
                           <AlertCircle className="mx-auto text-amber-500 mb-3" size={48} strokeWidth={1.5} />
                           <h3 className="text-lg font-bold text-stone-800 mb-2">No rooms available for these dates</h3>
-                          <p className="text-stone-500 text-sm mb-4 max-w-md mx-auto">
-                            All rooms are currently booked for your selected dates. Please try different dates or contact us directly.
-                          </p>
-                          <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                            <button
-                              onClick={() => setDatePickerOpen(true)}
-                              className="px-4 py-2.5 bg-ocean text-white rounded-xl font-semibold text-sm hover:bg-ocean/90 transition-colors"
-                            >
-                              📅 Change Dates
-                            </button>
-                            <a
-                              href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER || "212612345678"}?text=${encodeURIComponent(
-                                `Hi! I checked availability for ${booking.checkIn} to ${booking.checkOut} but no rooms are available. What are my options?`
-                              )}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-4 py-2.5 bg-green-500 text-white rounded-xl font-semibold text-sm hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
-                            >
-                              💬 Contact on WhatsApp
-                            </a>
-                          </div>
+                          <p className="text-stone-500 text-sm mb-4">Please try different dates or contact us directly.</p>
+                          <button onClick={() => setDatePickerOpen(true)}
+                            className="px-4 py-2.5 bg-ocean text-white rounded-xl font-semibold text-sm hover:bg-ocean/90">
+                            Change Dates
+                          </button>
                         </div>
                       )}
 
-                      {/* API Error / Not Connected */}
-                      {!liveLoading && liveError && booking.guests.length > 0 && (
-                        <div className="text-center py-12 bg-amber-50 rounded-2xl border-2 border-dashed border-amber-200">
-                          <AlertTriangle className="mx-auto text-amber-600 mb-3" size={48} strokeWidth={1.5} />
-                          <h3 className="text-lg font-bold text-stone-800 mb-2">Unable to check availability</h3>
-                          <p className="text-stone-500 text-sm mb-4 max-w-md mx-auto">
-                            We couldn't connect to our booking system. This usually means the site isn't deployed on Vercel yet.
-                          </p>
-                          <p className="text-amber-700 text-xs font-mono bg-amber-100 inline-block px-3 py-1.5 rounded-lg mb-4">
-                            {liveError}
-                          </p>
-                          <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                            <a
-                              href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER || "212612345678"}?text=${encodeURIComponent(
-                                `Hi! I want to book for ${booking.checkIn} to ${booking.checkOut} (${totalPersons} guests). Can you check availability?`
-                              )}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-4 py-2.5 bg-green-500 text-white rounded-xl font-semibold text-sm hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
-                            >
-                              💬 Book via WhatsApp
-                            </a>
-                          </div>
+                      {!liveLoading && liveError && (
+                        <div className="text-center py-8 bg-amber-50 rounded-2xl border border-amber-200">
+                          <AlertTriangle className="mx-auto text-amber-600 mb-2" size={36} strokeWidth={1.5} />
+                          <p className="text-stone-600 text-sm">Could not load live availability — {liveError}</p>
                         </div>
                       )}
 
                       {/* Room Cards */}
-                      <div className="space-y-4">
+                      <div className="space-y-4 mt-4">
                         {filteredRooms.map((room) => {
                           const assignedHere = booking.guests.filter((g) => g.roomId === room.id);
                           const hasGuests = assignedHere.length > 0;
-
-                          // ─── LIVE DATA REQUIRED (no static fallback) ───
                           const live = liveData[room.beds24RoomId];
                           const livePrice = live?.avgNightly && live.avgNightly > 0 ? live.avgNightly : room.price;
                           const liveAvail = live?.available ?? 0;
-                          const hasLiveAvailData = isLive && live && typeof liveAvail === "number";
-                          
-                          // HIDE room if: no live data OR availability is 0 (and no guests already assigned)
-                          const isUnavailable = !hasLiveAvailData || liveAvail === 0;
-                          if (isUnavailable && !hasGuests) return null;
+                          const hasLiveData = isLive && live && typeof liveAvail === "number";
+
+                          if (!hasLiveData && !hasGuests) return null;
+                          if (hasLiveData && liveAvail === 0 && !hasGuests) return null;
 
                           return (
                             <motion.div key={room.id} layout
                               className={`border-2 rounded-2xl transition-all ${
                                 hasGuests ? "border-ocean shadow-md shadow-ocean/10" : "border-stone-200 hover:border-stone-300"
-                              }`}
-                            >
+                              }`}>
                               <div className="flex flex-col md:flex-row">
-                                {/* Room Image — only this gets overflow-hidden, not the parent */}
                                 <div className="md:w-48 h-40 md:h-auto relative overflow-hidden md:rounded-l-2xl rounded-t-2xl md:rounded-tr-none">
                                   <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
-                                  <div className="absolute top-2 left-2 flex gap-1">
-                                    <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                                  <div className="absolute top-2 left-2">
+                                    <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${
                                       room.type === "dorm" ? "bg-blue-500/90 text-white" : "bg-amber-500/90 text-white"
-                                    }`}>{room.type === "dorm" ? "Shared Dorm" : "Private"}</span>
+                                    }`}>{room.type === "dorm" ? "Mixed Dorm" : "Private"}</span>
                                   </div>
-                                  {room.genderPolicy !== "any" && (
-                                    <div className="absolute top-2 right-2">
-                                      <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${
-                                        room.genderPolicy === "male" ? "bg-blue-600/90 text-white" :
-                                        room.genderPolicy === "female" ? "bg-pink-500/90 text-white" :
-                                        "bg-purple-500/90 text-white"
-                                      }`}>
-                                        {room.genderPolicy === "male" ? "♂ Male" : room.genderPolicy === "female" ? "♀ Female" : "Mixed"}
-                                      </span>
-                                    </div>
-                                  )}
                                   {hasGuests && (
                                     <div className="absolute bottom-2 right-2">
                                       <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-ocean text-white">
@@ -1069,8 +883,6 @@ export default function BookNow() {
                                     </div>
                                   )}
                                 </div>
-
-                                {/* Room Info */}
                                 <div className="flex-1 p-5">
                                   <div className="flex items-start justify-between mb-2">
                                     <div>
@@ -1080,9 +892,9 @@ export default function BookNow() {
                                     <div className="text-right">
                                       <p className="text-xl font-bold text-ocean">€{Math.round(livePrice)}</p>
                                       <p className="text-[10px] text-stone-400 uppercase">
-                                        {room.type === "dorm" ? "/ bed / night" : "/ room / night"}
+                                        {room.type === "dorm" ? "/ guest / night" : "/ room / night"}
                                       </p>
-                                      {hasLiveAvailData && (
+                                      {hasLiveData && (
                                         <p className={`text-[10px] font-semibold mt-0.5 ${
                                           (liveAvail ?? 99) <= 2 ? "text-red-600" : "text-green-600"
                                         }`}>
@@ -1091,31 +903,23 @@ export default function BookNow() {
                                       )}
                                     </div>
                                   </div>
-
                                   <p className="text-sm text-stone-500 mb-3 line-clamp-2">{room.description}</p>
-
-                                  {/* Features */}
                                   <div className="flex flex-wrap gap-1.5 mb-3">
                                     {room.features.slice(0, 5).map((f) => (
                                       <span key={f} className="px-2 py-0.5 bg-stone-100 rounded-full text-[10px] text-stone-600 font-medium">{f}</span>
                                     ))}
                                   </div>
-
-                                  {/* Price Calc */}
                                   {hasGuests && nights > 0 && (
                                     <div className="text-xs text-ocean font-semibold mb-1">
                                       {room.type === "dorm"
-                                        ? `${assignedHere.length} bed${assignedHere.length > 1 ? "s" : ""} × ${nights} night${nights > 1 ? "s" : ""} = €${room.price * assignedHere.length * nights}`
-                                        : `€${room.price} × ${nights} night${nights > 1 ? "s" : ""} = €${room.price * nights}`
+                                        ? `${assignedHere.length} guest${assignedHere.length > 1 ? "s" : ""} × €${Math.round(livePrice)} × ${nights} night${nights > 1 ? "s" : ""} = €${Math.round(livePrice) * assignedHere.length * nights}`
+                                        : `€${Math.round(livePrice)} × ${nights} night${nights > 1 ? "s" : ""} = €${Math.round(livePrice) * nights}`
                                       }
                                     </div>
                                   )}
-
-                                  {/* Inline guest chips — no dropdown, no clipping */}
                                   <GuestChipsAssignment
                                     roomId={room.id}
                                     roomName={room.name}
-                                    roomGenderPolicy={room.genderPolicy}
                                     guests={booking.guests}
                                     maxGuests={room.maxGuests}
                                     onAssignGuest={assignGuestToRoom}
@@ -1130,26 +934,27 @@ export default function BookNow() {
                     </div>
                   )}
 
-                  {/* ══════════════════════════════════════════
-                     STEP 3: EXTRAS — Add-ons
-                     ══════════════════════════════════════════ */}
+                  {/* ── STEP 3: ADD-ONS ── */}
                   {step === 3 && (
                     <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-100">
                       <h2 className="text-xl font-display font-bold text-stone-800 mb-2 flex items-center gap-2">
                         <Sparkles className="text-ocean" size={22} /> Add extras to your trip
                       </h2>
-                      <p className="text-stone-500 text-sm mb-4">Enhance your experience with activities & services</p>
+                      <p className="text-stone-500 text-sm mb-4">Enhance your experience — all optional</p>
 
-                      {/* Per Group / Per Person Toggle */}
                       <div className="flex items-center gap-2 mb-6 p-2 bg-stone-50 rounded-xl">
                         <button onClick={() => setAddonMode("group")}
                           className={`flex-1 py-2.5 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-all ${
-                            booking.addonMode === "group" ? "bg-white shadow-sm text-ocean" : "text-stone-500 hover:text-stone-700"
-                          }`}><ToggleLeft size={16} /> Per Group</button>
+                            booking.addonMode === "group" ? "bg-white shadow-sm text-ocean" : "text-stone-500"
+                          }`}>
+                          <ToggleLeft size={16} /> Per Group
+                        </button>
                         <button onClick={() => setAddonMode("person")}
                           className={`flex-1 py-2.5 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-all ${
-                            booking.addonMode === "person" ? "bg-white shadow-sm text-ocean" : "text-stone-500 hover:text-stone-700"
-                          }`}><ToggleRight size={16} /> Per Person</button>
+                            booking.addonMode === "person" ? "bg-white shadow-sm text-ocean" : "text-stone-500"
+                          }`}>
+                          <ToggleRight size={16} /> Per Person
+                        </button>
                       </div>
 
                       <div className="space-y-3">
@@ -1185,19 +990,20 @@ export default function BookNow() {
                                 <div className="mt-3 space-y-2 pl-1">
                                   {booking.guests.map((guest) => {
                                     const gQty = sel.perGuest?.[guest.id] || 0;
+                                    const cfg = guestConfig[guest.type];
                                     return (
                                       <div key={guest.id} className="flex items-center justify-between py-1">
                                         <span className="text-xs font-medium text-stone-600 flex items-center gap-1.5">
-                                          <span className={`w-2 h-2 rounded-full ${guestTypeConfig[guest.type].dot}`} />
+                                          <span className={`w-2 h-2 rounded-full ${cfg.dot}`} />
+                                          {cfg.showType && <span className={cfg.color}>{cfg.chipIcon}</span>}
                                           {guest.label}
-                                          <span className="text-stone-400">({guestTypeConfig[guest.type].label})</span>
                                         </span>
                                         <div className="flex items-center gap-2">
                                           <button onClick={() => setAddonGuestQty(addon.id, guest.id, gQty - 1)} disabled={gQty <= 0}
-                                            className="w-7 h-7 rounded border border-stone-200 flex items-center justify-center disabled:opacity-30 text-xs"><Minus size={12} /></button>
+                                            className="w-7 h-7 rounded border border-stone-200 flex items-center justify-center disabled:opacity-30"><Minus size={12} /></button>
                                           <span className="w-6 text-center text-sm font-bold">{gQty}</span>
                                           <button onClick={() => setAddonGuestQty(addon.id, guest.id, gQty + 1)} disabled={gQty >= addon.maxPerUnit}
-                                            className="w-7 h-7 rounded border border-stone-200 flex items-center justify-center disabled:opacity-30 text-xs"><Plus size={12} /></button>
+                                            className="w-7 h-7 rounded border border-stone-200 flex items-center justify-center disabled:opacity-30"><Plus size={12} /></button>
                                         </div>
                                       </div>
                                     );
@@ -1214,14 +1020,10 @@ export default function BookNow() {
                           );
                         })}
                       </div>
-
-                      <p className="text-xs text-stone-400 mt-4 text-center">All add-ons are optional. Skip this step if you prefer.</p>
                     </div>
                   )}
 
-                  {/* ══════════════════════════════════════════
-                     STEP 4: DETAILS — Contact Info
-                     ══════════════════════════════════════════ */}
+                  {/* ── STEP 4: DETAILS ── */}
                   {step === 4 && (
                     <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-100">
                       <h2 className="text-xl font-display font-bold text-stone-800 mb-2 flex items-center gap-2">
@@ -1254,6 +1056,22 @@ export default function BookNow() {
                               placeholder="+1 234 567 8900" className="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 focus:ring-2 focus:ring-ocean/30 focus:border-ocean outline-none text-sm bg-cream/50" />
                           </div>
                         </div>
+
+                        {/* ARRIVAL TIME */}
+                        <div>
+                          <label className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1 block flex items-center gap-1.5">
+                            <Timer size={12} /> Estimated Arrival Time
+                          </label>
+                          <div className="relative">
+                            <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                            <input type="time" value={booking.arrivalTime} onChange={(e) => setBooking({ arrivalTime: e.target.value })}
+                              className="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 focus:ring-2 focus:ring-ocean/30 focus:border-ocean outline-none text-sm bg-cream/50" />
+                          </div>
+                          <p className="text-[11px] text-stone-400 mt-1 flex items-center gap-1">
+                            <AlertCircle size={11} /> Helps us prepare your room. Check-in from 14:00.
+                          </p>
+                        </div>
+
                         <div>
                           <label className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1 block">Special Requests</label>
                           <textarea value={booking.specialRequests} onChange={(e) => setBooking({ specialRequests: e.target.value })}
@@ -1264,12 +1082,92 @@ export default function BookNow() {
                     </div>
                   )}
 
-                  {/* ══════════════════════════════════════════
-                     STEP 5: CONFIRM — Summary & Book
-                     ══════════════════════════════════════════ */}
+                  {/* ── STEP 5: PAYMENT ── */}
                   {step === 5 && (
+                    <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-100">
+                      <h2 className="text-xl font-display font-bold text-stone-800 mb-2 flex items-center gap-2">
+                        <CreditCard className="text-ocean" size={22} /> Choose Payment Option
+                      </h2>
+                      <p className="text-stone-500 text-sm mb-6">Select how you'd like to secure your booking</p>
+
+                      <div className="space-y-4">
+                        <PaymentOptionCard
+                          selected={booking.paymentChoice === "deposit"}
+                          onClick={() => setBooking({ paymentChoice: "deposit" })}
+                          icon={<Banknote size={22} />}
+                          title="Pay 30% Deposit Now"
+                          badge="Confirmed instantly"
+                          badgeColor="bg-green-100 text-green-700"
+                        >
+                          <p className="mb-2">Secure your room with a <strong className="text-stone-700">€{price.depositAmount}</strong> deposit. Your booking is confirmed immediately.</p>
+                          <p className="text-xs text-stone-400">Remaining €{price.total - price.depositAmount} payable on arrival.</p>
+                        </PaymentOptionCard>
+
+                        {booking.paymentChoice === "deposit" && (
+                          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+                            className="bg-stone-50 border border-stone-200 rounded-2xl p-5">
+                            <div className="flex items-center gap-2 mb-4">
+                              <Building2 size={18} className="text-ocean" />
+                              <span className="font-bold text-stone-800 text-sm">Bank Transfer Details</span>
+                            </div>
+                            <div className="space-y-2 text-sm">
+                              {[
+                                ["Bank", BANK_DETAILS.bankName],
+                                ["Account name", BANK_DETAILS.accountName],
+                                ["IBAN", BANK_DETAILS.iban],
+                                ["SWIFT/BIC", BANK_DETAILS.swift],
+                                ["Amount", `€${price.depositAmount}`],
+                                ["Reference", `${BANK_DETAILS.reference} — ${booking.contactName || "Your name"}`],
+                              ].map(([label, value]) => (
+                                <div key={label} className="flex items-start justify-between gap-4">
+                                  <span className="text-stone-500 text-xs shrink-0">{label}</span>
+                                  <span className="font-mono font-semibold text-stone-800 text-xs text-right">{value}</span>
+                                </div>
+                              ))}
+                            </div>
+                            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                              <p className="text-xs text-amber-800 flex items-start gap-1.5">
+                                <AlertCircle size={12} className="mt-0.5 shrink-0" />
+                                Please include your name as the payment reference. Send proof of payment to <strong>tamountsurfhouse@gmail.com</strong> to confirm.
+                              </p>
+                            </div>
+                          </motion.div>
+                        )}
+
+                        <PaymentOptionCard
+                          selected={booking.paymentChoice === "arrival"}
+                          onClick={() => setBooking({ paymentChoice: "arrival" })}
+                          icon={<Clock size={22} />}
+                          title="Pay on Arrival"
+                          badge="Pending confirmation"
+                          badgeColor="bg-amber-100 text-amber-700"
+                        >
+                          <p>No payment required now. Your booking will be a <strong className="text-stone-700">pending request</strong> until we confirm availability.</p>
+                          <p className="text-xs text-stone-400 mt-1">We'll confirm within 24 hours. Full amount paid on check-in.</p>
+                        </PaymentOptionCard>
+                      </div>
+
+                      {booking.paymentChoice && (
+                        <div className="mt-6 p-4 bg-stone-50 border border-stone-200 rounded-xl">
+                          <div className="flex items-center gap-2 mb-2">
+                            <CheckCircle2 size={16} className={booking.paymentChoice === "deposit" ? "text-green-500" : "text-amber-500"} />
+                            <span className="font-semibold text-stone-800 text-sm">
+                              {booking.paymentChoice === "deposit" ? "Booking will be CONFIRMED" : "Booking will be sent as a REQUEST"}
+                            </span>
+                          </div>
+                          <p className="text-xs text-stone-500">
+                            {booking.paymentChoice === "deposit"
+                              ? "After bank transfer confirmation, your room is secured. You'll receive an email with full details."
+                              : "We'll review your request and confirm within 24 hours. You'll receive an email either way."}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* ── STEP 6: CONFIRM ── */}
+                  {step === 6 && (
                     <div className="space-y-4">
-                      {/* Summary Card */}
                       <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-100">
                         <h2 className="text-xl font-display font-bold text-stone-800 mb-6 flex items-center gap-2">
                           <Check className="text-green-500" size={22} /> Booking Summary
@@ -1284,33 +1182,51 @@ export default function BookNow() {
                           </div>
                         </div>
 
-                        {/* Guest Summary */}
+                        {/* Guests */}
                         <div className="mb-4 p-3 bg-stone-50 rounded-xl">
-                          <p className="text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">Guests</p>
+                          <p className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Guests</p>
                           <div className="flex flex-wrap gap-2">
-                            {booking.maleCount > 0 && <span className="text-xs px-2 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-600 font-semibold">👨 {booking.maleCount} Male{booking.maleCount > 1 ? "s" : ""}</span>}
-                            {booking.femaleCount > 0 && <span className="text-xs px-2 py-1 rounded-full bg-pink-50 border border-pink-200 text-pink-500 font-semibold">👩 {booking.femaleCount} Female{booking.femaleCount > 1 ? "s" : ""}</span>}
-                            {booking.coupleCount > 0 && <span className="text-xs px-2 py-1 rounded-full bg-orange-50 border border-orange-200 text-orange-600 font-semibold">💑 {booking.coupleCount} Couple{booking.coupleCount > 1 ? "s" : ""}</span>}
+                            {booking.maleCount > 0 && (
+                              <span className="text-xs px-2 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-semibold flex items-center gap-1">
+                                <User size={11} /> {booking.maleCount} Male{booking.maleCount > 1 ? "s" : ""}
+                              </span>
+                            )}
+                            {booking.femaleCount > 0 && (
+                              <span className="text-xs px-2 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-600 font-semibold flex items-center gap-1">
+                                <User size={11} /> {booking.femaleCount} Female{booking.femaleCount > 1 ? "s" : ""}
+                              </span>
+                            )}
+                            {booking.coupleCount > 0 && (
+                              <span className="text-xs px-2 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 font-semibold flex items-center gap-1">
+                                <Heart size={11} /> {booking.coupleCount} Couple{booking.coupleCount > 1 ? "s" : ""}
+                              </span>
+                            )}
                           </div>
                         </div>
 
-                        {/* Package */}
-                        {price.selectedPkg && (
-                          <div className="mb-4 p-3 bg-ocean/5 border border-ocean/20 rounded-xl">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <span className="text-xs font-bold text-ocean uppercase">Package</span>
-                                <p className="font-semibold text-stone-800">{price.selectedPkg.name}</p>
-                              </div>
-                              <span className="font-bold text-ocean text-lg">€{price.accommodationTotal}</span>
-                            </div>
+                        {/* Arrival time */}
+                        {booking.arrivalTime && (
+                          <div className="mb-4 p-3 bg-stone-50 rounded-xl flex items-center gap-2">
+                            <Clock size={16} className="text-ocean" />
+                            <span className="text-sm text-stone-700">Estimated arrival: <strong>{booking.arrivalTime}</strong></span>
                           </div>
                         )}
 
-                        {/* Rooms by assignment */}
+                        {/* Package */}
+                        {price.selectedPkg && (
+                          <div className="mb-4 p-3 bg-ocean/5 border border-ocean/20 rounded-xl flex items-center justify-between">
+                            <div>
+                              <span className="text-xs font-bold text-ocean uppercase">Package</span>
+                              <p className="font-semibold text-stone-800">{price.selectedPkg.name}</p>
+                            </div>
+                            <span className="font-bold text-ocean text-lg">€{price.accommodationTotal}</span>
+                          </div>
+                        )}
+
+                        {/* Rooms */}
                         {price.roomBreakdown.length > 0 && (
                           <div className="space-y-3 mb-4">
-                            <h3 className="text-sm font-bold text-stone-600 uppercase tracking-wider">Room Assignments</h3>
+                            <h3 className="text-xs font-bold text-stone-500 uppercase tracking-wider">Room Assignments</h3>
                             {price.roomBreakdown.map((rb) => (
                               <div key={rb.room.id} className="p-3 border border-stone-200 rounded-xl">
                                 <div className="flex items-center justify-between mb-2">
@@ -1326,9 +1242,10 @@ export default function BookNow() {
                                   {rb.guestIds.map((gId) => {
                                     const g = booking.guests.find((x) => x.id === gId);
                                     if (!g) return null;
+                                    const cfg = guestConfig[g.type];
                                     return (
-                                      <span key={gId} className={`text-xs px-2 py-0.5 rounded-full border ${guestTypeConfig[g.type].bg} ${guestTypeConfig[g.type].border} ${guestTypeConfig[g.type].color} font-medium`}>
-                                        {guestTypeConfig[g.type].emoji} {g.label}
+                                      <span key={gId} className={`text-xs px-2 py-0.5 rounded-full border ${cfg.bg} ${cfg.border} ${cfg.color} font-medium flex items-center gap-1`}>
+                                        {cfg.showType && cfg.chipIcon} {g.label}
                                       </span>
                                     );
                                   })}
@@ -1341,7 +1258,7 @@ export default function BookNow() {
                         {/* Add-ons */}
                         {price.addonsTotal > 0 && (
                           <div className="mb-4">
-                            <h3 className="text-sm font-bold text-stone-600 uppercase tracking-wider mb-2">Add-ons</h3>
+                            <h3 className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Add-ons</h3>
                             {Object.entries(booking.addOns).filter(([, s]) => s.quantity > 0).map(([id, sel]) => {
                               const a = ADDONS.find((x) => x.id === id);
                               if (!a) return null;
@@ -1349,12 +1266,30 @@ export default function BookNow() {
                               return (
                                 <div key={id} className="flex items-center justify-between py-1.5 text-sm">
                                   <span className="text-stone-600">{a.name} ×{sel.quantity}</span>
-                                  <span className="font-semibold text-stone-800">€{lineTotal}</span>
+                                  <span className="font-semibold">€{lineTotal}</span>
                                 </div>
                               );
                             })}
                           </div>
                         )}
+
+                        {/* Payment choice summary */}
+                        <div className="mb-4 p-3 rounded-xl border flex items-center gap-3 ${booking.paymentChoice === 'deposit' ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}">
+                          {booking.paymentChoice === "deposit"
+                            ? <Banknote size={16} className="text-green-600 shrink-0" />
+                            : <Clock size={16} className="text-amber-600 shrink-0" />
+                          }
+                          <div>
+                            <p className={`text-sm font-semibold ${booking.paymentChoice === "deposit" ? "text-green-800" : "text-amber-800"}`}>
+                              {booking.paymentChoice === "deposit" ? "30% Deposit via Bank Transfer" : "Pay on Arrival"}
+                            </p>
+                            <p className="text-xs text-stone-500">
+                              {booking.paymentChoice === "deposit"
+                                ? `Deposit: €${price.depositAmount} · Remaining: €${price.total - price.depositAmount} on arrival`
+                                : "Full amount on check-in · Booking pending confirmation"}
+                            </p>
+                          </div>
+                        </div>
 
                         {/* Total */}
                         <div className="border-t-2 border-dashed border-stone-200 pt-4 mt-4">
@@ -1362,153 +1297,114 @@ export default function BookNow() {
                             <span className="text-lg font-bold text-stone-800">Total</span>
                             <span className="text-2xl font-display font-bold text-ocean">€{price.total}</span>
                           </div>
+                          {booking.paymentChoice === "deposit" && (
+                            <p className="text-right text-xs text-green-700 font-semibold mt-1">Due now: €{price.depositAmount}</p>
+                          )}
                           <p className="text-xs text-stone-400 mt-1">Add-ons payable on arrival unless booked online</p>
                         </div>
                       </div>
 
-                      {/* Contact Info Preview */}
+                      {/* Contact */}
                       <div className="bg-white rounded-2xl p-5 shadow-sm border border-stone-100">
-                        <h3 className="text-sm font-bold text-stone-600 uppercase tracking-wider mb-3">Contact Details</h3>
+                        <h3 className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-3">Contact Details</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                           <div className="flex items-center gap-2 text-stone-600"><User size={14} className="text-ocean" /> {booking.contactName}</div>
                           <div className="flex items-center gap-2 text-stone-600"><Mail size={14} className="text-ocean" /> {booking.contactEmail}</div>
                           {booking.contactPhone && <div className="flex items-center gap-2 text-stone-600"><Phone size={14} className="text-ocean" /> {booking.contactPhone}</div>}
+                          {booking.arrivalTime && <div className="flex items-center gap-2 text-stone-600"><Clock size={14} className="text-ocean" /> Arriving at {booking.arrivalTime}</div>}
                           {booking.specialRequests && <div className="flex items-center gap-2 text-stone-600 sm:col-span-2"><FileText size={14} className="text-ocean" /> {booking.specialRequests}</div>}
                         </div>
                       </div>
 
-                      {/* ═══ BOOKING ACTIONS / RESULT ═══ */}
+                      {/* Submit result */}
                       {submitResult?.success ? (
-                        /* ─── SUCCESS SCREEN ─── */
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-200 rounded-3xl p-6 sm:p-8 text-center"
-                        >
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                          className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-200 rounded-3xl p-6 sm:p-8 text-center">
                           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500 flex items-center justify-center shadow-lg shadow-green-500/30">
                             <CheckCircle2 size={36} className="text-white" />
                           </div>
-                          <h3 className="font-display text-2xl sm:text-3xl font-bold text-stone-800 mb-2">
-                            Booking Request Received! 🌊
+                          <h3 className="font-display text-2xl font-bold text-stone-800 mb-2">
+                            {booking.paymentChoice === "deposit" ? "Booking Confirmed!" : "Booking Request Received!"}
                           </h3>
                           <p className="text-stone-600 max-w-md mx-auto mb-5">
-                            Thanks {booking.contactName.split(" ")[0]}! Your reservation is in our system.
-                            We'll review and send you a payment link within <strong>1 hour</strong> at{" "}
-                            <strong>{booking.contactEmail}</strong>.
+                            Thanks {booking.contactName.split(" ")[0]}!{" "}
+                            {booking.paymentChoice === "deposit"
+                              ? "Complete your bank transfer to finalize. We'll confirm as soon as we receive payment."
+                              : "We'll review and confirm within 24 hours. Check your email for details."
+                            }
                           </p>
 
                           {submitResult.bookingIds && submitResult.bookingIds.length > 0 && (
                             <div className="bg-white rounded-2xl p-4 mb-5 inline-block">
-                              <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">
-                                Booking Reference{submitResult.bookingIds.length > 1 ? "s" : ""}
-                              </div>
-                              <div className="font-mono font-bold text-ocean text-lg flex items-center gap-2 justify-center flex-wrap">
+                              <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">Booking Reference</div>
+                              <div className="font-mono font-bold text-ocean text-lg flex items-center gap-2 justify-center">
                                 {submitResult.bookingIds.map((id) => (
-                                  <span key={id} className="bg-ocean/10 px-3 py-1 rounded-lg">
-                                    #{id}
-                                  </span>
+                                  <span key={id} className="bg-ocean/10 px-3 py-1 rounded-lg">#{id}</span>
                                 ))}
-                                <button
-                                  onClick={() => navigator.clipboard?.writeText(submitResult.bookingIds!.join(", "))}
-                                  className="text-stone-400 hover:text-ocean transition-colors"
-                                  title="Copy"
-                                >
-                                  <Copy size={14} />
-                                </button>
+                                <button onClick={() => navigator.clipboard?.writeText(submitResult.bookingIds!.join(", "))}
+                                  className="text-stone-400 hover:text-ocean"><Copy size={14} /></button>
                               </div>
                             </div>
                           )}
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
-                            <a
-                              href={`https://wa.me/212612345678?text=${encodeURIComponent(
-                                `Hi! I just made a booking request${
-                                  submitResult.bookingIds?.length
-                                    ? ` (Ref: ${submitResult.bookingIds.join(", ")})`
-                                    : ""
-                                }. My name is ${booking.contactName}. Looking forward to it! 🏄`
-                              )}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center justify-center gap-2 py-3.5 bg-green-500 text-white rounded-2xl font-bold text-sm hover:bg-green-600 transition-all"
-                            >
-                              <MessageCircle size={18} /> Chat with us on WhatsApp
-                            </a>
-                            <a
-                              href="/"
-                              className="flex items-center justify-center gap-2 py-3.5 bg-white text-stone-700 border-2 border-stone-200 rounded-2xl font-bold text-sm hover:bg-stone-50 transition-all"
-                            >
-                              Back to Home
-                            </a>
-                          </div>
+                          {booking.paymentChoice === "deposit" && (
+                            <div className="bg-white border border-stone-200 rounded-2xl p-4 mb-5 text-left">
+                              <p className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                <Building2 size={12} /> Bank Transfer Instructions
+                              </p>
+                              <div className="space-y-1.5 text-sm">
+                                {[
+                                  ["Bank", BANK_DETAILS.bankName],
+                                  ["Account", BANK_DETAILS.accountName],
+                                  ["IBAN", BANK_DETAILS.iban],
+                                  ["SWIFT", BANK_DETAILS.swift],
+                                  ["Amount", `€${price.depositAmount}`],
+                                  ["Reference", `${booking.contactName} - ${submitResult.bookingIds?.[0] || "booking"}`],
+                                ].map(([label, value]) => (
+                                  <div key={label} className="flex justify-between gap-4">
+                                    <span className="text-stone-400 text-xs shrink-0">{label}</span>
+                                    <span className="font-mono font-semibold text-stone-800 text-xs text-right">{value}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
 
-                          <p className="text-xs text-stone-500 mt-5">
-                            📧 A confirmation email is on its way. Add-ons listed above are payable on arrival
-                            unless included in your payment link.
-                          </p>
+                          <a href="/"
+                            className="inline-flex items-center justify-center gap-2 py-3.5 px-8 bg-white text-stone-700 border-2 border-stone-200 rounded-2xl font-bold text-sm hover:bg-stone-50 transition-all">
+                            Back to Home
+                          </a>
                         </motion.div>
                       ) : (
                         <>
-                          {/* ─── ERROR / WHATSAPP FALLBACK NOTICE ─── */}
                           {submitResult && !submitResult.success && (
-                            <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 flex gap-3 items-start">
-                              <AlertCircle size={20} className="text-amber-600 shrink-0 mt-0.5" />
-                              <div className="flex-1 text-sm">
-                                <p className="font-semibold text-amber-900 mb-1">
-                                  {submitResult.fallback === "whatsapp"
-                                    ? "Live booking unavailable — opened WhatsApp instead"
-                                    : "We couldn't process your booking online"}
-                                </p>
+                            <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-4 flex gap-3 items-start">
+                              <AlertCircle size={20} className="text-red-600 shrink-0 mt-0.5" />
+                              <div className="text-sm">
+                                <p className="font-semibold text-red-900 mb-1">Booking failed — please try again</p>
                                 {submitResult.errors?.map((e, i) => (
-                                  <p key={i} className="text-amber-800 text-xs">{e}</p>
+                                  <p key={i} className="text-red-800 text-xs">{e}</p>
                                 ))}
-                                <p className="text-amber-800 text-xs mt-1">
-                                  No worries — message us on WhatsApp and we'll book you in manually within minutes.
-                                </p>
                               </div>
                             </div>
                           )}
 
-                          {/* ─── PRIMARY ACTION ─── */}
-                          <button
-                            onClick={handleConfirmBooking}
-                            disabled={submitting}
+                          <button onClick={handleConfirmBooking} disabled={submitting}
                             className={`w-full flex items-center justify-center gap-2 py-5 rounded-2xl font-bold text-base transition-all shadow-lg ${
-                              submitting
-                                ? "bg-stone-300 text-stone-500 cursor-not-allowed shadow-none"
-                                : "bg-gradient-to-r from-ocean to-ocean-dark text-white hover:shadow-ocean/30 hover:scale-[1.01]"
-                            }`}
-                          >
+                              submitting ? "bg-stone-300 text-stone-500 cursor-not-allowed shadow-none"
+                              : "bg-gradient-to-r from-ocean to-ocean-dark text-white hover:shadow-ocean/30 hover:scale-[1.01]"
+                            }`}>
                             {submitting ? (
-                              <>
-                                <Loader2 size={20} className="animate-spin" />
-                                Sending your booking…
-                              </>
+                              <><Loader2 size={20} className="animate-spin" /> Sending your booking…</>
                             ) : (
                               <>
-                                <Check size={20} /> Confirm Booking — €{price.total}
+                                <Check size={20} />
+                                {booking.paymentChoice === "deposit" ? `Confirm & Pay €${price.depositAmount} Deposit` : "Send Booking Request"}
                                 <ChevronRight size={18} />
                               </>
                             )}
                           </button>
 
-                          {/* ─── ALTERNATIVE: WHATSAPP ─── */}
-                          <a
-                            href={`https://wa.me/212612345678?text=${encodeURIComponent(
-                              buildWhatsAppMessage(booking, nights, price.total, price.roomBreakdown)
-                            )}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full flex items-center justify-center gap-2 py-3.5 bg-white border-2 border-green-500 text-green-600 rounded-2xl font-semibold text-sm hover:bg-green-50 transition-all"
-                          >
-                            <MessageCircle size={18} /> Or book via WhatsApp instead
-                          </a>
-
-                          <p className="text-center text-xs text-stone-500 mt-2">
-                            🔒 Your booking is sent as a request. We'll confirm and email a secure payment link within 1 hour.
-                          </p>
-
-                          {/* Trust Badges */}
                           <div className="grid grid-cols-3 gap-3 mt-4">
                             {[
                               { icon: <Shield size={16} />, label: "Secure" },
@@ -1529,7 +1425,7 @@ export default function BookNow() {
                 </motion.div>
               </AnimatePresence>
 
-              {/* ═══ NAVIGATION BUTTONS ═══ */}
+              {/* NAVIGATION */}
               <div className="flex justify-between items-center mt-6">
                 {step > 1 ? (
                   <button onClick={goBack} className="flex items-center gap-2 px-5 py-3 rounded-xl text-stone-600 hover:bg-stone-100 font-semibold text-sm transition-all">
@@ -1537,26 +1433,22 @@ export default function BookNow() {
                   </button>
                 ) : <div />}
 
-                {step < 5 ? (
+                {step < 6 ? (
                   <button onClick={goNext} disabled={!canProceed(step)}
                     className={`flex items-center gap-2 px-7 py-3.5 rounded-xl font-bold text-sm transition-all ${
-                      canProceed(step)
-                        ? "bg-ocean text-white hover:bg-ocean-dark shadow-lg shadow-ocean/20"
-                        : "bg-stone-200 text-stone-400 cursor-not-allowed"
-                    }`}
-                  >
+                      canProceed(step) ? "bg-ocean text-white hover:bg-ocean-dark shadow-lg shadow-ocean/20" : "bg-stone-200 text-stone-400 cursor-not-allowed"
+                    }`}>
                     Continue <ChevronRight size={16} />
                   </button>
                 ) : null}
               </div>
             </div>
 
-            {/* ─── SIDEBAR (Desktop only) ─── */}
+            {/* SIDEBAR */}
             <div className="hidden lg:block w-80 shrink-0">
               <div className="sticky top-44 bg-white rounded-2xl p-5 shadow-sm border border-stone-100">
                 <h3 className="font-display font-bold text-stone-800 mb-4 text-sm">Booking Summary</h3>
 
-                {/* Dates */}
                 {nights > 0 && (
                   <div className="flex items-center gap-2 text-sm mb-3 pb-3 border-b border-stone-100">
                     <Calendar size={14} className="text-ocean" />
@@ -1564,17 +1456,15 @@ export default function BookNow() {
                   </div>
                 )}
 
-                {/* Guests */}
                 <div className="mb-3 pb-3 border-b border-stone-100">
                   <p className="text-xs font-semibold text-stone-500 uppercase mb-2">Guests ({totalPersons})</p>
                   <div className="flex flex-wrap gap-1">
-                    {booking.maleCount > 0 && <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-600 font-semibold">👨 ×{booking.maleCount}</span>}
-                    {booking.femaleCount > 0 && <span className="text-[10px] px-2 py-0.5 rounded-full bg-pink-50 border border-pink-200 text-pink-500 font-semibold">👩 ×{booking.femaleCount}</span>}
-                    {booking.coupleCount > 0 && <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-50 border border-orange-200 text-orange-600 font-semibold">💑 ×{booking.coupleCount}</span>}
+                    {booking.maleCount > 0 && <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-semibold flex items-center gap-1"><User size={9} /> {booking.maleCount}M</span>}
+                    {booking.femaleCount > 0 && <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-600 font-semibold flex items-center gap-1"><User size={9} /> {booking.femaleCount}F</span>}
+                    {booking.coupleCount > 0 && <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 font-semibold flex items-center gap-1"><Heart size={9} /> {booking.coupleCount}C</span>}
                   </div>
                 </div>
 
-                {/* Package */}
                 {price.selectedPkg && (
                   <div className="mb-3 pb-3 border-b border-stone-100">
                     <p className="text-xs font-semibold text-stone-500 uppercase mb-1">Package</p>
@@ -1585,7 +1475,6 @@ export default function BookNow() {
                   </div>
                 )}
 
-                {/* Room Breakdown */}
                 {price.roomBreakdown.length > 0 && (
                   <div className="mb-3 pb-3 border-b border-stone-100">
                     <p className="text-xs font-semibold text-stone-500 uppercase mb-2">Rooms</p>
@@ -1599,9 +1488,10 @@ export default function BookNow() {
                           {rb.guestIds.map((gId) => {
                             const g = booking.guests.find((x) => x.id === gId);
                             if (!g) return null;
+                            const cfg = guestConfig[g.type];
                             return (
-                              <span key={gId} className={`text-[9px] px-1.5 py-0.5 rounded-full ${guestTypeConfig[g.type].bg} ${guestTypeConfig[g.type].color} font-medium`}>
-                                {guestTypeConfig[g.type].emoji} {g.label}
+                              <span key={gId} className={`text-[9px] px-1.5 py-0.5 rounded-full ${cfg.bg} ${cfg.color} font-medium flex items-center gap-0.5`}>
+                                {cfg.showType && cfg.chipIcon} {g.label}
                               </span>
                             );
                           })}
@@ -1611,7 +1501,6 @@ export default function BookNow() {
                   </div>
                 )}
 
-                {/* Add-ons */}
                 {price.addonsTotal > 0 && (
                   <div className="mb-3 pb-3 border-b border-stone-100">
                     <p className="text-xs font-semibold text-stone-500 uppercase mb-1">Add-ons</p>
@@ -1622,16 +1511,22 @@ export default function BookNow() {
                   </div>
                 )}
 
-                {/* Total */}
+                {booking.paymentChoice && (
+                  <div className="mb-3 pb-3 border-b border-stone-100">
+                    <p className="text-xs font-semibold text-stone-500 uppercase mb-1">Payment</p>
+                    <p className={`text-xs font-semibold flex items-center gap-1 ${booking.paymentChoice === "deposit" ? "text-green-700" : "text-amber-700"}`}>
+                      {booking.paymentChoice === "deposit" ? <Banknote size={11} /> : <Clock size={11} />}
+                      {booking.paymentChoice === "deposit" ? `30% deposit (€${price.depositAmount})` : "Pay on arrival"}
+                    </p>
+                  </div>
+                )}
+
                 <div className="flex items-center justify-between pt-1">
                   <span className="font-bold text-stone-800">Total</span>
                   <span className="text-xl font-display font-bold text-ocean">€{price.total}</span>
                 </div>
-
                 {nights > 0 && price.total > 0 && (
-                  <p className="text-[10px] text-stone-400 text-right mt-1">
-                    ≈ €{Math.round(price.total / nights)} / night
-                  </p>
+                  <p className="text-[10px] text-stone-400 text-right mt-1">≈ €{Math.round(price.total / nights)} / night</p>
                 )}
               </div>
             </div>

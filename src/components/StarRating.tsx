@@ -7,7 +7,7 @@ export default function StarRating({ rating }: { rating: number }) {
         <Star
           key={i}
           size={16}
-          className={i < rating ? "fill-sunset text-sunset" : "text-gray-300"}
+          className={i < rating ? "fill-[var(--color-accent)] text-[var(--color-accent)]" : "text-gray-300"}
         />
       ))}
     </div>

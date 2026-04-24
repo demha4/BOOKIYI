@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { navLinks } from "../data/content";
 import { motion, AnimatePresence } from "framer-motion";
+import Logo from "./Logo";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -10,7 +11,7 @@ export default function Navbar() {
   const location = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    const handleScroll = () => setIsScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -21,55 +22,55 @@ export default function Navbar() {
   }, [location]);
 
   const isHome = location.pathname === "/";
-  const bgClass = isScrolled || !isHome
-    ? "bg-white/95 backdrop-blur-md shadow-sm"
-    : "bg-transparent";
-  const textClass = isScrolled || !isHome ? "text-charcoal" : "text-white";
+  const solid = isScrolled || !isHome;
+  const shellClass = solid
+    ? "bg-cream/95 backdrop-blur-md shadow-[0_12px_30px_rgba(15,42,58,0.10)] border border-[var(--color-border)]"
+    : "bg-white/8 backdrop-blur-md border border-white/12 shadow-[0_12px_30px_rgba(0,0,0,0.14)]";
+  const textClass = solid ? "text-charcoal" : "text-white";
 
   return (
     <>
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${bgClass}`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            <Link
-              to="/"
-              className={`font-serif text-xl lg:text-2xl font-bold tracking-tight transition-colors ${textClass}`}
-            >
-              Anza Surf House
-            </Link>
-
-            <div className="hidden lg:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`text-sm font-medium transition-colors hover:opacity-70 ${textClass} ${
-                    location.pathname === link.path ? "opacity-100 border-b-2 border-current" : "opacity-80"
-                  }`}
-                >
-                  {link.label}
+      <nav className="fixed top-3 sm:top-4 left-0 right-0 z-50 px-3 sm:px-5 lg:px-6 pointer-events-none">
+        <div className="max-w-[1240px] mx-auto pointer-events-auto">
+          <div className={`rounded-[1.4rem] sm:rounded-[1.6rem] transition-all duration-300 ${shellClass}`}>
+            <div className="px-4 sm:px-5 lg:px-7">
+              <div className="flex items-center justify-between h-[68px] sm:h-[74px] lg:h-[82px] gap-4">
+                <Link to="/" className="transition-colors shrink-0" aria-label="Tamount Surf House home">
+                  <Logo className={`h-8 sm:h-9 lg:h-10 w-auto ${solid ? "" : "[filter:brightness(0)_invert(1)]"}`} />
                 </Link>
-              ))}
-            </div>
 
-            <div className="hidden lg:block">
-              <Link
-                to="/book"
-                className="bg-sunset hover:bg-sunset-light text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-all hover:shadow-lg active:scale-95"
-              >
-                Book Now
-              </Link>
-            </div>
+                <div className="hidden xl:flex items-center gap-6">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      className={`text-sm font-medium transition-colors hover:opacity-75 ${textClass} ${
+                        location.pathname === link.path ? "opacity-100 border-b-2 border-current pb-1" : "opacity-85"
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
 
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className={`lg:hidden p-2 transition-colors ${textClass}`}
-              aria-label="Toggle menu"
-            >
-              {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+                <div className="hidden xl:block">
+                  <Link
+                    to="/book"
+                    className="bg-ocean hover:bg-ocean-dark text-white px-6 lg:px-7 py-2.5 lg:py-3 rounded-full text-sm font-semibold transition-all hover:shadow-lg active:scale-95"
+                  >
+                    Book Now
+                  </Link>
+                </div>
+
+                <button
+                  onClick={() => setMobileOpen(!mobileOpen)}
+                  className={`xl:hidden p-2 transition-colors shrink-0 ${textClass}`}
+                  aria-label="Toggle menu"
+                >
+                  {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </nav>
@@ -80,9 +81,9 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-white pt-20 px-6"
+            className="fixed inset-0 z-40 bg-white pt-24 px-6 overflow-y-auto"
           >
-            <div className="flex flex-col gap-2 mt-4">
+            <div className="max-w-md mx-auto flex flex-col gap-2 mt-4 pb-10">
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.path}
@@ -92,10 +93,8 @@ export default function Navbar() {
                 >
                   <Link
                     to={link.path}
-                    className={`block py-3 text-lg font-medium border-b border-soft-gray ${
-                      location.pathname === link.path
-                        ? "text-sunset"
-                        : "text-charcoal"
+                    className={`block py-3.5 text-lg font-medium border-b border-soft-gray ${
+                      location.pathname === link.path ? "text-ocean" : "text-charcoal"
                     }`}
                   >
                     {link.label}
@@ -110,7 +109,7 @@ export default function Navbar() {
               >
                 <Link
                   to="/book"
-                  className="block w-full bg-sunset text-white text-center py-4 rounded-full text-lg font-semibold"
+                  className="block w-full bg-ocean text-white text-center py-4 rounded-full text-lg font-semibold"
                 >
                   Book Now
                 </Link>

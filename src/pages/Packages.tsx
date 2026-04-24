@@ -1,133 +1,99 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Check, Clock, ArrowRight, Target } from "lucide-react";
-import { packages } from "../data/content";
+import { MessageCircle } from "lucide-react";
+import { siteInfo } from "../data/content";
+
+const packageCards = [
+  {
+    title: "Bed & Breakfast",
+    price: "From €12 / night",
+    copy1:
+      "The flexible option. Pick your room, stay as long as you want, and start every morning with a proper Moroccan breakfast on the rooftop.",
+    copy2:
+      "You handle your own days. We are here when you need tips, transport, or a lesson booked on the fly.",
+    minimum: "Minimum stay: 1 night",
+    detailPath: "/packages/bed-and-breakfast",
+    bookPath: "/book",
+    badge: "Flexible",
+    badgeClass: "bg-ocean/10 text-ocean",
+  },
+  {
+    title: "Surf Camp Pack",
+    price: "From €45 / day",
+    copy1:
+      "Everything sorted. Accommodation, breakfast and dinner, daily surf lessons, board and wetsuit, transport to the best spots, and rooftop video analysis.",
+    copy2:
+      "Just show up with your swimsuit and a sense of humor.",
+    minimum: "Minimum stay: 3 nights",
+    detailPath: "/packages/surf-camp",
+    bookPath: "/book?package=beginner-week",
+    badge: "All-inclusive",
+    badgeClass: "bg-[#F7E8D3] text-[#A56D2A]",
+  },
+];
 
 export default function Packages() {
   return (
-    <div className="pt-20">
-      {/* Header */}
-      <section className="py-16 bg-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <p className="text-sunset font-medium text-sm tracking-wider uppercase mb-3">Adventures</p>
-            <h1 className="font-serif text-4xl sm:text-5xl font-bold text-charcoal mb-4">
-              Surf Packages
-            </h1>
-            <p className="text-stone max-w-2xl mx-auto text-lg">
-              Curated surf experiences for every level. From first-timers to wave-chasers, 
-              we've got the perfect package for you.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Packages */}
-      <section className="pb-20 bg-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-12">
-            {packages.map((pkg, i) => (
-              <motion.div
-                key={pkg.id}
-                id={pkg.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-3xl overflow-hidden shadow-sm border border-sand-dark/20"
-              >
-                <div className="grid grid-cols-1 lg:grid-cols-5">
-                  <div className="lg:col-span-2 image-hover-zoom h-64 lg:h-auto overflow-hidden">
-                    <img
-                      src={pkg.image}
-                      alt={pkg.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="lg:col-span-3 p-6 lg:p-10">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="flex items-center gap-1 text-xs font-medium bg-sand px-3 py-1 rounded-full">
-                        <Clock size={12} /> {pkg.duration}
-                      </span>
-                      {i === 1 && (
-                        <span className="text-xs font-medium bg-sunset text-white px-3 py-1 rounded-full">
-                          Most Popular
-                        </span>
-                      )}
-                    </div>
-
-                    <h2 className="font-serif text-2xl lg:text-3xl font-bold text-charcoal mb-2">
-                      {pkg.name}
-                    </h2>
-                    <p className="text-sunset font-medium mb-4">{pkg.tagline}</p>
-                    <p className="text-stone leading-relaxed mb-6">{pkg.description}</p>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 mb-8">
-                      {pkg.includes.map((item, j) => (
-                        <div key={j} className="flex items-start gap-2">
-                          <Check size={16} className="text-ocean mt-0.5 shrink-0" />
-                          <span className="text-sm text-charcoal">{item}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 mb-8">
-                      <span className="flex items-center gap-1 text-xs text-stone">
-                        <Target size={12} /> Best for:
-                      </span>
-                      {pkg.bestFor.map((bf) => (
-                        <span
-                          key={bf}
-                          className="text-xs bg-soft-gray px-2 py-1 rounded-full text-stone"
-                        >
-                          {bf}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6 border-t border-sand-dark/20">
-                      <div>
-                        <span className="text-stone text-sm">From</span>
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-sunset font-bold text-3xl">€{pkg.priceFrom}</span>
-                          <span className="text-stone">/{pkg.priceUnit}</span>
-                        </div>
-                      </div>
-                      <Link
-                        to={`/book?package=${pkg.id}`}
-                        className="bg-sunset hover:bg-sunset-light text-white px-8 py-3 rounded-full font-semibold transition-all active:scale-95 flex items-center gap-2"
-                      >
-                        Book This Package <ArrowRight size={18} />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Info Box */}
-      <section className="py-16 bg-white">
+    <div className="pt-20 bg-cream">
+      <section className="py-24 sm:py-28 text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-ocean/5 rounded-3xl p-8 lg:p-12 text-center">
-            <h3 className="font-serif text-2xl font-bold text-charcoal mb-4">
-              Want Something Custom?
-            </h3>
-            <p className="text-stone mb-6 max-w-lg mx-auto">
-              We can tailor any package to your needs. Longer stays, private lessons, 
-              group bookings — just reach out and we'll make it happen.
-            </p>
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 bg-charcoal hover:bg-stone text-white px-8 py-3 rounded-full font-semibold transition-all active:scale-95"
+          <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="kicker text-ocean mb-5">
+            Packages
+          </motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="section-title text-charcoal mb-6">
+            Our Packages — pick the stay that fits your trip
+          </motion.h1>
+          <motion.p initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="section-copy text-stone max-w-3xl mx-auto">
+            We built two packs because travelers arrive with two different kinds of plans. Some want total flexibility. Others want the whole week handled. Both are good trips. Pick yours.
+          </motion.p>
+        </div>
+      </section>
+
+      <section className="pb-20 sm:pb-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {packageCards.map((pkg, i) => (
+            <motion.div
+              key={pkg.title}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm flex flex-col"
             >
-              Get in Touch <ArrowRight size={18} />
-            </Link>
+              <div className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-medium mb-5 ${pkg.badgeClass}`}>{pkg.badge}</div>
+              <h2 className="text-3xl sm:text-[2.2rem] font-semibold tracking-tight text-charcoal leading-tight mb-2">{pkg.title}</h2>
+              <p className="text-ocean font-semibold text-lg mb-5">{pkg.price}</p>
+              <p className="card-copy text-stone mb-4">{pkg.copy1}</p>
+              <p className="card-copy text-stone mb-6 flex-1">{pkg.copy2}</p>
+              <p className="text-sm text-stone mb-6">{pkg.minimum}</p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <Link to={pkg.detailPath} className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 text-charcoal px-5 py-3.5 text-sm font-medium hover:bg-stone-50 transition-colors">
+                  See full details
+                </Link>
+                <Link to={pkg.bookPath} className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-5 py-3.5 text-sm font-semibold hover:bg-charcoal/90 transition-colors">
+                  {pkg.title === "Bed & Breakfast" ? "Book B&B" : "Book Surf Camp"}
+                </Link>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      <section className="pb-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-[2rem] bg-charcoal text-white p-8 sm:p-10 shadow-[0_18px_60px_rgba(20,28,43,0.18)] text-center">
+            <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-4">Not sure which one fits?</h3>
+            <p className="text-white/70 text-base sm:text-lg leading-8 max-w-2xl mx-auto mb-7">
+              Message Abdelwahd on WhatsApp. He will help you figure it out in two minutes without trying to upsell you into something you do not need.
+            </p>
+            <a
+              href={`https://wa.me/${siteInfo.whatsapp}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-white text-charcoal px-7 py-3.5 font-semibold text-sm sm:text-base hover:bg-white/90 transition-colors"
+            >
+              <MessageCircle size={18} /> WhatsApp {siteInfo.phone}
+            </a>
           </div>
         </div>
       </section>

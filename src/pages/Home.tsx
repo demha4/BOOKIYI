@@ -1,133 +1,234 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
+  MapPin,
+  Wifi,
   Waves,
+  ArrowRight,
   Sun,
   Zap,
-  MapPin,
   Users,
-  Wifi,
-  ArrowRight,
-  ChevronRight,
   Star,
+  MessageCircle,
+  Plane,
 } from "lucide-react";
-import { testimonials, rooms, packages, experiences, whyChooseUs } from "../data/content";
-import StarRating from "../components/StarRating";
-
-const iconMap: Record<string, React.ReactNode> = {
-  Waves: <Waves size={28} />,
-  Sun: <Sun size={28} />,
-  Zap: <Zap size={28} />,
-  MapPin: <MapPin size={28} />,
-  Users: <Users size={28} />,
-  Wifi: <Wifi size={28} />,
-};
+import { rooms, galleryImages, testimonials, siteInfo } from "../data/content";
 
 export default function Home() {
+  const easyItems = [
+    {
+      icon: <Waves size={28} className="text-ocean" />,
+      title: "Daily Surf Sessions",
+      text: "World-class breaks at Anza, Taghazout, and Tamraght with local guides who know every swell.",
+    },
+    {
+      icon: <Sun size={28} className="text-ocean" />,
+      title: "Sunset Yoga",
+      text: "Rooftop yoga sessions as the sun dips into the Atlantic. Reset your body after a day in the water.",
+    },
+    {
+      icon: <Zap size={28} className="text-ocean" />,
+      title: "Skate & Chill",
+      text: "Our in-house skate ramp and proximity to Taghazout skate park mean the fun doesn't stop when the surf slows down.",
+    },
+    {
+      icon: <MapPin size={28} className="text-ocean" />,
+      title: "Local Adventures",
+      text: "Explore Paradise Valley, Agadir souks, and hidden beaches with simple add-ons that fit into your stay.",
+    },
+    {
+      icon: <Users size={28} className="text-ocean" />,
+      title: "Community Dinners",
+      text: "Family-style dinners every evening. Share stories, make friends, and taste authentic Moroccan cuisine.",
+    },
+    {
+      icon: <Wifi size={28} className="text-ocean" />,
+      title: "Digital Nomad Friendly",
+      text: "High-speed WiFi, quiet workspaces, and a relaxed setup for remote work between surf sessions.",
+    },
+  ];
+
+  const activityCards = [
+    {
+      id: "surf-lesson",
+      img: "/images/surf-lesson.jpg",
+      location: "Best Spots in Agadir",
+      title: "2-Hour Surf Lesson",
+      benefit: "Fast progression with coach + full gear included.",
+      priceLogic: "From €30 / person",
+    },
+    {
+      id: "sunset-yoga",
+      img: "/images/yoga-sunset.jpg",
+      location: "Agadir",
+      title: "Sunset Yoga Session",
+      benefit: "Slow down after surf with ocean-view terrace flow.",
+      priceLogic: "From €12",
+    },
+    {
+      id: "paradise-day-trip",
+      img: "/images/moroccan-sunset.jpg",
+      location: "Paradise Valley",
+      title: "Paradise Valley Day Trip",
+      benefit: "One-day reset with natural pools and scenic views.",
+      priceLogic: "From €30 / person",
+    },
+  ];
+
   return (
-    <div>
-      {/* Hero */}
-      <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
+    <div className="bg-cream">
+      {/* Hero Section */}
+      <section className="relative min-h-[88vh] md:min-h-screen flex flex-col items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
           <img
             src="/images/hero-surf.jpg"
             alt="Surfing in Taghazout Morocco"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
+          <div className="absolute inset-0 bg-charcoal/60" />
         </div>
 
-        <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto pt-16">
-          <motion.p
+        <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto pt-24 pb-12 flex flex-col items-center">
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-sm sm:text-base font-medium tracking-[0.2em] uppercase mb-4 text-sand"
+            transition={{ delay: 0.1 }}
+            className="inline-block border border-white/40 rounded-full px-4 sm:px-5 py-1.5 mb-6 sm:mb-8 text-xs sm:text-sm text-white/90"
           >
-            Anza, Agadir — Morocco
-          </motion.p>
+            Anza, Agadir, Morocco • Surf, Stay, And Local Experiences
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="font-serif text-4xl sm:text-5xl md:text-7xl font-bold leading-tight mb-6"
+            transition={{ delay: 0.2 }}
+            className="display-title mb-2"
           >
-            Where Waves Meet
-            <br />
-            <span className="text-sunset-light">Community</span>
+            Stay Where The <br className="hidden sm:block" />
+            Surf Trip Feels
           </motion.h1>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3 }}
+            className="script-accent text-blue-accent -mt-1 sm:-mt-2 mb-8 sm:mb-10 -rotate-2"
+          >
+            Easy, warm And Real
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 justify-center mb-8 sm:mb-10 w-full sm:w-auto"
+          >
+            <Link
+              to="/book"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-charcoal px-7 py-3.5 rounded-full font-medium text-sm transition-all hover:bg-white/90 active:scale-95"
+            >
+              Book Your Stay <ArrowRight size={16} />
+            </Link>
+            <Link
+              to="/packages"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-transparent text-white border border-white/50 px-7 py-3.5 rounded-full font-medium text-sm transition-all hover:bg-white/10 active:scale-95"
+            >
+              Explore Packages <ArrowRight size={16} />
+            </Link>
+          </motion.div>
+
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="text-base sm:text-lg md:text-xl text-gray-200 mb-10 max-w-2xl mx-auto leading-relaxed"
+            className="section-copy text-white/80 max-w-2xl mx-auto"
           >
-            The best surf hostel in Agadir near Taghazout & Tamraght. 
-            Surf lessons, yoga, skate, and unforgettable sunsets — all in one place.
+            TAMOUNT Surf House brings together beach-close stays, friendly hospitality, surf lessons, slower terrace moments, and activity add-ons designed for travelers who want a real Morocco surf experience without the usual confusion.
           </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <Link
-              to="/book"
-              className="bg-sunset hover:bg-sunset-light text-white px-8 py-4 rounded-full font-semibold text-base transition-all hover:shadow-xl active:scale-95"
-            >
-              Book Your Stay
-            </Link>
-            <Link
-              to="/packages"
-              className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white border border-white/30 px-8 py-4 rounded-full font-semibold text-base transition-all active:scale-95"
-            >
-              View Surf Packages
-            </Link>
-          </motion.div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 animate-bounce"
-        >
-          <div className="w-6 h-10 border-2 border-white/40 rounded-full flex justify-center pt-2">
-            <div className="w-1.5 h-1.5 bg-white rounded-full" />
-          </div>
-        </motion.div>
       </section>
 
-      {/* Social Proof */}
-      <section className="py-16 bg-cream">
+      {/* Why It Feels Easier - Features */}
+      <section className="py-20 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <StarRating rating={5} />
-              <span className="text-stone text-sm font-medium ml-2">4.9 / 5</span>
+          <div className="text-center mb-12 sm:mb-16">
+            <div className="inline-block border border-stone-200 rounded-full px-5 py-1.5 mb-6 sm:mb-8 text-sm text-stone-500">
+              Why It Feels Easier
             </div>
-            <p className="text-stone text-sm">Based on 200+ reviews from Google & Booking.com</p>
+            <h2 className="section-title text-charcoal mb-5 sm:mb-6">
+              Curated Experiences To Shape<br className="hidden sm:block" />
+              <span className="script-accent text-blue-accent font-normal relative top-1 sm:top-2"> The Stay </span>
+              Around Your Pace.
+            </h2>
+            <p className="section-copy text-stone max-w-3xl mx-auto px-2">
+              Everything is structured to make the stay simple to understand at a glance: where you sleep, what you can add, and how to move from browsing to booking without confusion.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {testimonials.map((t, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
+            {easyItems.map((item, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-2xl p-6 shadow-sm border border-sand-dark/30"
+                transition={{ delay: i * 0.08 }}
+                className="card-shell p-7 sm:p-10"
               >
-                <StarRating rating={t.rating} />
-                <p className="text-charcoal text-sm leading-relaxed mt-3 mb-4">"{t.text}"</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-ocean text-white flex items-center justify-center font-semibold text-sm">
-                    {t.avatar}
+                <div className="rounded-[1.45rem] bg-[linear-gradient(180deg,#F4F8FD_0%,#EAF2FA_100%)] flex items-center justify-center mb-6 sm:mb-8 w-[70px] h-[70px] sm:w-[76px] sm:h-[76px] shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+                  {item.icon}
+                </div>
+                <h3 className="card-title font-semibold text-charcoal mb-3 sm:mb-4">{item.title}</h3>
+                <p className="card-copy text-stone">{item.text}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Guest Reviews */}
+      <section className="py-18 sm:py-20 bg-cream">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10 sm:mb-12">
+            <div className="inline-block border border-stone-200 rounded-full px-5 py-1.5 mb-6 sm:mb-8 text-sm text-stone-500">
+              Testimonials
+            </div>
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={16} className="fill-[var(--color-accent)] text-[var(--color-accent)]" />
+              ))}
+              <span className="ml-2 sm:ml-3 text-stone font-semibold text-base sm:text-lg">4.9 / 5</span>
+            </div>
+            <p className="text-stone text-base sm:text-xl leading-relaxed">
+              Based on 200+ reviews from Google & Booking.com
+            </p>
+          </div>
+        </div>
+
+        <div className="reviews-track-wrapper">
+          <div className="reviews-track px-4 sm:px-6 lg:px-8">
+            {[...testimonials, ...testimonials].map((item, i) => (
+              <motion.div
+                key={`${item.name}-${i}`}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: (i % testimonials.length) * 0.06 }}
+                className="review-card card-shell p-6 sm:p-7 h-full flex flex-col"
+              >
+                <div className="flex gap-1 mb-4">
+                  {Array.from({ length: 5 }).map((_, j) => (
+                    <Star key={j} size={16} className="fill-[var(--color-accent)] text-[var(--color-accent)]" />
+                  ))}
+                </div>
+                <p className="text-charcoal text-[15px] sm:text-base leading-8 mb-7 flex-1">“{item.text}”</p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-ocean text-white flex items-center justify-center font-semibold shrink-0">
+                    {item.avatar}
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">{t.name}</p>
-                    <p className="text-stone text-xs">{t.country}</p>
+                    <div className="font-semibold text-charcoal text-lg leading-tight">{item.name}</div>
+                    <div className="text-stone text-base">{item.country}</div>
                   </div>
                 </div>
               </motion.div>
@@ -136,178 +237,49 @@ export default function Home() {
         </div>
       </section>
 
-      {/* About Preview */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="image-hover-zoom rounded-3xl overflow-hidden"
-            >
-              <img
-                src="/images/surf-camp.jpg"
-                alt="Surf community at Anza Surf House"
-                className="w-full h-[400px] object-cover"
-              />
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <p className="text-sunset font-medium text-sm tracking-wider uppercase mb-3">Our Story</p>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal mb-6">
-                More Than a Hostel — A Lifestyle
-              </h2>
-              <p className="text-stone leading-relaxed mb-4">
-                Born from a shared love for waves and community, Anza Surf House sits perfectly between 
-                the legendary breaks of Taghazout and the quiet charm of Tamraght. We didn't just build 
-                a place to sleep — we created a home for surfers, nomads, and dreamers.
-              </p>
-              <p className="text-stone leading-relaxed mb-6">
-                Here, mornings start with coffee and swell checks. Afternoons are for surfing, yoga, 
-                or exploring hidden beaches. Evenings bring family dinners on the rooftop, swapping 
-                stories under a sky full of stars.
-              </p>
-              <Link
-                to="/about"
-                className="inline-flex items-center gap-2 text-ocean font-semibold hover:text-ocean-dark transition-colors"
-              >
-                Read Our Story <ArrowRight size={18} />
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Rooms Preview */}
-      <section className="py-20 bg-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-sunset font-medium text-sm tracking-wider uppercase mb-3">Stay With Us</p>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal">
-              Rooms & Accommodation
+      {/* Rooms / Accommodations */}
+      <section className="py-20 sm:py-24 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16">
+            <div className="inline-block border border-stone-200 rounded-full px-5 py-1.5 mb-6 sm:mb-8 text-sm text-stone-500">
+              Accommodations
+            </div>
+            <h2 className="section-title text-charcoal mb-5 sm:mb-6">
+              Choose The Stay<br className="hidden sm:block" />
+              <span className="script-accent text-blue-accent font-normal relative top-1 sm:top-2"> Style </span>
+              That Fits Your Trip.
             </h2>
-            <p className="text-stone mt-3 max-w-xl mx-auto">
-              From private ocean-view retreats to social dorms, find your perfect space.
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {rooms.slice(0, 4).map((room, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {rooms.slice(0, 3).map((room, i) => (
               <motion.div
                 key={room.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm border border-sand-dark/20 group"
-              >
-                <div className="image-hover-zoom h-48 overflow-hidden">
-                  <img
-                    src={room.image}
-                    alt={room.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold text-charcoal">{room.name}</h3>
-                    <span className="text-xs font-medium bg-sand px-2 py-1 rounded-full capitalize">
-                      {room.type}
-                    </span>
-                  </div>
-                  <p className="text-stone text-sm mb-4 line-clamp-2">{room.description}</p>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-sunset font-bold text-lg">€{room.price}</span>
-                      <span className="text-stone text-xs">/{room.type === "dorm" ? "bed/night" : "room/night"}</span>
-                    </div>
-                    <Link
-                      to={`/rooms#${room.id}`}
-                      className="text-ocean text-sm font-medium hover:text-ocean-dark transition-colors flex items-center gap-1"
-                    >
-                      Details <ChevronRight size={14} />
-                    </Link>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="text-center mt-10">
-            <Link
-              to="/rooms"
-              className="inline-flex items-center gap-2 bg-charcoal hover:bg-stone text-white px-8 py-3 rounded-full font-semibold transition-all active:scale-95"
-            >
-              View All Rooms <ArrowRight size={18} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Surf Packages */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-sunset font-medium text-sm tracking-wider uppercase mb-3">Adventures</p>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal">
-              Surf Packages & Experiences
-            </h2>
-            <p className="text-stone mt-3 max-w-xl mx-auto">
-              Everything you need for an unforgettable surf trip in Morocco.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {packages.map((pkg, i) => (
-              <motion.div
-                key={pkg.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
                 transition={{ delay: i * 0.15 }}
-                className={`rounded-2xl overflow-hidden border-2 transition-all hover:shadow-xl ${
-                  i === 1 ? "border-sunset md:-mt-4 md:mb-4 shadow-lg" : "border-sand-dark/20"
-                }`}
+                className="relative rounded-3xl overflow-hidden h-[420px] sm:h-[470px] md:h-[540px] group flex flex-col justify-end"
               >
-                {i === 1 && (
-                  <div className="bg-sunset text-white text-center py-2 text-sm font-semibold">
-                    Most Popular
-                  </div>
-                )}
-                <div className="image-hover-zoom h-52 overflow-hidden">
-                  <img src={pkg.image} alt={pkg.name} className="w-full h-full object-cover" />
+                <div className="absolute inset-0">
+                  <img src={room.image} alt={room.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/40 to-transparent" />
                 </div>
-                <div className="p-6">
-                  <h3 className="font-serif text-xl font-bold text-charcoal mb-1">{pkg.name}</h3>
-                  <p className="text-stone text-sm mb-4">{pkg.tagline}</p>
-                  <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-sunset font-bold text-2xl">€{pkg.priceFrom}</span>
-                    <span className="text-stone text-sm">/{pkg.priceUnit}</span>
+                <div className="relative z-10 p-6 sm:p-8">
+                  <div className="inline-block border border-white/60 bg-black/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4 text-sm font-medium text-white">
+                    From €{room.price} / Night
                   </div>
-                  <ul className="space-y-2 mb-6">
-                    {pkg.includes.slice(0, 4).map((item, j) => (
-                      <li key={j} className="flex items-start gap-2 text-sm text-stone">
-                        <Star size={14} className="text-sunset mt-0.5 shrink-0" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                    {pkg.includes.length > 4 && (
-                      <li className="text-sm text-ocean font-medium">+ {pkg.includes.length - 4} more</li>
-                    )}
-                  </ul>
+                  <h3 className="font-serif text-2xl sm:text-3xl leading-tight text-white mb-2">
+                    {room.name}
+                  </h3>
+                  <p className="text-white/80 text-sm sm:text-base leading-7 mb-6">
+                    {room.type === "dorm" ? "For solo trips and practical budgets." : "For couples, friends, and slower stays."}
+                  </p>
                   <Link
-                    to={`/packages#${pkg.id}`}
-                    className={`block text-center py-3 rounded-full font-semibold transition-all active:scale-95 ${
-                      i === 1
-                        ? "bg-sunset hover:bg-sunset-light text-white"
-                        : "bg-charcoal hover:bg-stone text-white"
-                    }`}
+                    to={`/rooms#${room.id}`}
+                    className="w-full flex items-center justify-center gap-2 bg-white text-charcoal py-3.5 rounded-full font-medium text-sm transition-all hover:bg-white/90 active:scale-95"
                   >
-                    View Details
+                    Check Availability <ArrowRight size={16} />
                   </Link>
                 </div>
               </motion.div>
@@ -316,165 +288,258 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Experience Section */}
-      <section className="py-20 bg-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-sunset font-medium text-sm tracking-wider uppercase mb-3">Life at Anza</p>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal">
-              The Full Experience
+      {/* Activities */}
+      <section className="py-18 sm:py-20 bg-cream">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16">
+            <div className="inline-block border border-stone-200 rounded-full px-5 py-1.5 mb-6 sm:mb-8 text-sm text-stone-500">
+              Activities
+            </div>
+            <h2 className="section-title text-charcoal mb-5 sm:mb-6">
+              Experiences That Support<br className="hidden sm:block" />
+              <span className="script-accent text-blue-accent font-normal relative top-1 sm:top-2"> The Stay, </span>
+              Not Distract From It.
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {experiences.map((exp, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+            {activityCards.map((act, i) => (
               <motion.div
-                key={i}
+                key={act.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-2xl p-6 shadow-sm border border-sand-dark/20 hover:shadow-md transition-shadow"
+                transition={{ delay: i * 0.15 }}
+                className="card-shell overflow-hidden flex flex-col h-full"
               >
-                <div className="w-12 h-12 rounded-xl bg-ocean/10 text-ocean flex items-center justify-center mb-4">
-                  {iconMap[exp.icon]}
+                <div className="h-52 sm:h-56 overflow-hidden bg-[linear-gradient(180deg,#F4F8FD_0%,#EAF2FA_100%)]">
+                  <img src={act.img} alt={act.title} className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
                 </div>
-                <h3 className="font-semibold text-charcoal mb-2">{exp.title}</h3>
-                <p className="text-stone text-sm leading-relaxed">{exp.description}</p>
+                <div className="p-6 sm:p-8 flex flex-col flex-1">
+                  <div className="flex items-center gap-1.5 text-stone-500 text-sm mb-4">
+                    <MapPin size={14} /> <span>{act.location}</span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-semibold text-charcoal leading-tight mb-2">{act.title}</h3>
+                  <p className="text-stone-600 text-[15px] sm:text-base leading-7 mb-4 flex-1">
+                    {act.benefit}
+                  </p>
+                  <div className="text-ocean text-sm sm:text-base font-semibold mb-5">{act.priceLogic}</div>
+                  <div className="space-y-2">
+                    <Link to={`/book?activity=${act.id}`} className="block w-full text-center rounded-full bg-charcoal text-white px-4 py-3 text-sm font-medium hover:bg-charcoal/90 transition-colors">
+                      Add To Stay
+                    </Link>
+                    <Link to="/contact" className="block w-full text-center rounded-full border border-stone-300 text-charcoal px-4 py-3 text-sm font-medium hover:bg-stone-50 transition-colors">
+                      Details
+                    </Link>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-sunset font-medium text-sm tracking-wider uppercase mb-3">Why Us</p>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal">
-              Why Choose Anza Surf House
+      {/* Packages */}
+      <section className="py-20 sm:py-24 bg-cream">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-block border border-stone-200 rounded-full px-5 py-1.5 mb-6 sm:mb-8 text-sm text-stone-500">
+            Packages
+          </div>
+          <h2 className="section-title text-charcoal mb-5 sm:mb-6">
+            Two ways to stay with us.
+          </h2>
+          <p className="section-copy text-stone max-w-3xl mx-auto mb-10 sm:mb-12">
+            Come for a night, a week, or just three days that somehow turns into two weeks. Whether you want to figure out your own days or have the surf, transport, meals, and coaching sorted for you, we have a pack for that.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="card-shell p-7 sm:p-8 flex flex-col"
+            >
+              <div className="inline-flex w-fit rounded-full bg-[linear-gradient(180deg,#F4F8FD_0%,#EAF2FA_100%)] text-ocean px-3.5 py-1.5 text-xs font-medium mb-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">Flexible stay</div>
+              <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-2">Bed &amp; Breakfast</h3>
+              <p className="text-ocean font-semibold text-lg mb-4">From €12 / night</p>
+              <p className="card-copy text-stone mb-4">
+                The flexible option. Pick your room, stay as long as you want, and start every morning with a proper Moroccan breakfast on the rooftop.
+              </p>
+              <p className="card-copy text-stone mb-6 flex-1">
+                You handle your own days. We are here when you need local tips, transport, or a lesson booked on the fly.
+              </p>
+              <p className="text-sm text-stone mb-6">Minimum stay: 1 night</p>
+              <div className="grid sm:grid-cols-2 gap-3 mt-auto">
+                <Link to="/packages/bed-and-breakfast" className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 text-charcoal px-5 py-3.5 text-sm font-medium hover:bg-stone-50 transition-colors">
+                  See full details
+                </Link>
+                <Link to="/book" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-5 py-3.5 text-sm font-semibold hover:bg-charcoal/90 transition-colors">
+                  Book B&amp;B
+                </Link>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.08 }}
+              className="card-shell p-7 sm:p-8 flex flex-col"
+            >
+              <div className="inline-flex w-fit rounded-full bg-[#F7E8D3] text-[#A56D2A] px-3.5 py-1.5 text-xs font-medium mb-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">All-inclusive</div>
+              <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-2">Surf Camp Pack</h3>
+              <p className="text-ocean font-semibold text-lg mb-4">From €45 / day</p>
+              <p className="card-copy text-stone mb-4">
+                Everything sorted. Accommodation, breakfast and dinner, daily surf lessons, board and wetsuit, transport to the best spots, and video analysis afterwards.
+              </p>
+              <p className="card-copy text-stone mb-6 flex-1">
+                Just show up with your swimsuit and a sense of humor.
+              </p>
+              <p className="text-sm text-stone mb-6">Minimum stay: 3 nights</p>
+              <div className="grid sm:grid-cols-2 gap-3 mt-auto">
+                <Link to="/packages/surf-camp" className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 text-charcoal px-5 py-3.5 text-sm font-medium hover:bg-stone-50 transition-colors">
+                  See full details
+                </Link>
+                <Link to="/book?package=beginner-week" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-5 py-3.5 text-sm font-semibold hover:bg-charcoal/90 transition-colors">
+                  Book Surf Camp
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+
+          <p className="text-stone text-sm sm:text-base leading-7 mt-8 max-w-3xl mx-auto">
+            Not sure which? Message Abdelwahd on WhatsApp — he will help you figure it out in two minutes.
+            <a href={`https://wa.me/${siteInfo.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-ocean font-semibold ml-1 hover:text-ocean-dark transition-colors">
+              {siteInfo.phone}
+            </a>
+          </p>
+        </div>
+      </section>
+
+      {/* Gallery */}
+      <section className="py-20 sm:py-24 bg-cream overflow-hidden">
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16">
+            <div className="inline-block border border-stone-200 rounded-full px-5 py-1.5 mb-6 sm:mb-8 text-sm text-stone-500">
+              Gallery
+            </div>
+            <h2 className="section-title text-charcoal mb-5 sm:mb-6">
+              See The Atmosphere<br className="hidden sm:block" />
+              <span className="script-accent text-blue-accent font-normal relative top-1 sm:top-2"> Before </span>
+              You Arrive.
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {whyChooseUs.map((item, i) => (
+          <div className="gallery-grid">
+            {galleryImages.slice(0, 8).map((img, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.96 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="text-center"
+                transition={{ delay: (i % 4) * 0.08 }}
+                className="gallery-item group bg-slate-100"
               >
-                <div className="text-5xl font-serif font-bold text-sunset mb-3">{item.stat}</div>
-                <p className="text-stone text-sm font-medium uppercase tracking-wider mb-3">
-                  {item.statLabel}
-                </p>
-                <h3 className="font-semibold text-charcoal mb-2">{item.title}</h3>
-                <p className="text-stone text-sm leading-relaxed">{item.description}</p>
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/12 transition-colors" />
               </motion.div>
             ))}
+          </div>
+
+          <div className="mt-10 sm:mt-12 text-center">
+            <Link
+              to="/gallery"
+              className="inline-flex items-center gap-2 bg-charcoal text-white px-8 py-3.5 rounded-full font-medium text-sm transition-all hover:bg-charcoal/90 active:scale-95"
+            >
+              View Full Gallery <ArrowRight size={16} />
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Location */}
-      <section className="py-20 bg-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <p className="text-sunset font-medium text-sm tracking-wider uppercase mb-3">Location</p>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal mb-6">
-                The Heart of Morocco's Surf Coast
-              </h2>
-              <p className="text-stone leading-relaxed mb-6">
-                Nestled in the peaceful village of Anza, we're perfectly positioned between 
-                Morocco's most famous surf towns. Taghazout's legendary breaks are a 5-minute 
-                drive. Tamraght's consistent waves are even closer.
-              </p>
-
-              <div className="grid grid-cols-2 gap-4 mb-8">
-                {[
-                  { name: "Anza Beach", dist: "300m walk" },
-                  { name: "Taghazout", dist: "5 min drive" },
-                  { name: "Tamraght", dist: "3 min drive" },
-                  { name: "Agadir Airport", dist: "45 min drive" },
-                ].map((loc) => (
-                  <div key={loc.name} className="bg-white rounded-xl p-4 border border-sand-dark/20">
-                    <MapPin size={16} className="text-sunset mb-1" />
-                    <p className="font-semibold text-charcoal text-sm">{loc.name}</p>
-                    <p className="text-stone text-xs">{loc.dist}</p>
-                  </div>
-                ))}
+      {/* Contact & Help */}
+      <section className="py-18 sm:py-24 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8 sm:mb-10">
+            <div className="inline-block border border-stone-200 rounded-full px-5 py-1.5 text-sm text-stone-500">
+              Contact & Help
+            </div>
+          </div>
+          <div className="rounded-[2.2rem] sm:rounded-[2.6rem] bg-[#182136] text-white shadow-[0_22px_60px_rgba(20,28,43,0.18)] p-6 sm:p-8 lg:p-10">
+            <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-6 lg:gap-8 items-stretch">
+              <div className="py-2 sm:py-4">
+                <div className="kicker text-blue-300 mb-5 sm:mb-6">Direct Booking</div>
+                <h2 className="text-[2rem] sm:text-[2.6rem] lg:text-[3.3rem] font-semibold leading-[1.05] tracking-[-0.03em] max-w-2xl mb-5 sm:mb-6 text-balance">
+                  Need help choosing between private and shared stay options?
+                </h2>
+                <p className="text-white/70 text-base sm:text-lg leading-8 max-w-2xl mb-7 sm:mb-8">
+                  Let guests ask before they commit. The best stay pages reduce uncertainty early and make it easy to switch from browsing to booking.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <Link
+                    to="/book"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-white text-charcoal px-6 py-3.5 text-sm sm:text-base font-semibold hover:bg-white/90 transition-colors"
+                  >
+                    Check availability <ArrowRight size={16} />
+                  </Link>
+                  <Link
+                    to="/contact"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/5 text-white px-6 py-3.5 text-sm sm:text-base font-medium hover:bg-white/10 transition-colors"
+                  >
+                    Ask a question
+                  </Link>
+                </div>
               </div>
 
-              <Link
-                to="/contact"
-                className="inline-flex items-center gap-2 bg-charcoal hover:bg-stone text-white px-8 py-3 rounded-full font-semibold transition-all active:scale-95"
-              >
-                Get Directions <ArrowRight size={18} />
-              </Link>
-            </motion.div>
+              <div className="rounded-[2rem] bg-white/8 border border-white/8 p-6 sm:p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+                <p className="text-white/60 text-sm sm:text-base mb-3">Direct contact</p>
+                <a href="tel:+212612345678" className="block text-white text-2xl sm:text-[2rem] font-semibold leading-tight mb-1 hover:text-blue-200 transition-colors">
+                  +212 6 12 34 56 78
+                </a>
+                <a href="mailto:tamountsurfhouse@gmail.com" className="block text-white/65 text-sm sm:text-base mb-6 hover:text-white transition-colors">
+                  tamountsurfhouse@gmail.com
+                </a>
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="rounded-3xl overflow-hidden shadow-lg h-[400px] bg-sand"
-            >
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3445.6!2d-9.68!3d30.51!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzDCsDMwJzM2LjAiTiA5wrA0MCc0OC4wIlc!5e0!3m2!1sen!2sma!4v1"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Anza Surf House Location"
-              />
-            </motion.div>
-          </div>
-        </div>
-      </section>
+                <div className="space-y-3.5 text-white/75 text-sm sm:text-base">
+                  <div className="flex items-start gap-3">
+                    <MapPin size={18} className="text-blue-300 mt-0.5 shrink-0" />
+                    <span>Anza, Agadir, Morocco</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Waves size={18} className="text-blue-300 mt-0.5 shrink-0" />
+                    <span>Stay + surf + local experiences</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Plane size={18} className="text-blue-300 mt-0.5 shrink-0" />
+                    <span>Airport support available on request</span>
+                  </div>
+                </div>
 
-      {/* CTA Section */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="/images/moroccan-sunset.jpg"
-            alt="Sunset in Morocco"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-ocean-dark/70" />
-        </div>
-
-        <div className="relative z-10 max-w-3xl mx-auto text-center text-white px-4">
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
-            Your Wave is Waiting
-          </h2>
-          <p className="text-lg text-gray-200 mb-10 leading-relaxed">
-            Whether it's your first time on a board or your hundredth barrel, 
-            Anza Surf House is where your next adventure begins. Book now and 
-            feel the stoke of Morocco's best surf coast.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/book"
-              className="bg-sunset hover:bg-sunset-light text-white px-10 py-4 rounded-full font-semibold text-lg transition-all hover:shadow-xl active:scale-95"
-            >
-              Book Now
-            </Link>
-            <Link
-              to="/contact"
-              className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white border border-white/30 px-10 py-4 rounded-full font-semibold text-lg transition-all active:scale-95"
-            >
-              Ask a Question
-            </Link>
+                <div className="mt-7">
+                  <a
+                    href="https://wa.me/212612345678?text=Hi!%20I%20need%20help%20choosing%20the%20best%20stay%20option."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] text-white px-6 py-4 text-base sm:text-lg font-semibold hover:bg-[#1fb458] transition-colors w-full sm:w-auto"
+                  >
+                    <MessageCircle size={20} /> Message on WhatsApp
+                  </a>
+                </div>
+                <div className="mt-3">
+                  <a
+                    href="https://maps.google.com/?q=Anza,Agadir,Morocco"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-white/6 border border-white/12 text-white px-6 py-4 text-base sm:text-lg font-medium hover:bg-white/10 transition-colors w-full sm:w-auto"
+                  >
+                    <MapPin size={18} /> Get Directions
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

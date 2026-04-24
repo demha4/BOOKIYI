@@ -1,14 +1,11 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
 
-/* ═══════════════════════════════════════════════════════════════
-   TYPE DEFINITIONS
-   ═══════════════════════════════════════════════════════════════ */
-
 export type GuestType = "male" | "female" | "couple";
+export type PaymentChoice = "deposit" | "arrival" | null;
 
 export interface GuestProfile {
   id: string;
-  label: string;       // "Guest 1", "Guest 2" etc. (auto-generated)
+  label: string;       // "Guest 1 (Male)", "Couple 1"
   type: GuestType;
   roomId: string | null;
 }
@@ -19,29 +16,24 @@ export interface AddonSelection {
 }
 
 export interface BookingState {
-  /* Guest counts by type */
   maleCount: number;
   femaleCount: number;
   coupleCount: number;
-  /* Generated guest list */
   guests: GuestProfile[];
-  /* Dates */
   checkIn: string;
   checkOut: string;
-  /* Package (null = "Room Only") */
   packageId: string | null;
-  /* Add-ons */
   addOns: Record<string, AddonSelection>;
   addonMode: "group" | "person";
-  /* Contact details */
   contactName: string;
   contactEmail: string;
   contactPhone: string;
   specialRequests: string;
   promoCode: string;
+  arrivalTime: string;          // e.g. "14:30"
+  paymentChoice: PaymentChoice; // "deposit" | "arrival"
 }
 
-/* ─── Build guest array from counts ─── */
 function buildGuests(
   maleCount: number,
   femaleCount: number,
@@ -51,42 +43,25 @@ function buildGuests(
   const guests: GuestProfile[] = [];
   let n = 1;
 
-  // Males
   for (let i = 0; i < maleCount; i++) {
-    const existing = existingGuests.find(
-      (g) => g.type === "male" && !guests.some((x) => x.id === g.id)
-    );
-    guests.push(
-      existing
-        ? { ...existing, label: `Guest ${n}` }
-        : { id: `g${Date.now()}-${n}`, label: `Guest ${n}`, type: "male", roomId: null }
-    );
+    const label = `Guest ${n} (Male)`;
+    const existing = existingGuests.find((g) => g.type === "male" && g.label === label);
+    guests.push(existing ?? { id: `g${Date.now()}-m${i}`, label, type: "male", roomId: null });
     n++;
   }
 
-  // Females
   for (let i = 0; i < femaleCount; i++) {
-    const existing = existingGuests.find(
-      (g) => g.type === "female" && !guests.some((x) => x.id === g.id)
-    );
-    guests.push(
-      existing
-        ? { ...existing, label: `Guest ${n}` }
-        : { id: `g${Date.now()}-${n}`, label: `Guest ${n}`, type: "female", roomId: null }
-    );
+    const label = `Guest ${n} (Female)`;
+    const existing = existingGuests.find((g) => g.type === "female" && g.label === label);
+    guests.push(existing ?? { id: `g${Date.now()}-f${i}`, label, type: "female", roomId: null });
     n++;
   }
 
-  // Couples (each couple = 1 guest entry but counts as 2 persons)
-  for (let i = 0; i < coupleCount; i++) {
-    const existing = existingGuests.find(
-      (g) => g.type === "couple" && !guests.some((x) => x.id === g.id)
-    );
-    guests.push(
-      existing
-        ? { ...existing, label: `Couple ${i + 1}` }
-        : { id: `g${Date.now()}-${n}`, label: `Couple ${i + 1}`, type: "couple", roomId: null }
-    );
+  // Each couple = 2 neutral guests (no gender label)
+  for (let i = 0; i < coupleCount * 2; i++) {
+    const label = `Guest ${n}`;
+    const existing = existingGuests.find((g) => g.type === "couple" && g.label === label);
+    guests.push(existing ?? { id: `g${Date.now()}-c${i}`, label, type: "couple", roomId: null });
     n++;
   }
 
@@ -108,6 +83,8 @@ const defaultState: BookingState = {
   contactPhone: "",
   specialRequests: "",
   promoCode: "",
+  arrivalTime: "",
+  paymentChoice: null,
 };
 
 interface BookingContextType {
@@ -122,8 +99,8 @@ interface BookingContextType {
   setAddonGuestQty: (addonId: string, guestId: string, qty: number) => void;
   clearAllRoomAssignments: () => void;
   nights: number;
-  totalPersons: number; // males + females + (couples × 2)
-  totalGuests: number;  // number of guest entries (couples = 1)
+  totalPersons: number;
+  totalGuests: number;
 }
 
 const BookingContext = createContext<BookingContextType | null>(null);
@@ -135,27 +112,21 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setBookingState((prev) => ({ ...prev, ...update }));
   }, []);
 
-  const resetBooking = useCallback(() => {
-    setBookingState(defaultState);
-  }, []);
+  const resetBooking = useCallback(() => setBookingState(defaultState), []);
 
-  /* ─── Set guest counts and rebuild guest array ─── */
   const setGuestCounts = useCallback((male: number, female: number, couple: number) => {
-    setBookingState((prev) => {
-      const newGuests = buildGuests(
+    setBookingState((prev) => ({
+      ...prev,
+      maleCount: Math.max(0, male),
+      femaleCount: Math.max(0, female),
+      coupleCount: Math.max(0, couple),
+      guests: buildGuests(
         Math.max(0, male),
         Math.max(0, female),
         Math.max(0, couple),
         prev.guests
-      );
-      return {
-        ...prev,
-        maleCount: Math.max(0, male),
-        femaleCount: Math.max(0, female),
-        coupleCount: Math.max(0, couple),
-        guests: newGuests,
-      };
-    });
+      ),
+    }));
   }, []);
 
   const updateGuest = useCallback((id: string, update: Partial<GuestProfile>) => {
@@ -172,12 +143,10 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  /* ─── Package ─── */
   const setPackage = useCallback((packageId: string | null) => {
     setBookingState((prev) => ({ ...prev, packageId }));
   }, []);
 
-  /* ─── Addon Management ─── */
   const setAddonMode = useCallback((mode: "group" | "person") => {
     setBookingState((prev) => ({ ...prev, addonMode: mode }));
   }, []);
@@ -187,10 +156,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       ...prev,
       addOns: {
         ...prev.addOns,
-        [addonId]: {
-          ...prev.addOns[addonId],
-          quantity: Math.max(0, qty),
-        },
+        [addonId]: { ...prev.addOns[addonId], quantity: Math.max(0, qty) },
       },
     }));
   }, []);
@@ -202,24 +168,17 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       const totalQty = Object.values(perGuest).reduce((s, v) => s + v, 0);
       return {
         ...prev,
-        addOns: {
-          ...prev.addOns,
-          [addonId]: { quantity: totalQty, perGuest },
-        },
+        addOns: { ...prev.addOns, [addonId]: { quantity: totalQty, perGuest } },
       };
     });
   }, []);
 
-  /* ─── Computed ─── */
   const nights =
     booking.checkIn && booking.checkOut
-      ? Math.max(
-          1,
-          Math.ceil(
-            (new Date(booking.checkOut).getTime() - new Date(booking.checkIn).getTime()) /
-              (1000 * 60 * 60 * 24)
-          )
-        )
+      ? Math.max(1, Math.ceil(
+          (new Date(booking.checkOut).getTime() - new Date(booking.checkIn).getTime()) /
+            (1000 * 60 * 60 * 24)
+        ))
       : 0;
 
   const totalPersons =
@@ -228,23 +187,11 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const totalGuests = booking.guests.length;
 
   return (
-    <BookingContext.Provider
-      value={{
-        booking,
-        setBooking,
-        resetBooking,
-        setGuestCounts,
-        updateGuest,
-        setPackage,
-        setAddonMode,
-        setAddonGroupQty,
-        setAddonGuestQty,
-        clearAllRoomAssignments,
-        nights,
-        totalPersons,
-        totalGuests,
-      }}
-    >
+    <BookingContext.Provider value={{
+      booking, setBooking, resetBooking, setGuestCounts, updateGuest,
+      setPackage, setAddonMode, setAddonGroupQty, setAddonGuestQty,
+      clearAllRoomAssignments, nights, totalPersons, totalGuests,
+    }}>
       {children}
     </BookingContext.Provider>
   );

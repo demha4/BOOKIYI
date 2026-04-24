@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Loader2, WifiOff, Wifi, AlertCircle } from "lucide-react";
+import { Loader2, WifiOff, Wifi } from "lucide-react";
 
 interface LiveSyncIndicatorProps {
   lastUpdated: Date | null;

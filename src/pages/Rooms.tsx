@@ -1,132 +1,140 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Users, Maximize, Check, ArrowRight } from "lucide-react";
+import { Users, Maximize, Check, ArrowRight, Wifi, Coffee, Waves, KeyRound } from "lucide-react";
 import { rooms } from "../data/content";
+
+const sharedSpaces = [
+  {
+    icon: <Coffee size={22} className="text-ocean" />,
+    title: "The Rooftop Terrace",
+    text: "Covered shade, open sky, low seating, and the place where the whole house ends up once the sunset starts.",
+  },
+  {
+    icon: <Wifi size={22} className="text-ocean" />,
+    title: "The Shared Kitchen",
+    text: "Stove, fridge, kettle, pans, plates, and enough space to make tea at odd hours or dinner with new friends.",
+  },
+  {
+    icon: <Waves size={22} className="text-ocean" />,
+    title: "Surfboard Storage",
+    text: "Covered storage downstairs, locked overnight, with space for the boards and wetsuits that keep the week moving.",
+  },
+];
+
+const houseRules = [
+  "Check-in from 2pm. Late arrival is fine if you message us.",
+  "Check-out by 11am. We can hold bags after.",
+  "Quiet hours from 11pm onward. Rooftop stays open, just softer.",
+  "Shoes off in the bedrooms.",
+  "Kitchen stays open — just clean up after yourself.",
+  "Visitors during the day are okay. Overnight guests, ask first.",
+];
 
 export default function Rooms() {
   return (
-    <div className="pt-20">
-      {/* Header */}
-      <section className="py-16 bg-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <p className="text-sunset font-medium text-sm tracking-wider uppercase mb-3">Accommodation</p>
-            <h1 className="font-serif text-4xl sm:text-5xl font-bold text-charcoal mb-4">
-              Rooms & Dorms
-            </h1>
-            <p className="text-stone max-w-2xl mx-auto text-lg">
-              Clean, comfortable, and designed for surfers. From private ocean-view rooms 
-              to social dorms, find your perfect home base.
-            </p>
-          </motion.div>
+    <div className="pt-20 bg-cream">
+      <section className="py-24 sm:py-28 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="kicker text-ocean mb-5">
+            Rooms at Tamount Surf House
+          </motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="section-title text-charcoal mb-6">
+            Three rooms. That's the whole house.
+          </motion.h1>
+          <motion.p initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="section-copy text-stone max-w-3xl mx-auto">
+            We kept the house small so we could keep it good. One dorm, one triple, one double. Fresh linen, hot showers, breakfast every morning, and the rooftop included in all of it.
+          </motion.p>
         </div>
       </section>
 
-      {/* Rooms Grid */}
-      <section className="pb-20 bg-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {rooms.map((room, i) => (
-              <motion.div
-                key={room.id}
-                id={room.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-3xl overflow-hidden shadow-sm border border-sand-dark/20"
-              >
-                <div className="grid grid-cols-1 lg:grid-cols-2">
-                  <div className="image-hover-zoom h-64 lg:h-auto overflow-hidden">
-                    <img
-                      src={room.image}
-                      alt={room.name}
-                      className="w-full h-full object-cover"
-                    />
+      <section className="pb-20 sm:pb-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          {rooms.map((room, i) => (
+            <motion.div
+              key={room.id}
+              id={room.id}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              className="bg-white rounded-[2rem] overflow-hidden border border-stone-200 shadow-sm"
+            >
+              <div className="grid lg:grid-cols-[0.95fr_1.05fr]">
+                <div className="image-hover-zoom h-72 lg:h-full bg-slate-100">
+                  <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
+                </div>
+                <div className="p-7 sm:p-8 lg:p-10 flex flex-col justify-between">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2 mb-4">
+                      <span className={`rounded-full px-3 py-1 text-xs font-medium uppercase tracking-wider ${room.type === "dorm" ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-700"}`}>
+                        {room.type === "dorm" ? "Shared Dorm" : "Private Room"}
+                      </span>
+                      <span className="rounded-full bg-stone-100 text-stone px-3 py-1 text-xs font-medium flex items-center gap-1"><Maximize size={12} /> {room.size}</span>
+                    </div>
+                    <h2 className="text-3xl sm:text-[2.2rem] font-semibold tracking-tight text-charcoal leading-tight mb-4">{room.name}</h2>
+                    <p className="card-copy text-stone mb-5">{room.description}</p>
+                    <div className="flex items-center gap-2 mb-5 text-sm sm:text-base text-stone">
+                      <Users size={16} />
+                      <span>Up to {room.maxGuests} guests</span>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-2.5 mb-7">
+                      {room.features.map((feature) => (
+                        <div key={feature} className="flex items-start gap-2 text-sm sm:text-base text-stone leading-7">
+                          <Check size={16} className="text-ocean mt-1 shrink-0" />
+                          <span>{feature}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="p-6 lg:p-8 flex flex-col justify-between">
+
+                  <div className="pt-5 border-t border-stone-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className={`text-xs font-medium px-3 py-1 rounded-full uppercase tracking-wider ${
-                          room.type === "dorm" ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-700"
-                        }`}>
-                          {room.type === "dorm" ? "Shared Dorm" : "Private"}
-                        </span>
-                        {room.genderPolicy !== "any" && (
-                          <span className={`text-xs font-medium px-3 py-1 rounded-full uppercase tracking-wider ${
-                            room.genderPolicy === "male" ? "bg-blue-50 text-blue-600" :
-                            room.genderPolicy === "female" ? "bg-pink-50 text-pink-600" :
-                            "bg-purple-50 text-purple-600"
-                          }`}>
-                            {room.genderPolicy === "male" ? "♂ Male Only" : room.genderPolicy === "female" ? "♀ Female Only" : "Mixed"}
-                          </span>
-                        )}
-                        <span className="text-xs text-stone flex items-center gap-1">
-                          <Maximize size={12} /> {room.size}
-                        </span>
-                      </div>
-                      <h2 className="font-serif text-2xl font-bold text-charcoal mb-3">{room.name}</h2>
-                      <p className="text-stone text-sm leading-relaxed mb-4">{room.description}</p>
-
-                      <div className="flex items-center gap-2 mb-4 text-sm text-stone">
-                        <Users size={16} />
-                        <span>Up to {room.maxGuests} guests</span>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {room.features.map((feature) => (
-                          <span
-                            key={feature}
-                            className="flex items-center gap-1 text-xs bg-soft-gray px-3 py-1.5 rounded-full text-stone"
-                          >
-                            <Check size={12} className="text-ocean" /> {feature}
-                          </span>
-                        ))}
-                      </div>
+                      <div className="text-ocean font-bold text-3xl">€{room.price}</div>
+                      <div className="text-stone text-sm sm:text-base">/{room.type === "dorm" ? "bed / night" : "room / night"} · breakfast included</div>
                     </div>
-
-                    <div className="flex items-center justify-between pt-4 border-t border-sand-dark/20">
-                      <div>
-                        <span className="text-sunset font-bold text-2xl">€{room.price}</span>
-                        <span className="text-stone text-sm">/{room.type === "dorm" ? "bed/night" : "room/night"}</span>
-                      </div>
-                      <Link
-                        to="/book"
-                        className="bg-sunset hover:bg-sunset-light text-white px-6 py-2.5 rounded-full font-semibold text-sm transition-all active:scale-95 flex items-center gap-2"
-                      >
-                        Book <ArrowRight size={16} />
-                      </Link>
-                    </div>
+                    <Link to="/book" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-7 py-3.5 font-semibold text-sm hover:bg-charcoal/90 transition-colors">
+                      Book this room <ArrowRight size={16} />
+                    </Link>
                   </div>
                 </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      <section className="py-20 sm:py-24 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="section-title text-charcoal mb-5">The parts of the house everyone uses.</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {sharedSpaces.map((space, i) => (
+              <motion.div key={space.title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="bg-cream rounded-3xl border border-stone-200 p-7 shadow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center mb-5">{space.icon}</div>
+                <h3 className="card-title font-semibold text-charcoal mb-3">{space.title}</h3>
+                <p className="card-copy text-stone">{space.text}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Amenities Banner */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="font-serif text-2xl font-bold text-charcoal">All Rooms Include</h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[
-              "Free WiFi", "Hot Showers", "Daily Cleaning", "Secure Lockers",
-              "Linen Included", "Beach Towels",
-            ].map((amenity) => (
-              <div
-                key={amenity}
-                className="flex items-center justify-center gap-2 bg-cream rounded-xl py-4 px-3 text-sm font-medium text-charcoal"
-              >
-                <Check size={16} className="text-ocean" />
-                {amenity}
-              </div>
-            ))}
+      <section className="py-20 sm:py-24 bg-cream">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-[2rem] border border-stone-200 p-8 sm:p-10 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-ocean/10 text-ocean flex items-center justify-center"><KeyRound size={24} /></div>
+              <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal">A few small rules so everyone has a good stay.</h2>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+              {houseRules.map((rule) => (
+                <div key={rule} className="flex items-start gap-2 text-sm sm:text-base text-stone leading-7">
+                  <Check size={16} className="text-ocean mt-1 shrink-0" />
+                  <span>{rule}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

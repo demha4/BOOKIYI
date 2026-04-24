@@ -43,6 +43,7 @@ export interface Beds24BookingPayload {
   guestComments?: string;
   referer?: string;
   status?: 1 | 2 | 3;
+  price?: number;
 }
 
 /* ─────────────────────────  HELPERS  ───────────────────────── */
@@ -107,70 +108,48 @@ export async function getLiveRoomData(
   const numNights = nights.length || 1;
 
   try {
-    const [availData, ratesData] = await Promise.all([
-      callBeds24<Record<string, Record<string, number | string>>>(
-        "getAvailabilities",
-        { checkIn, checkOut }
-      ).catch((err) => {
-        console.error("[Beds24] Availability fetch failed:", err);
-        return {};
-      }),
-      callBeds24<Record<string, { price?: number; price1?: number; numAvail?: number; minStay?: number }>>(
-        "getRatesAvailabilities",
-        { checkIn, checkOut, numAdults }
-      ).catch((err) => {
-        console.error("[Beds24] Rates fetch failed:", err);
-        return {};
-      }),
-    ]);
+    // V2 API: single call returns both availability and pricing
+    const offersResponse = await callBeds24<{
+      success: boolean;
+      data: Array<{
+        roomId: number;
+        propertyId: number;
+        offers: Array<{
+          offerId: number;
+          offerName: string;
+          price: number;
+          unitsAvailable: number;
+        }>;
+      }>;
+    }>("getRatesAvailabilities", { checkIn, checkOut, numAdults }).catch((err) => {
+      console.error("[Beds24] Offers fetch failed:", err);
+      return { success: false, data: [] };
+    });
 
     const result: Record<string, RoomLiveData> = {};
-    const allRoomIds = new Set<string>([
-      ...Object.keys(availData),
-      ...Object.keys(ratesData),
-    ]);
 
-    for (const roomId of allRoomIds) {
-      if (!/^\d+$/.test(roomId)) continue;
+    if (offersResponse?.data && Array.isArray(offersResponse.data)) {
+      for (const room of offersResponse.data) {
+        const roomId = String(room.roomId);
+        const bestOffer = room.offers?.[0]; // take first/best offer
 
-      // Availability: minimum across all nights
-      const dailyAvail = (availData as any)[roomId] || {};
-      const dateValues: number[] = [];
-      for (const date of nights) {
-        const raw = dailyAvail[date];
-        const num =
-          typeof raw === "number"
-            ? raw
-            : typeof raw === "string" && raw !== ""
-            ? Number(raw)
-            : NaN;
-        if (Number.isFinite(num)) dateValues.push(num);
+        if (!bestOffer) continue;
+
+        const totalPrice = Number(bestOffer.price) || 0;
+        const unitsAvailable = Number(bestOffer.unitsAvailable) || 0;
+
+        result[roomId] = {
+          available: unitsAvailable,
+          totalPrice: totalPrice,
+          avgNightly: numNights > 0 ? totalPrice / numNights : totalPrice,
+          minStay: 1,
+        };
       }
-      const minAvail = dateValues.length === 0 ? -1 : Math.min(...dateValues);
-
-      // Pricing
-      const rateInfo = (ratesData as any)[roomId] || {};
-      let totalPrice = 0;
-      const ratePrice = Number(rateInfo.price);
-      const ratePrice1 = Number(rateInfo.price1);
-      if (Number.isFinite(ratePrice) && ratePrice > 0) {
-        totalPrice = ratePrice;
-      } else if (Number.isFinite(ratePrice1) && ratePrice1 > 0) {
-        totalPrice = ratePrice1 * numNights;
-      }
-
-      result[roomId] = {
-        available: minAvail,
-        totalPrice,
-        avgNightly: numNights ? totalPrice / numNights : 0,
-        minStay: Number(rateInfo.minStay) || 1,
-      };
     }
 
     if (import.meta.env.DEV) {
       console.log("[Beds24] Live data parsed:", result);
-      console.log("[Beds24] Raw availability:", availData);
-      console.log("[Beds24] Raw rates:", ratesData);
+      console.log("[Beds24] Raw V2 offers response:", offersResponse);
     }
 
     return result;
@@ -190,25 +169,20 @@ export async function checkAvailability(
   if (!checkIn || !checkOut) return {};
 
   try {
-    const data = await callBeds24<Record<string, Record<string, number | string>>>(
-      "getAvailabilities",
-      { checkIn, checkOut }
-    );
+    const offersResponse = await callBeds24<{
+      success: boolean;
+      data: Array<{
+        roomId: number;
+        offers: Array<{ unitsAvailable: number }>;
+      }>;
+    }>("getAvailabilities", { checkIn, checkOut });
 
-    const nights = eachDate(checkIn, checkOut);
     const result: Record<string, number> = {};
-
-    for (const [roomId, daily] of Object.entries(data)) {
-      if (!/^\d+$/.test(roomId)) continue;
-      let minAvail = Infinity;
-      for (const date of nights) {
-        const v = daily[date];
-        const num = typeof v === "number" ? v : typeof v === "string" ? Number(v) : 0;
-        minAvail = Math.min(minAvail, num);
+    if (offersResponse?.data && Array.isArray(offersResponse.data)) {
+      for (const room of offersResponse.data) {
+        result[String(room.roomId)] = room.offers?.[0]?.unitsAvailable ?? 0;
       }
-      result[roomId] = Number.isFinite(minAvail) ? minAvail : 0;
     }
-
     return result;
   } catch (err) {
     console.error("[Beds24] checkAvailability failed:", err);
@@ -311,6 +285,7 @@ export interface SubmitBookingInput {
   guestPhone?: string;
   notes?: string;
   status?: 0 | 1;
+  price?: number;
 }
 
 export interface SubmitBookingResult {
@@ -324,56 +299,49 @@ export interface SubmitBookingResult {
 export async function submitBookingToBeds24(
   input: SubmitBookingInput
 ): Promise<SubmitBookingResult> {
-  const lastNight = new Date(input.checkOut);
-  lastNight.setDate(lastNight.getDate() - 1);
-  const lastNightStr = lastNight.toISOString().slice(0, 10);
-
   try {
-    const bookingPromises = input.rooms.map((room) => {
-      const params = new URLSearchParams({
-        propKey: PROP_KEY,
-        propertyId: PROPERTY_ID,
-        roomId: String(room.roomId),
+    const payload = {
+      rooms: input.rooms.map((room) => ({
+        roomId: room.roomId,
+        numAdult: room.numAdult,
+        numChild: room.numChild || 0,
         firstNight: input.checkIn,
-        lastNight: lastNightStr,
-        numAdult: String(room.numAdult),
-        numChild: String(room.numChild || 0),
-        guestFirstName: input.guestFirstName || "",
-        guestName: input.guestName,
-        guestEmail: input.guestEmail,
-        guestPhone: input.guestPhone || "",
-        guestComments: input.notes || "",
-        referer: "tamount-website",
-        status: String(input.status ?? 0),
-      });
+        lastNight: input.checkOut,
+      })),
+      guestFirstName: input.guestFirstName || "",
+      guestName: input.guestName,
+      guestEmail: input.guestEmail,
+      guestPhone: input.guestPhone || "",
+      notes: input.notes || "",
+      status: input.status === 1 ? "confirmed" : "request",
+      price: typeof input.price === "number" ? input.price : undefined,
+    };
 
-      const url = `${API_BASE}/setBooking?${params.toString()}`;
-      return fetch(url, { method: "POST" }).then((res) => res.json());
+    const res = await fetch(`${API_BASE}?action=createBooking`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
 
-    const results = await Promise.all(bookingPromises);
-    const bookingIds: string[] = [];
-    const errors: string[] = [];
+    const data = await res.json();
 
-    results.forEach((result, index) => {
-      if (result?.[0]?.success) {
-        bookingIds.push(result[0].new?.id || `unknown-${index}`);
-      } else {
-        errors.push(result?.[0]?.errors?.[0]?.message || `Room ${index + 1} failed`);
-      }
-    });
+    if (data?.success) {
+      return {
+        success: true,
+        bookingIds: data.booking?.id ? [String(data.booking.id)] : [],
+        raw: data,
+      };
+    }
 
     return {
-      success: bookingIds.length > 0,
-      bookingIds: bookingIds.length > 0 ? bookingIds : undefined,
-      errors: errors.length > 0 ? errors : undefined,
-      raw: results,
+      success: false,
+      errors: [data?.error || "Booking creation failed"],
+      raw: data,
     };
   } catch (err) {
     return {
       success: false,
       errors: [err instanceof Error ? err.message : "Network error"],
-      fallback: "whatsapp",
     };
   }
 }
