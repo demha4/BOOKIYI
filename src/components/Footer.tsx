@@ -33,7 +33,6 @@ export default function Footer() {
                   {link.label}
                 </Link>
               ))}
-              <Link to="/packages" className="text-white/65 hover:text-white text-sm transition-colors">Packages</Link>
               <Link to="/faq" className="text-white/65 hover:text-white text-sm transition-colors">FAQ</Link>
             </div>
           </div>
@@ -71,8 +70,8 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-white/45 text-sm">&copy; {new Date().getFullYear()} {siteInfo.name}. All rights reserved.</p>
           <div className="flex gap-6 text-white/45 text-sm">
-            <span className="hover:text-white transition-colors">Privacy Policy</span>
-            <span className="hover:text-white transition-colors">Terms of Service</span>
+            <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>

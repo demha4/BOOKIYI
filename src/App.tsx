@@ -16,6 +16,8 @@ import Experiences from "./pages/Experiences";
 import Faq from "./pages/Faq";
 import PackageBedAndBreakfast from "./pages/PackageBedAndBreakfast";
 import PackageSurfCamp from "./pages/PackageSurfCamp";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/faq" element={<Faq />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
             <Route path="/book" element={<BookNow />} />
             <Route path="/book/bed-and-breakfast" element={<BookNow />} />
             <Route path="/book/room/:roomId" element={<BookNow />} />

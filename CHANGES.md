@@ -46,3 +46,36 @@ The actual `/public/images/*.jpg` photos are **unchanged**. Booking.com's image 
 - ✅ `npx tsc --noEmit` passes with no errors
 - ✅ `npx vite build` succeeds (634 KB gzipped to 183 KB)
 - ✅ All `content.ts` exports preserved — no breaking changes for consumers (`Home.tsx`, `Rooms.tsx`, `Gallery.tsx`, `Faq.tsx`, `Contact.tsx`, `BookNow.tsx`, `PackageSurfCamp.tsx`, `PackageBedAndBreakfast.tsx`, `Navbar.tsx`, `Footer.tsx`)
+
+---
+
+## Pass 2 — Navbar + legal pages (Apr 25, 2026)
+
+### `src/data/content.ts`
+- **`navLinks`** — added `{ label: "Packages", path: "/packages" }` between Surf and Experiences. The mobile menu and Footer's "Explore" column both iterate over `navLinks`, so they pick this up automatically.
+
+### `src/components/Footer.tsx`
+- Removed the duplicate hardcoded `<Link to="/packages">` (now in `navLinks`, no longer needed).
+- Converted the **Privacy Policy** and **Terms of Service** placeholders from `<span>`s to real `<Link>`s pointing to `/privacy` and `/terms`.
+
+### `src/pages/Privacy.tsx` (new)
+Original Privacy Policy in the same plain-language voice as the rest of the site. Covers: who we are, what we collect (name/email/phone, ID for legal guest registration, messages, basic analytics), why we collect it, who we share with (Moroccan authorities for legal registration, booking platforms, hosting/booking-tool service providers), how long we keep it, user rights (access, correction, deletion), cookies (technical only), changes, and contact. Last updated date: April 2026.
+
+> **Note on the source:** Booking.com's actual Privacy Policy is copyrighted, so the content here is **original** — written in the site's voice, but reflecting the real facts of how a small Moroccan hostel operates (legal guest registration, etc.).
+
+### `src/pages/Terms.tsx` (new)
+Original Terms of Service covering: about the terms, booking confirmation, payment (cash EUR/MAD on arrival per real Booking listing), cancellation (free up to 24 hr per Booking's "free cancellation" listing), check-in/out times (12:00–24:00 in / by 12:00 out per Booking), who can stay (children welcome, no bachelor parties, no pets, no extra beds — all per the real Booking listing), house rules, surf lessons & risks, personal belongings, limits of responsibility, website use, governing law (Morocco / Agadir courts), changes, and contact.
+
+### `src/App.tsx`
+- Added imports for `Privacy` and `Terms`.
+- Added two new routes: `/privacy` → `<Privacy />` and `/terms` → `<Terms />`.
+
+### `public/sitemap.xml`
+- Added `/privacy` and `/terms` URLs with low priority (0.3) and yearly `changefreq` — appropriate for legal pages.
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2171 modules, 650 KB → 186 KB gzipped)
+- ✅ Desktop nav: 8 links + Book Now button still fits at the `xl:` breakpoint (1280 px+) within the 1240 px container
+- ✅ Mobile menu: picks up Packages automatically (iterates `navLinks`)
+- ✅ Footer "Explore" column: picks up Packages automatically (iterates `navLinks`)

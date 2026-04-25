@@ -12,6 +12,7 @@ export const navLinks = [
   { label: "Home", path: "/" },
   { label: "Rooms", path: "/rooms" },
   { label: "Surf", path: "/surf" },
+  { label: "Packages", path: "/packages" },
   { label: "Experiences", path: "/experiences" },
   { label: "About", path: "/about" },
   { label: "Gallery", path: "/gallery" },
