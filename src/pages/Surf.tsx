@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Waves, Shield, Bus, Thermometer, Clock3 } from "lucide-react";
+import SEO from "../components/SEO";
 
 const lessons = [
   {
@@ -38,8 +39,13 @@ const rentals = [
 
 export default function Surf() {
   return (
-    <div className="pt-20 bg-cream">
-      <section className="relative py-24 sm:py-28 overflow-hidden bg-charcoal text-white">
+    <div className="bg-cream">
+      <SEO
+        title="Surf Lessons & Spots"
+        description="Surf lessons from €30, board rental from €7/day, and local spot guidance. Beginner to advanced coaching at Anza, Taghazout, and Tamraght breaks."
+        ogImage="/images/surf-lesson.jpg"
+      />
+      <section className="relative pt-28 pb-24 sm:pt-32 sm:pb-28 overflow-hidden bg-charcoal text-white">
         <div className="absolute inset-0">
           <img src="/images/hero-surf.jpg" alt="surfing near anza and taghazout" className="w-full h-full object-cover opacity-35" />
         </div>
@@ -57,15 +63,16 @@ export default function Surf() {
       </section>
 
       <section className="py-20 sm:py-24">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
+            <span className="tag-pill tag-pill-blue mb-5 inline-block">Surf Lessons</span>
             <h2 className="section-title text-charcoal mb-5">Lessons for every level.</h2>
             <p className="section-copy text-stone max-w-3xl mx-auto">No shouting, no overcomplicated packages. Just the right session for your level, with the right spot for the day.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {lessons.map((lesson, i) => (
-              <motion.div key={lesson.title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="bg-white rounded-3xl border border-stone-200 p-7 sm:p-8 shadow-sm">
-                <div className="w-14 h-14 rounded-2xl bg-ocean/10 text-ocean flex items-center justify-center mb-5"><Waves size={24} /></div>
+              <motion.div key={lesson.title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="card-soft">
+                <div className="w-14 h-14 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center mb-5"><Waves size={24} /></div>
                 <h3 className="card-title font-semibold text-charcoal mb-2">{lesson.title}</h3>
                 <p className="text-ocean font-semibold text-sm sm:text-base mb-4">{lesson.price}</p>
                 <p className="card-copy text-stone">{lesson.text}</p>
@@ -76,7 +83,7 @@ export default function Surf() {
       </section>
 
       <section className="py-20 sm:py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="section-title text-charcoal mb-5">The breaks, ranked by how far they are from your bed.</h2>
             <p className="section-copy text-stone max-w-3xl mx-auto">An honest read on the main spots we surf from the house.</p>
@@ -96,35 +103,41 @@ export default function Surf() {
         </div>
       </section>
 
-      <section className="py-20 sm:py-24">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-6">
-          <div className="bg-white rounded-3xl border border-stone-200 p-7 shadow-sm">
-            <div className="w-14 h-14 rounded-2xl bg-ocean/10 text-ocean flex items-center justify-center mb-5"><Bus size={24} /></div>
-            <h3 className="card-title font-semibold text-charcoal mb-3">Spot transfers included</h3>
-            <p className="card-copy text-stone">If you book surf with us, we sort the transport to wherever is working — Anza, Tamraght, Taghazout, or farther when the day calls for it.</p>
+      <section className="py-20 sm:py-24 bg-white">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="tag-pill tag-pill-cream mb-5 inline-block">Info</span>
+            <h2 className="section-title text-charcoal mb-5">Everything you need to know.</h2>
           </div>
-          <div className="bg-white rounded-3xl border border-stone-200 p-7 shadow-sm">
-            <div className="w-14 h-14 rounded-2xl bg-ocean/10 text-ocean flex items-center justify-center mb-5"><Thermometer size={24} /></div>
-            <h3 className="card-title font-semibold text-charcoal mb-3">When to come</h3>
-            <p className="card-copy text-stone">October to April is peak swell. Summer stays smaller and friendlier for first-timers. Either way, there is usually something rideable nearby.</p>
-          </div>
-          <div className="bg-white rounded-3xl border border-stone-200 p-7 shadow-sm">
-            <div className="w-14 h-14 rounded-2xl bg-ocean/10 text-ocean flex items-center justify-center mb-5"><Shield size={24} /></div>
-            <h3 className="card-title font-semibold text-charcoal mb-3">Equipment rental</h3>
-            <div className="space-y-2 text-sm sm:text-base text-stone leading-7">
-              {rentals.map(([name, price]) => (
-                <div key={name} className="flex items-start justify-between gap-3 border-b border-stone-100 pb-2">
-                  <span>{name}</span>
-                  <span className="text-right font-medium text-charcoal">{price}</span>
-                </div>
-              ))}
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="card-soft">
+              <div className="w-14 h-14 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center mb-5"><Bus size={24} /></div>
+              <h3 className="card-title font-semibold text-charcoal mb-3">Spot transfers included</h3>
+              <p className="card-copy text-stone">If you book surf with us, we sort the transport to wherever is working — Anza, Tamraght, Taghazout, or farther when the day calls for it.</p>
+            </div>
+            <div className="card-soft">
+              <div className="w-14 h-14 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center mb-5"><Thermometer size={24} /></div>
+              <h3 className="card-title font-semibold text-charcoal mb-3">When to come</h3>
+              <p className="card-copy text-stone">October to April is peak swell. Summer stays smaller and friendlier for first-timers. Either way, there is usually something rideable nearby.</p>
+            </div>
+            <div className="card-soft">
+              <div className="w-14 h-14 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center mb-5"><Shield size={24} /></div>
+              <h3 className="card-title font-semibold text-charcoal mb-3">Equipment rental</h3>
+              <div className="space-y-2 text-sm sm:text-base text-stone leading-7">
+                {rentals.map(([name, price]) => (
+                  <div key={name} className="flex items-start justify-between gap-3 border-b border-stone-100 pb-2">
+                    <span>{name}</span>
+                    <span className="text-right font-medium text-charcoal">{price}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       <section className="pb-24">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-charcoal text-white rounded-[2rem] p-8 sm:p-10 text-center shadow-[0_18px_60px_rgba(20,28,43,0.18)]">
             <div className="w-14 h-14 rounded-2xl bg-white/10 text-blue-300 flex items-center justify-center mx-auto mb-5"><Clock3 size={24} /></div>
             <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight leading-tight mb-4">Want us to tell you where the waves are best for your dates?</h2>

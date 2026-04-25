@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, MessageCircle } from "lucide-react";
 import { rooms, siteInfo } from "../data/content";
+import SEO from "../components/SEO";
 
 const included = [
   "Daily Moroccan breakfast",
@@ -16,15 +17,12 @@ const included = [
 ];
 
 const extras = [
-  "Surf lesson — from €25",
-  "Board + wetsuit rental — from €12 / day",
-  "Paradise Valley trip — €25",
-  "Sandboarding Timlalin — €25",
-  "Imsouane day trip — €50",
-  "Sunset camel ride — €30",
-  "Rooftop yoga — €12",
-  "Rooftop dinner night — around €6",
-  "Airport transfer from AGA — €25",
+  "Surf lesson with coach — €30, free evening surfing included",
+  "Paradise Valley — €30, lunch included",
+  "Sand Dunes — €30, dinner included",
+  "Taxi — €25",
+  "Washing machine — €5",
+  "Skate Park Sunset — €5",
 ];
 
 const idealFor = [
@@ -38,7 +36,13 @@ const idealFor = [
 
 export default function PackageBedAndBreakfast() {
   return (
-    <div className="pt-20 bg-cream">
+    <div className="pt-32 sm:pt-36 bg-cream">
+      <SEO
+        title="Bed & Breakfast"
+        description="Flexible B&B from €12/night. Choose your room, enjoy Moroccan breakfast daily, rooftop access, and book activities as you go. Minimum stay: 1 night."
+        ogImage="/images/private-room.jpg"
+        ogType="product"
+      />
       <section className="py-24 sm:py-28 text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="kicker text-ocean mb-5">
@@ -53,7 +57,7 @@ export default function PackageBedAndBreakfast() {
           <div className="text-2xl sm:text-3xl font-bold text-ocean">From €12 / night</div>
           <p className="text-stone mt-2">Dorm bed — private rooms from €30</p>
           <div className="mt-8">
-            <Link to="/book" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-7 py-3.5 font-semibold text-sm sm:text-base hover:bg-charcoal/90 transition-colors">
+            <Link to="/book/bed-and-breakfast" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-7 py-3.5 font-semibold text-sm sm:text-base hover:bg-charcoal/90 transition-colors">
               Book Bed & Breakfast
             </Link>
           </div>

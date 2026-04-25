@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { faqs } from "../data/content";
+import SEO from "../components/SEO";
 
 export default function Faq() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <div className="pt-20 bg-cream">
+    <div className="pt-32 sm:pt-36 bg-cream">
+      <SEO
+        title="FAQ"
+        description="Answers to common questions about booking, surf lessons, airport transfers, food, what to pack, and staying at Tamount Surf House in Anza, Agadir."
+        ogImage="/images/hostel-living.jpg"
+      />
       <section className="py-24 sm:py-28 text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="kicker text-ocean mb-5">

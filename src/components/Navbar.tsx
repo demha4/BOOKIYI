@@ -78,12 +78,32 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-white pt-24 px-6 overflow-y-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-charcoal/20 backdrop-blur-sm px-3 sm:px-5 pt-24"
+            onClick={() => setMobileOpen(false)}
           >
-            <div className="max-w-md mx-auto flex flex-col gap-2 mt-4 pb-10">
+            <motion.div
+              initial={{ opacity: 0, y: -14, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -14, scale: 0.98 }}
+              transition={{ duration: 0.22 }}
+              className="max-w-[1240px] mx-auto rounded-[1.6rem] bg-cream/98 border border-[var(--color-border)] shadow-[0_18px_50px_rgba(15,42,58,0.18)] p-4 sm:p-5"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-center justify-between pb-4 border-b border-[var(--color-border)]">
+                <Logo className="h-8 w-auto" />
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  className="w-10 h-10 rounded-full bg-white border border-[var(--color-border)] flex items-center justify-center text-charcoal"
+                  aria-label="Close menu"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="grid gap-2 pt-4">
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.path}
@@ -93,28 +113,37 @@ export default function Navbar() {
                 >
                   <Link
                     to={link.path}
-                    className={`block py-3.5 text-lg font-medium border-b border-soft-gray ${
-                      location.pathname === link.path ? "text-ocean" : "text-charcoal"
+                    className={`flex items-center justify-between rounded-2xl px-4 py-3.5 text-base font-semibold transition-colors ${
+                      location.pathname === link.path ? "bg-ocean text-white" : "bg-white text-charcoal hover:bg-primary-50"
                     }`}
                   >
-                    {link.label}
+                    <span>{link.label}</span>
+                    <span className="text-sm opacity-60">/</span>
                   </Link>
                 </motion.div>
               ))}
+              </div>
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="mt-4"
+                className="mt-4 grid grid-cols-2 gap-3"
               >
                 <Link
+                  to="/book/bed-and-breakfast"
+                  className="block w-full bg-white border border-[var(--color-border)] text-charcoal text-center py-4 rounded-full text-sm font-semibold"
+                >
+                  B&amp;B
+                </Link>
+                <Link
                   to="/book"
-                  className="block w-full bg-ocean text-white text-center py-4 rounded-full text-lg font-semibold"
+                  className="block w-full bg-ocean text-white text-center py-4 rounded-full text-sm font-semibold"
                 >
                   Book Now
                 </Link>
               </motion.div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

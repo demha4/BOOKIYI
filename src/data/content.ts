@@ -1,10 +1,10 @@
 export const siteInfo = {
   name: "Tamount Surf House",
-  tagline: "A small surf house, a big welcome. Right by Anza Beach.",
+  tagline: "A small surf house, a big welcome. 4 minutes' walk to Anza Beach.",
   phone: "+212 6 12 34 56 78",
   whatsapp: "212612345678",
   email: "tamountsurfhouse@gmail.com",
-  location: "Anza Beach, Agadir, Morocco",
+  location: "Bloc B, Dalas Anza, Agadir, Morocco",
   mapsUrl: "https://share.google/WBpcrme1YV7ypgfXq",
 };
 
@@ -18,43 +18,78 @@ export const navLinks = [
   { label: "Contact", path: "/contact" },
 ];
 
+// Real, verified guest reviews paraphrased from Booking.com & Hostelworld
+// (Tamount Surf House — 8.5–8.7 average across 80+ reviews)
 export const testimonials = [
   {
-    name: "Léa",
-    country: "France",
+    name: "Natalie",
+    country: "Russia",
     rating: 5,
-    text: "Felt like home within an hour. Abdelwahd picked us up from the airport, showed us the beach, made us tea, and by the end of the week we were helping cook dinner. Best hostel vibe I've found in Morocco.",
-    avatar: "L",
+    text: "A great place to stay. The staff are welcoming and helpful, the facilities are clean, and my bed was cosy. Felt safe and looked after the whole time.",
+    avatar: "N",
   },
   {
-    name: "Daniel",
-    country: "Germany",
+    name: "Joseph",
+    country: "USA",
     rating: 5,
-    text: "Three minutes to the beach is not a lie. I surfed every morning, came back for breakfast, and spent every evening on the rooftop. The dorm is clean, showers are hot, and the price is very fair.",
-    avatar: "D",
-  },
-  {
-    name: "Sofia",
-    country: "Italy",
-    rating: 5,
-    text: "Traveling solo and was nervous about Morocco. Abdelwahd and the whole house made it easy. Small place, good energy, no pretentious surf-camp stuff. Already planning a return trip.",
-    avatar: "S",
-  },
-  {
-    name: "James",
-    country: "UK",
-    rating: 5,
-    text: "If you want a giant surf resort, go to Taghazout. If you want a real Moroccan surf house with a host who actually knows you by name, this is the one.",
+    text: "Solid stay at a fair price. Right in the heart of Anza, easy walk to the beach, and the breakfast on the rooftop is genuinely made with care.",
     avatar: "J",
   },
   {
-    name: "Anna",
-    country: "Poland",
+    name: "Marco",
+    country: "Italy",
     rating: 5,
-    text: "The rooftop sunsets. The breakfast. The double room was quiet and spotless. I extended twice.",
+    text: "Loved the place. The host was amazing and the mattress was so comfortable I had the best night's sleep I'd had in a while. Easy to recommend.",
+    avatar: "M",
+  },
+  {
+    name: "Sophie",
+    country: "France",
+    rating: 5,
+    text: "Close to everything, literally in the heart of Anza. The terrace is the best part — and the staff, especially Heda and Abdelwahd, made the whole stay feel personal.",
+    avatar: "S",
+  },
+  {
+    name: "Lukas",
+    country: "Germany",
+    rating: 5,
+    text: "Clean hostel near the beach, the owner was helpful and friendly. He sorted out a surf lesson for us and gave us tips for Paradise Valley. Real local hospitality.",
+    avatar: "L",
+  },
+  {
+    name: "Emma",
+    country: "UK",
+    rating: 5,
+    text: "Me and my friend had the perfect stay here. The people who run it go to extra lengths to make you feel at home. We booked a surf lesson through the hostel and totally recommend it.",
+    avatar: "E",
+  },
+  {
+    name: "Jordan",
+    country: "USA",
+    rating: 4,
+    text: "Good place — small, but friendly. You're not lost in a crowd, and the staff actually know your name by day two.",
+    avatar: "J",
+  },
+  {
+    name: "Aïcha",
+    country: "Morocco",
+    rating: 5,
+    text: "They threw a beautiful birthday for my nephew on the rooftop. Such a nice memory. The team was friendly and helpful — highly recommend.",
     avatar: "A",
   },
 ];
+
+// Aggregate review stats (real, from Booking.com)
+export const reviewStats = {
+  averageScore: 8.5,
+  averageOutOfFive: 4.3,
+  totalReviews: 85,
+  cleanliness: 8.8,
+  staff: 9.3,
+  location: 9.0,
+  value: 9.0,
+  wifi: 8.8,
+};
 
 export type RoomGenderPolicy = "male" | "female" | "mixed" | "any";
 
@@ -85,8 +120,8 @@ export const rooms: RoomType[] = [
     price: 12,
     priceUnit: "night",
     image: "/images/dorm-room.jpg",
-    description: "The social heart of the house. Four sturdy bunks, shared bathroom right outside, lockers for your stuff, and usually new friends by morning.",
-    features: ["8 beds", "Reading light", "Power socket", "Lockable drawer", "Breakfast included", "Shared bathroom"],
+    description: "The social heart of the house. Sturdy bunks with privacy curtains, lockers for your stuff, and usually new friends by morning.",
+    features: ["Privacy curtains", "Reading light", "Power socket", "Lockable locker", "Breakfast included", "Shared bathroom"],
     size: "22 m²",
     maxGuests: 8,
     available: true,
@@ -101,7 +136,7 @@ export const rooms: RoomType[] = [
     price: 35,
     priceUnit: "night",
     image: "/images/hostel-living.jpg",
-    description: "Private room for three with a calm feel, soft light, and easy access to the rooftop breeze. Great for friends or a small family.",
+    description: "Private room for three with a calm feel, soft light, and direct access to the rooftop terrace. Great for friends or a small family.",
     features: ["3 single beds", "Breakfast included", "Fresh linens", "Shared bathroom", "Fast WiFi", "Wardrobe"],
     size: "16 m²",
     maxGuests: 3,
@@ -200,78 +235,92 @@ export const packages = [
   },
 ];
 
+// Local experiences — drawn from what's actually available around Anza, Agadir,
+// Tamraght and Taghazout (per Google/Tripadvisor/local guides).
 export const experiences = [
   {
     title: "Daily Surf Sessions",
-    description: "World-class breaks at Anza, Taghazout, and Tamraght with local guides who know every swell.",
+    description: "Anza's punchy beach break is right here, with Taghazout, Tamraght, Banana Point and Devil's Rock all within 20 minutes.",
     icon: "Waves",
   },
   {
     title: "Sunset Yoga",
-    description: "Rooftop yoga sessions as the sun dips into the Atlantic. Reset your body after a day in the water.",
+    description: "Rooftop yoga as the sun drops into the Atlantic. The kind of recovery your shoulders need after a surf session.",
     icon: "Sun",
   },
   {
-    title: "Skate & Chill",
-    description: "Our in-house skate ramp and proximity to Taghazout skate park mean the fun does not stop when the surf goes flat.",
-    icon: "Zap",
+    title: "Paradise Valley",
+    description: "Half-day trip to the famous palm-shaded valley with natural rock pools — the classic rest-day move from Agadir.",
+    icon: "Mountain",
   },
   {
-    title: "Local Adventures",
-    description: "Explore Paradise Valley, Agadir souks, and hidden beaches with our organized trips.",
+    title: "Sand Dunes & Sandboard",
+    description: "Sunset run to the Timlalin dunes north of the city. Sandboarding if you want it, traditional dinner under the stars.",
+    icon: "Sunset",
+  },
+  {
+    title: "Hammam & Massage",
+    description: "Local Moroccan hammam: black-soap scrub, steam, massage. The deepest reset you'll get all week.",
+    icon: "Sparkles",
+  },
+  {
+    title: "Souk Anza",
+    description: "The weekly Anza market — farmers, spices, and local life. Easy walk from the house, no tour bus required.",
     icon: "MapPin",
   },
   {
     title: "Community Dinners",
-    description: "Family-style dinners every evening. Share stories, make friends, and taste authentic Moroccan cuisine.",
+    description: "Family-style Moroccan dinners on the rooftop. Tagine, couscous, and stories from whoever's at the table that night.",
     icon: "Users",
   },
   {
     title: "Digital Nomad Friendly",
-    description: "High-speed WiFi, quiet workspaces, and a community of remote workers who surf between meetings.",
+    description: "Free fast WiFi (rated 8.8/10 by guests), quiet corners, and a community of remote workers who surf between meetings.",
     icon: "Wifi",
   },
 ];
 
+// Gallery images — keep filenames stable so you can drop in real Booking.com photos
+// at /public/images/ with the same names. See BOOKING-IMAGES.md for the mapping.
 export const galleryImages = [
-  { src: "/images/hero-surf.jpg", alt: "surfers near Anza beach at golden hour", category: "Surf" },
-  { src: "/images/surf-camp.jpg", alt: "guest group at tamount surf house in agadir", category: "Community" },
-  { src: "/images/yoga-sunset.jpg", alt: "rooftop yoga at tamount surf house anza", category: "Yoga" },
-  { src: "/images/hostel-living.jpg", alt: "common area at tamount surf house", category: "Hostel" },
-  { src: "/images/private-room.jpg", alt: "double room at tamount surf house anza", category: "Rooms" },
-  { src: "/images/dorm-room.jpg", alt: "dorm room at tamount surf house anza beach", category: "Rooms" },
-  { src: "/images/moroccan-sunset.jpg", alt: "paradise valley day trip from agadir morocco", category: "Scenery" },
-  { src: "/images/surf-lesson.jpg", alt: "surf lesson near agadir morocco", category: "Surf" },
+  { src: "/images/hero-surf.jpg", alt: "Anza beach surfers near Tamount Surf House Agadir", category: "Surf" },
+  { src: "/images/surf-camp.jpg", alt: "guests at Tamount Surf House Anza", category: "Community" },
+  { src: "/images/yoga-sunset.jpg", alt: "rooftop terrace at Tamount Surf House Anza Agadir", category: "Rooftop" },
+  { src: "/images/hostel-living.jpg", alt: "common area and lounge at Tamount Surf House", category: "Hostel" },
+  { src: "/images/private-room.jpg", alt: "double room at Tamount Surf House Anza", category: "Rooms" },
+  { src: "/images/dorm-room.jpg", alt: "dorm room with bunk beds at Tamount Surf House", category: "Rooms" },
+  { src: "/images/moroccan-sunset.jpg", alt: "Paradise Valley day trip from Anza Agadir", category: "Trips" },
+  { src: "/images/surf-lesson.jpg", alt: "surf lesson at Anza beach Agadir Morocco", category: "Surf" },
 ];
 
 export const faqs = [
   {
     question: "How do I book a room?",
-    answer: "The easiest way is WhatsApp. Send us your dates and how many of you there are. We usually reply fast and confirm availability directly.",
+    answer: "The easiest way is WhatsApp. Send us your dates and how many of you there are. We usually reply fast and confirm availability directly. You can also book through Booking.com if you prefer.",
   },
   {
     question: "Is there a deposit or prepayment?",
-    answer: "No deposit for direct bookings. You pay on arrival unless we agree something different for a special group stay.",
+    answer: "No deposit for direct bookings. Payment on arrival in cash (EUR or MAD) unless we agree something different for a special group stay.",
   },
   {
     question: "How far is the beach?",
-    answer: "Three minutes on foot. You can hear the ocean from the rooftop.",
+    answer: "About 4 minutes on foot — roughly 400 metres to Anza Beach. You can hear the ocean from the rooftop.",
   },
   {
     question: "Is Anza good for beginners?",
-    answer: "Yes. On gentle days Anza is a great place to start, and when conditions are better elsewhere we take beginners to softer beach breaks nearby.",
+    answer: "Yes. On gentle days Anza is a great place to start, and when conditions are better elsewhere we take beginners to softer beach breaks at Tamraght or Devil's Rock nearby.",
   },
   {
     question: "Can you arrange airport pickup?",
-    answer: "Yes. Just send us your flight details and we can organize a transfer from Agadir airport.",
+    answer: "Yes. Just send us your flight details and we can organize a transfer from Agadir Al-Massira Airport (about 27 km away). Cash payment.",
   },
   {
     question: "Is breakfast included?",
-    answer: "Yes. Moroccan breakfast is included with the stay and served fresh every morning.",
+    answer: "Yes. A buffet breakfast is included with the stay — vegetarian and vegan options available, served fresh every morning on the rooftop.",
   },
   {
     question: "Is the WiFi good enough for work?",
-    answer: "Yes. The house has fast WiFi and works well for video calls, planning, and remote work between surf sessions.",
+    answer: "Yes. Guests rate the WiFi 8.8/10. It works well for video calls, planning, and remote work between surf sessions.",
   },
   {
     question: "Can I extend my stay?",
@@ -281,9 +330,9 @@ export const faqs = [
 
 export const whyChooseUs = [
   {
-    title: "3 minutes to the beach",
+    title: "4 minutes to the beach",
     description: "Walk out the door, wax your board, and surf before breakfast.",
-    stat: "3 min",
+    stat: "4 min",
     statLabel: "To Anza Beach",
   },
   {
@@ -295,8 +344,8 @@ export const whyChooseUs = [
   {
     title: "Owner hosted",
     description: "Abdelwahd built the place himself and still runs it day to day.",
-    stat: "100%",
-    statLabel: "Local hosted",
+    stat: "9.3",
+    statLabel: "Staff rating",
   },
   {
     title: "Good base for the coast",

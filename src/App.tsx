@@ -3,7 +3,7 @@ import { BookingProvider } from "./contexts/BookingContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import WhatsAppButton from "./components/WhatsAppButton";
-import MobileBookBar from "./components/MobileBookBar";
+import JsonLd from "./components/JsonLd";
 import Home from "./pages/Home";
 import Rooms from "./pages/Rooms";
 import Packages from "./pages/Packages";
@@ -20,6 +20,7 @@ import PackageSurfCamp from "./pages/PackageSurfCamp";
 function App() {
   return (
     <BookingProvider>
+      <JsonLd />
       <div className="min-h-screen bg-cream flex flex-col">
         <Navbar />
         <main className="flex-1">
@@ -36,11 +37,13 @@ function App() {
             <Route path="/faq" element={<Faq />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/book" element={<BookNow />} />
+            <Route path="/book/bed-and-breakfast" element={<BookNow />} />
+            <Route path="/book/room/:roomId" element={<BookNow />} />
+            <Route path="/book/package/:packageId" element={<BookNow />} />
           </Routes>
         </main>
         <Footer />
         <WhatsAppButton />
-        <MobileBookBar />
       </div>
     </BookingProvider>
   );

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, MessageCircle } from "lucide-react";
 import { siteInfo, testimonials } from "../data/content";
+import SEO from "../components/SEO";
 
 const included = [
   "Accommodation in the room type you choose",
@@ -43,7 +44,13 @@ const skillLevels = [
 
 export default function PackageSurfCamp() {
   return (
-    <div className="pt-20 bg-cream">
+    <div className="pt-32 sm:pt-36 bg-cream">
+      <SEO
+        title="Surf Camp Pack"
+        description="All-inclusive surf camp from €45/day. Daily lessons, board + wetsuit, breakfast + dinner, transport to best spots, and video analysis. Minimum stay: 3 nights."
+        ogImage="/images/surf-camp.jpg"
+        ogType="product"
+      />
       <section className="py-24 sm:py-28 text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="kicker text-ocean mb-5">
@@ -59,7 +66,7 @@ export default function PackageSurfCamp() {
           <p className="text-stone mt-2">In the dorm — private rooms from €65 / day</p>
           <p className="text-stone mt-1">Minimum stay: 3 nights</p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to="/book?package=beginner-week" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-7 py-3.5 font-semibold text-sm sm:text-base hover:bg-charcoal/90 transition-colors">
+            <Link to="/book/package/beginner-week" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-7 py-3.5 font-semibold text-sm sm:text-base hover:bg-charcoal/90 transition-colors">
               Book Surf Camp Pack
             </Link>
             <a href="#pricing" className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 text-charcoal px-7 py-3.5 font-medium text-sm sm:text-base hover:bg-stone-50 transition-colors">

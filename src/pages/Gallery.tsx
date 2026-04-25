@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { galleryImages } from "../data/content";
+import SEO from "../components/SEO";
 
 export default function Gallery() {
   const [selected, setSelected] = useState<number | null>(null);
@@ -19,7 +20,12 @@ export default function Gallery() {
   };
 
   return (
-    <div className="pt-20 bg-cream">
+    <div className="pt-32 sm:pt-36 bg-cream">
+      <SEO
+        title="Photo Gallery"
+        description="See the atmosphere at Tamount Surf House before you arrive. Rooftop sunsets, surf sessions, rooms, and the Anza beach lifestyle."
+        ogImage="/images/hero-surf.jpg"
+      />
       <section className="py-24 sm:py-28 text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="kicker text-ocean mb-5">

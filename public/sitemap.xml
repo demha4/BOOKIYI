@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://tamountsurfhouse.com/</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://tamountsurfhouse.com/images/hero-surf.jpg</image:loc>
+      <image:title>Surfing at Anza Beach</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://tamountsurfhouse.com/rooms</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://tamountsurfhouse.com/images/dorm-room.jpg</image:loc>
+      <image:title>Dorm Room</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://tamountsurfhouse.com/images/private-room.jpg</image:loc>
+      <image:title>Private Room</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://tamountsurfhouse.com/surf</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tamountsurfhouse.com/images/surf-lesson.jpg</image:loc>
+      <image:title>Surf Lesson</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://tamountsurfhouse.com/experiences</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tamountsurfhouse.com/images/moroccan-sunset.jpg</image:loc>
+      <image:title>Paradise Valley Trip</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://tamountsurfhouse.com/packages</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://tamountsurfhouse.com/images/surf-camp.jpg</image:loc>
+      <image:title>Surf Camp Package</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://tamountsurfhouse.com/packages/bed-and-breakfast</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamountsurfhouse.com/packages/surf-camp</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamountsurfhouse.com/about</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://tamountsurfhouse.com/images/hostel-living.jpg</image:loc>
+      <image:title>Tamount Surf House Interior</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://tamountsurfhouse.com/gallery</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tamountsurfhouse.com/contact</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tamountsurfhouse.com/faq</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://tamountsurfhouse.com/book</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+</urlset>

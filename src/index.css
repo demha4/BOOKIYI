@@ -40,6 +40,13 @@ body {
   overflow-x: hidden;
 }
 
+/* Normalize all large content/card zones to one system width */
+.max-w-5xl,
+.max-w-6xl,
+.max-w-7xl {
+  max-width: 1240px !important;
+}
+
 .font-serif {
   font-family: 'Mochiy Pop One', sans-serif;
 }
@@ -54,17 +61,28 @@ body {
 
 .display-title {
   font-family: 'Mochiy Pop One', sans-serif;
-  font-size: clamp(2.4rem, 6vw, 4.9rem);
-  line-height: 1.04;
-  letter-spacing: -0.03em;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   text-wrap: balance;
+}
+
+.container-narrow {
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+.container-wide {
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
 }
 
 .section-title {
   font-family: 'Mochiy Pop One', sans-serif;
-  font-size: clamp(2rem, 4.4vw, 3.5rem);
-  line-height: 1.1;
-  letter-spacing: -0.025em;
+  font-size: clamp(1.8rem, 3.8vw, 2.8rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
@@ -81,9 +99,10 @@ body {
 }
 
 .card-title {
-  font-size: clamp(1.35rem, 2vw, 1.85rem);
-  line-height: 1.18;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.15rem, 1.4vw, 1.35rem);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  font-weight: 600;
 }
 
 .card-copy {
@@ -100,18 +119,65 @@ body {
 }
 
 .card-shell {
-  background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,252,255,0.94) 100%);
-  border: 1px solid rgba(232, 223, 209, 0.9);
+  background: #fff;
+  border: 1px solid #F0E9E4;
   border-radius: 28px;
   overflow: hidden;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-  box-shadow: 0 16px 42px -20px rgba(22, 61, 84, 0.20);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 20px rgba(15, 42, 58, 0.06);
 }
 
 .card-shell:hover {
-  transform: translateY(-4px);
-  border-color: rgba(114, 187, 219, 0.55);
-  box-shadow: 0 22px 50px -24px rgba(22, 61, 84, 0.26);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px -12px rgba(15, 42, 58, 0.12);
+}
+
+.card-soft {
+  background: #F9F5F1;
+  border: 1px solid #F0E9E4;
+  border-radius: 24px;
+  padding: 2rem;
+  transition: box-shadow 0.25s ease;
+}
+
+.card-soft:hover {
+  box-shadow: 0 8px 30px rgba(15, 42, 58, 0.08);
+}
+
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.tag-pill-blue {
+  background: #E8F4F8;
+  color: #2B84AD;
+}
+
+.tag-pill-cream {
+  background: #F9F5F1;
+  color: #5B5B5B;
+}
+
+.tag-pill-accent {
+  background: #F7E8D3;
+  color: #A56D2A;
+}
+
+.tag-pill-green {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.tag-pill-coral {
+  background: #FFF3F0;
+  color: #C44D4D;
 }
 
 .reviews-track-wrapper {

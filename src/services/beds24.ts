@@ -326,9 +326,15 @@ export async function submitBookingToBeds24(
     const data = await res.json();
 
     if (data?.success) {
+      const ids = Array.isArray(data.booking?.ids)
+        ? data.booking.ids.map(String)
+        : data.booking?.id
+          ? [String(data.booking.id)]
+          : [];
+
       return {
         success: true,
-        bookingIds: data.booking?.id ? [String(data.booking.id)] : [],
+        bookingIds: ids,
         raw: data,
       };
     }

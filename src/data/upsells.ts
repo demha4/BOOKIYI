@@ -5,9 +5,10 @@ export interface UpsellItem {
 }
 
 export const UPSELL_ITEMS: UpsellItem[] = [
-  { id: "airport-pickup", name: "Airport Pickup", price: 25 },
-  { id: "surf-lesson", name: "Surf Lesson", price: 25 },
-  { id: "board-rental", name: "Board + Wetsuit Rental", price: 12 },
-  { id: "yoga-session", name: "Rooftop Yoga", price: 12 },
-  { id: "paradise-valley", name: "Paradise Valley Trip", price: 25 },
+  { id: "surf-lesson", name: "Surf Lesson", price: 30 },
+  { id: "paradise-valley", name: "Paradise Valley", price: 30 },
+  { id: "sand-dunes", name: "Sand Dunes", price: 30 },
+  { id: "airport-pickup", name: "Taxi", price: 25 },
+  { id: "washing-machine", name: "Washing Machine", price: 5 },
+  { id: "skate-park", name: "Skate Park Sunset", price: 5 },
 ];

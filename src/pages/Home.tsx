@@ -6,45 +6,47 @@ import {
   Waves,
   ArrowRight,
   Sun,
-  Zap,
+  Sparkles,
+  Mountain,
   Users,
   Star,
   MessageCircle,
   Plane,
 } from "lucide-react";
 import { rooms, galleryImages, testimonials, siteInfo } from "../data/content";
+import SEO from "../components/SEO";
 
 export default function Home() {
   const easyItems = [
     {
       icon: <Waves size={28} className="text-ocean" />,
       title: "Daily Surf Sessions",
-      text: "World-class breaks at Anza, Taghazout, and Tamraght with local guides who know every swell.",
+      text: "Anza's beach break is a 4-minute walk away. Taghazout, Tamraght, Banana Point, and Devil's Rock are all within 20 minutes.",
     },
     {
       icon: <Sun size={28} className="text-ocean" />,
       title: "Sunset Yoga",
-      text: "Rooftop yoga sessions as the sun dips into the Atlantic. Reset your body after a day in the water.",
+      text: "Rooftop yoga as the sun drops into the Atlantic. Opens shoulders and hips after a long session in the water.",
     },
     {
-      icon: <Zap size={28} className="text-ocean" />,
-      title: "Skate & Chill",
-      text: "Our in-house skate ramp and proximity to Taghazout skate park mean the fun doesn't stop when the surf slows down.",
+      icon: <Mountain size={28} className="text-ocean" />,
+      title: "Paradise Valley & Dunes",
+      text: "Half-day to the palm valley with rock pools, or a sunset run to the Timlalin sand dunes north of Agadir.",
     },
     {
-      icon: <MapPin size={28} className="text-ocean" />,
-      title: "Local Adventures",
-      text: "Explore Paradise Valley, Agadir souks, and hidden beaches with simple add-ons that fit into your stay.",
+      icon: <Sparkles size={28} className="text-ocean" />,
+      title: "Hammam & Reset",
+      text: "Local Moroccan hammam — black soap, steam, scrub, and massage. The deepest reset you'll get all week.",
     },
     {
       icon: <Users size={28} className="text-ocean" />,
       title: "Community Dinners",
-      text: "Family-style dinners every evening. Share stories, make friends, and taste authentic Moroccan cuisine.",
+      text: "Family-style Moroccan dinners on the rooftop. Tagine, couscous, and stories from whoever's at the table.",
     },
     {
       icon: <Wifi size={28} className="text-ocean" />,
       title: "Digital Nomad Friendly",
-      text: "High-speed WiFi, quiet workspaces, and a relaxed setup for remote work between surf sessions.",
+      text: "Free fast WiFi (rated 8.8/10 by guests), quiet corners, and a community of remote workers between sessions.",
     },
   ];
 
@@ -54,29 +56,34 @@ export default function Home() {
       img: "/images/surf-lesson.jpg",
       location: "Best Spots in Agadir",
       title: "2-Hour Surf Lesson",
-      benefit: "Fast progression with coach + full gear included.",
+      benefit: "Coach-led session with free evening surfing included.",
       priceLogic: "From €30 / person",
     },
     {
-      id: "sunset-yoga",
-      img: "/images/yoga-sunset.jpg",
-      location: "Agadir",
-      title: "Sunset Yoga Session",
-      benefit: "Slow down after surf with ocean-view terrace flow.",
-      priceLogic: "From €12",
+      id: "sand-dunes",
+      img: "/images/moroccan-sunset.jpg",
+      location: "Timlalin",
+      title: "Sand Dunes",
+      benefit: "Dunes trip with dinner included.",
+      priceLogic: "€30 / person",
     },
     {
       id: "paradise-day-trip",
       img: "/images/moroccan-sunset.jpg",
       location: "Paradise Valley",
       title: "Paradise Valley Day Trip",
-      benefit: "One-day reset with natural pools and scenic views.",
-      priceLogic: "From €30 / person",
+      benefit: "Valley trip with lunch included.",
+      priceLogic: "€30 / person",
     },
   ];
 
   return (
     <div className="bg-cream">
+      <SEO
+        title="Surf Hostel in Anza, Agadir"
+        description="Small, family-run surf hostel in Anza Beach, Agadir. Dorm beds from €12/night, private rooms, rooftop terrace, surf lessons, and local trips. Book direct & save."
+        ogImage="/images/hero-surf.jpg"
+      />
       {/* Hero Section */}
       <section className="relative min-h-[88vh] md:min-h-screen flex flex-col items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -95,7 +102,7 @@ export default function Home() {
             transition={{ delay: 0.1 }}
             className="inline-block border border-white/40 rounded-full px-4 sm:px-5 py-1.5 mb-6 sm:mb-8 text-xs sm:text-sm text-white/90"
           >
-            Anza, Agadir, Morocco • Surf, Stay, And Local Experiences
+            Anza, Agadir · Morocco
           </motion.div>
 
           <motion.h1
@@ -173,9 +180,9 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="card-shell p-7 sm:p-10"
+                className="bg-cream rounded-3xl p-7 sm:p-10 border border-stone-100 shadow-sm"
               >
-                <div className="rounded-[1.45rem] bg-[linear-gradient(180deg,#F4F8FD_0%,#EAF2FA_100%)] flex items-center justify-center mb-6 sm:mb-8 w-[70px] h-[70px] sm:w-[76px] sm:h-[76px] shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+                <div className="rounded-[1.35rem] bg-slate-100 flex items-center justify-center mb-6 sm:mb-8 w-[70px] h-[70px] sm:w-[76px] sm:h-[76px]">
                   {item.icon}
                 </div>
                 <h3 className="card-title font-semibold text-charcoal mb-3 sm:mb-4">{item.title}</h3>
@@ -197,10 +204,10 @@ export default function Home() {
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star key={i} size={16} className="fill-[var(--color-accent)] text-[var(--color-accent)]" />
               ))}
-              <span className="ml-2 sm:ml-3 text-stone font-semibold text-base sm:text-lg">4.9 / 5</span>
+              <span className="ml-2 sm:ml-3 text-stone font-semibold text-base sm:text-lg">8.5 / 10</span>
             </div>
             <p className="text-stone text-base sm:text-xl leading-relaxed">
-              Based on 200+ reviews from Google & Booking.com
+              Based on 85+ verified reviews on Booking.com & Hostelworld
             </p>
           </div>
         </div>
@@ -214,7 +221,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: (i % testimonials.length) * 0.06 }}
-                className="review-card card-shell p-6 sm:p-7 h-full flex flex-col"
+                className="review-card card-shell bg-white p-6 sm:p-7 h-full flex flex-col"
               >
                 <div className="flex gap-1 mb-4">
                   {Array.from({ length: 5 }).map((_, j) => (
@@ -310,9 +317,9 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15 }}
-                className="card-shell overflow-hidden flex flex-col h-full"
+                className="bg-white rounded-3xl overflow-hidden border border-stone-200 hover:shadow-lg transition-shadow flex flex-col h-full"
               >
-                <div className="h-52 sm:h-56 overflow-hidden bg-[linear-gradient(180deg,#F4F8FD_0%,#EAF2FA_100%)]">
+                <div className="h-52 sm:h-56 overflow-hidden bg-slate-100">
                   <img src={act.img} alt={act.title} className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
                 </div>
                 <div className="p-6 sm:p-8 flex flex-col flex-1">
@@ -357,9 +364,9 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="card-shell p-7 sm:p-8 flex flex-col"
+              className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm flex flex-col"
             >
-              <div className="inline-flex w-fit rounded-full bg-[linear-gradient(180deg,#F4F8FD_0%,#EAF2FA_100%)] text-ocean px-3.5 py-1.5 text-xs font-medium mb-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">Flexible stay</div>
+              <div className="inline-flex w-fit rounded-full bg-ocean/10 text-ocean px-3 py-1 text-xs font-medium mb-5">Flexible stay</div>
               <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-2">Bed &amp; Breakfast</h3>
               <p className="text-ocean font-semibold text-lg mb-4">From €12 / night</p>
               <p className="card-copy text-stone mb-4">
@@ -373,7 +380,7 @@ export default function Home() {
                 <Link to="/packages/bed-and-breakfast" className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 text-charcoal px-5 py-3.5 text-sm font-medium hover:bg-stone-50 transition-colors">
                   See full details
                 </Link>
-                <Link to="/book" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-5 py-3.5 text-sm font-semibold hover:bg-charcoal/90 transition-colors">
+                <Link to="/book/bed-and-breakfast" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-5 py-3.5 text-sm font-semibold hover:bg-charcoal/90 transition-colors">
                   Book B&amp;B
                 </Link>
               </div>
@@ -384,9 +391,9 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.08 }}
-              className="card-shell p-7 sm:p-8 flex flex-col"
+              className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm flex flex-col"
             >
-              <div className="inline-flex w-fit rounded-full bg-[#F7E8D3] text-[#A56D2A] px-3.5 py-1.5 text-xs font-medium mb-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">All-inclusive</div>
+              <div className="inline-flex w-fit rounded-full bg-sunset/10 text-sunset px-3 py-1 text-xs font-medium mb-5">All-inclusive</div>
               <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-2">Surf Camp Pack</h3>
               <p className="text-ocean font-semibold text-lg mb-4">From €45 / day</p>
               <p className="card-copy text-stone mb-4">
@@ -400,19 +407,26 @@ export default function Home() {
                 <Link to="/packages/surf-camp" className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 text-charcoal px-5 py-3.5 text-sm font-medium hover:bg-stone-50 transition-colors">
                   See full details
                 </Link>
-                <Link to="/book?package=beginner-week" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-5 py-3.5 text-sm font-semibold hover:bg-charcoal/90 transition-colors">
+                <Link to="/book/package/beginner-week" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-5 py-3.5 text-sm font-semibold hover:bg-charcoal/90 transition-colors">
                   Book Surf Camp
                 </Link>
               </div>
             </motion.div>
           </div>
 
-          <p className="text-stone text-sm sm:text-base leading-7 mt-8 max-w-3xl mx-auto">
-            Not sure which? Message Abdelwahd on WhatsApp — he will help you figure it out in two minutes.
-            <a href={`https://wa.me/${siteInfo.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-ocean font-semibold ml-1 hover:text-ocean-dark transition-colors">
-              {siteInfo.phone}
+        </div>
+      </section>
+
+      {/* CTA Help Card */}
+      <section className="py-16 sm:py-20 bg-cream">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-charcoal text-white rounded-[2rem] p-8 sm:p-12 text-center shadow-[0_18px_60px_rgba(20,28,43,0.18)]">
+            <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight leading-tight mb-4">Not sure which one fits?</h2>
+            <p className="text-white/70 text-base sm:text-lg leading-8 max-w-2xl mx-auto mb-8">Message Abdelwahd on WhatsApp. He will help you figure it out in two minutes without trying to upsell you into something you do not need.</p>
+            <a href={`https://wa.me/${siteInfo.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-white text-charcoal px-8 py-4 font-semibold text-base hover:bg-white/90 transition-colors">
+              <MessageCircle size={18} /> WhatsApp {siteInfo.phone}
             </a>
-          </p>
+          </div>
         </div>
       </section>
 
@@ -468,7 +482,7 @@ export default function Home() {
               Contact & Help
             </div>
           </div>
-          <div className="rounded-[2.2rem] sm:rounded-[2.6rem] bg-[#182136] text-white shadow-[0_22px_60px_rgba(20,28,43,0.18)] p-6 sm:p-8 lg:p-10">
+          <div className="rounded-[2rem] sm:rounded-[2.4rem] bg-[#182136] text-white shadow-[0_18px_60px_rgba(20,28,43,0.18)] p-6 sm:p-8 lg:p-10">
             <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-6 lg:gap-8 items-stretch">
               <div className="py-2 sm:py-4">
                 <div className="kicker text-blue-300 mb-5 sm:mb-6">Direct Booking</div>
@@ -494,7 +508,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="rounded-[2rem] bg-white/8 border border-white/8 p-6 sm:p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+              <div className="rounded-[1.7rem] bg-white/8 border border-white/8 p-6 sm:p-7">
                 <p className="text-white/60 text-sm sm:text-base mb-3">Direct contact</p>
                 <a href="tel:+212612345678" className="block text-white text-2xl sm:text-[2rem] font-semibold leading-tight mb-1 hover:text-blue-200 transition-colors">
                   +212 6 12 34 56 78

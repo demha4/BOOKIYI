@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Phone, Mail, Send, CheckCircle, MessageCircle, CircleHelp } from "lucide-react";
 import { faqs, siteInfo } from "../data/content";
+import SEO from "../components/SEO";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -24,7 +25,12 @@ export default function Contact() {
   };
 
   return (
-    <div className="pt-20 bg-cream">
+    <div className="pt-32 sm:pt-36 bg-cream">
+      <SEO
+        title="Contact Us"
+        description="WhatsApp +212 6 12 34 56 78 or email tamountsurfhouse@gmail.com. Fast replies for booking questions, surf conditions, and local tips."
+        ogImage="/images/hostel-living.jpg"
+      />
       <section className="py-24 sm:py-28 text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="kicker text-ocean mb-5">

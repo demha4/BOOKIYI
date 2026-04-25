@@ -179,23 +179,45 @@ export default async function handler(req: RequestLike, res: ResponseLike) {
           ? new Date(new Date(arrival).getTime() + 86400000).toISOString().slice(0, 10)
           : rawDeparture;
 
-        // V2 POST /bookings expects an ARRAY with correct V2 field names
-        const bookingPayload = [{
-          propertyId: Number(PROPERTY_ID),
-          roomId: Number(roomAssignments[0].roomId),
-          arrival,
-          departure,
-          status,
-          numAdult: roomAssignments.reduce((sum: number, r: any) => sum + Number(r.numAdult || 1), 0),
-          numChild: roomAssignments.reduce((sum: number, r: any) => sum + Number(r.numChild || 0), 0),
-          firstName: guestFirstName || "",
-          lastName: guestName,
-          email: guestEmail,
-          phone: guestPhone || "",
-          notes: notes || "",
-          referer: "tamount-website",
-          ...(typeof price === "number" && Number.isFinite(price) ? { price } : {}),
-        }];
+        const finalPrice = typeof price === "number" && Number.isFinite(price) ? Number(price) : null;
+        const totalAdultsForSplit = roomAssignments.reduce(
+          (sum: number, r: any) => sum + Number(r.numAdult || 1),
+          0
+        );
+        let allocatedPrice = 0;
+
+        // V2 POST /bookings expects an ARRAY. Each selected room becomes its own booking.
+        const bookingPayload = roomAssignments.map((room: any, index: number) => {
+          const numAdult = Number(room.numAdult || 1);
+          const numChild = Number(room.numChild || 0);
+          const isLast = index === roomAssignments.length - 1;
+          const priceShare = finalPrice === null
+            ? null
+            : isLast
+              ? Number((finalPrice - allocatedPrice).toFixed(2))
+              : Number(((finalPrice * numAdult) / Math.max(totalAdultsForSplit, 1)).toFixed(2));
+
+          if (priceShare !== null && !isLast) allocatedPrice += priceShare;
+
+          return {
+            propertyId: Number(PROPERTY_ID),
+            roomId: Number(room.roomId),
+            arrival,
+            departure,
+            status,
+            numAdult,
+            numChild,
+            firstName: guestFirstName || "",
+            lastName: guestName,
+            email: guestEmail,
+            phone: guestPhone || "",
+            notes: [notes || "", roomAssignments.length > 1 ? `Room booking ${index + 1}/${roomAssignments.length}` : ""]
+              .filter(Boolean)
+              .join(" | "),
+            referer: "tamount-website",
+            ...(priceShare !== null ? { price: priceShare } : {}),
+          };
+        });
 
         console.log("[Beds24] Creating booking:", JSON.stringify(bookingPayload));
 
@@ -208,12 +230,15 @@ export default async function handler(req: RequestLike, res: ResponseLike) {
 
         // V2 returns array of created bookings
         const bookingArr = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : [data];
-        const bookingId = bookingArr[0]?.id || bookingArr[0]?.bookId || null;
+        const bookingIds = bookingArr
+          .map((booking: any) => booking?.id || booking?.bookId || null)
+          .filter(Boolean);
+        const bookingId = bookingIds[0] || null;
 
         if (bookingId) {
-          res.status(200).json({ success: true, booking: { id: bookingId }, raw: data });
+          res.status(200).json({ success: true, booking: { id: bookingId, ids: bookingIds }, raw: data });
         } else {
-          res.status(200).json({ success: true, booking: { id: null }, raw: data });
+          res.status(200).json({ success: true, booking: { id: null, ids: [] }, raw: data });
         }
         return;
       }

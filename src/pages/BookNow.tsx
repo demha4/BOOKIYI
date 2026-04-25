@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar, Users, ChevronRight, Check, Bed, Package, Plus,
@@ -42,12 +42,12 @@ interface AddonDef {
 }
 
 const ADDONS: AddonDef[] = [
-  { id: "surf-lesson", name: "Surf Lesson", description: "2hr session with ISA-certified instructor + board & wetsuit", price: 25, priceUnit: "perSession", icon: <Waves size={18} />, maxPerUnit: 10 },
-  { id: "yoga-class", name: "Yoga Class", description: "Sunset rooftop yoga — all levels, mats provided", price: 10, priceUnit: "perSession", icon: <Sun size={18} />, maxPerUnit: 10 },
-  { id: "airport-pickup", name: "Airport Pickup", description: "Private transfer from Agadir Al Massira Airport", price: 30, priceUnit: "fixed", icon: <Plane size={18} />, maxPerUnit: 1 },
-  { id: "breakfast-upgrade", name: "Breakfast Upgrade", description: "Daily continental + Moroccan breakfast", price: 5, priceUnit: "perNight", icon: <UtensilsCrossed size={18} />, maxPerUnit: 1 },
-  { id: "equipment-rental", name: "Equipment Rental", description: "Premium surfboard + wetsuit for your stay", price: 10, priceUnit: "perNight", icon: <Dumbbell size={18} />, maxPerUnit: 1 },
-  { id: "massage", name: "Moroccan Massage", description: "1hr traditional massage to relax after surfing", price: 35, priceUnit: "fixed", icon: <Sparkles size={18} />, maxPerUnit: 5 },
+  { id: "surf-lesson", name: "Surf Lesson", description: "With coach, plus free evening surfing", price: 30, priceUnit: "perSession", icon: <Waves size={18} />, maxPerUnit: 10 },
+  { id: "paradise-valley", name: "Paradise Valley", description: "Valley trip with lunch included", price: 30, priceUnit: "fixed", icon: <Sparkles size={18} />, maxPerUnit: 10 },
+  { id: "sand-dunes", name: "Sand Dunes", description: "Dunes trip with dinner included", price: 30, priceUnit: "fixed", icon: <Sun size={18} />, maxPerUnit: 10 },
+  { id: "airport-pickup", name: "Taxi", description: "Taxi / airport transfer support", price: 25, priceUnit: "fixed", icon: <Plane size={18} />, maxPerUnit: 1 },
+  { id: "washing-machine", name: "Washing Machine", description: "Laundry wash during your stay", price: 5, priceUnit: "fixed", icon: <UtensilsCrossed size={18} />, maxPerUnit: 10 },
+  { id: "skate-park", name: "Skate Park Sunset", description: "Sunset skate park session", price: 5, priceUnit: "fixed", icon: <Dumbbell size={18} />, maxPerUnit: 10 },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
@@ -71,7 +71,7 @@ const guestConfig: Record<GuestType, {
 /* ═══════════════════════════════════════════════════════════════
    PRICE CALCULATION HOOK
    ═══════════════════════════════════════════════════════════════ */
-function usePriceBreakdown() {
+function usePriceBreakdown(liveData: Record<string, { avgNightly?: number; totalPrice?: number }> = {}) {
   const { booking, nights, totalPersons } = useBooking();
 
   const roomBreakdown = useMemo(() => {
@@ -83,18 +83,20 @@ function usePriceBreakdown() {
         roomMap.set(g.roomId, list);
       }
     });
-    const breakdown: { room: typeof rooms[0]; guestIds: string[]; subtotal: number }[] = [];
+    const breakdown: { room: typeof rooms[0]; guestIds: string[]; subtotal: number; unitPrice: number }[] = [];
     roomMap.forEach((guestIds, roomId) => {
       const room = rooms.find((r) => r.id === roomId);
       if (room) {
+        const live = liveData[room.beds24RoomId];
+        const unitPrice = live?.avgNightly && live.avgNightly > 0 ? live.avgNightly : room.price;
         const subtotal = room.type === "dorm"
-          ? room.price * nights * guestIds.length
-          : room.price * nights;
-        breakdown.push({ room, guestIds, subtotal });
+          ? unitPrice * nights * guestIds.length
+          : unitPrice * nights;
+        breakdown.push({ room, guestIds, subtotal, unitPrice });
       }
     });
     return breakdown;
-  }, [booking.guests, nights]);
+  }, [booking.guests, nights, liveData]);
 
   const selectedPkg = packages.find((p) => p.id === booking.packageId);
 
@@ -111,10 +113,22 @@ function usePriceBreakdown() {
     return Object.entries(booking.addOns).reduce((sum, [id, sel]) => {
       const addon = ADDONS.find((a) => a.id === id);
       if (!addon || sel.quantity <= 0) return sum;
-      if (addon.priceUnit === "perNight") return sum + addon.price * sel.quantity * nights;
-      return sum + addon.price * sel.quantity;
+      
+      // Airport transfer is per-booking (fixed), all other add-ons are per-guest
+      if (addon.id === "airport-pickup") {
+        if (addon.priceUnit === "perNight") {
+          return sum + addon.price * sel.quantity * nights;
+        }
+        return sum + addon.price * sel.quantity;
+      }
+      
+      // All other add-ons multiply by number of guests
+      if (addon.priceUnit === "perNight") {
+        return sum + addon.price * sel.quantity * nights * totalPersons;
+      }
+      return sum + addon.price * sel.quantity * totalPersons;
     }, 0);
-  }, [booking.addOns, nights]);
+  }, [booking.addOns, nights, totalPersons]);
 
   const total = accommodationTotal + addonsTotal;
   const depositAmount = Math.ceil(total * 0.3);
@@ -422,13 +436,16 @@ function PaymentOptionCard({
 export default function BookNow() {
   const [step, setStep] = useState(1);
   const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const params = useParams<{ roomId?: string; packageId?: string }>();
   const ctx = useBooking();
   const { booking, setBooking, setGuestCounts, updateGuest, setPackage,
     setAddonMode, setAddonGroupQty, setAddonGuestQty, nights, totalPersons } = ctx;
-  const price = usePriceBreakdown();
 
   const { liveData, loading: liveLoading, error: liveError, isLive, lastUpdated, refresh: refreshAvailability } =
     useLiveAvailability(booking.checkIn, booking.checkOut, totalPersons || 1, 30000);
+
+  const price = usePriceBreakdown(liveData);
 
   const [guestPickerOpen, setGuestPickerOpen] = useState(false);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
@@ -515,9 +532,25 @@ export default function BookNow() {
   };
 
   useEffect(() => {
-    const pkg = searchParams.get("package");
+    const pkg = params.packageId || searchParams.get("package");
+    const roomOnly = location.pathname.includes("bed-and-breakfast");
+
+    if (roomOnly) {
+      setPackage(null);
+      return;
+    }
+
     if (pkg) setPackage(pkg);
-  }, [searchParams, setPackage]);
+  }, [location.pathname, params.packageId, searchParams, setPackage]);
+
+  useEffect(() => {
+    const presetRoomId = params.roomId || searchParams.get("room");
+    if (!presetRoomId || booking.guests.length === 0) return;
+    if (!rooms.some((room) => room.id === presetRoomId)) return;
+    if (booking.guests.some((guest) => guest.roomId !== null)) return;
+
+    booking.guests.forEach((guest) => updateGuest(guest.id, { roomId: presetRoomId }));
+  }, [params.roomId, searchParams, booking.guests, updateGuest]);
 
   /* ─── Navigation ─── */
   const canProceed = (s: number) => {
@@ -1236,7 +1269,7 @@ export default function BookNow() {
                                     }`}>{rb.room.type}</span>
                                     <span className="font-semibold text-stone-800 text-sm">{rb.room.name}</span>
                                   </div>
-                                  <span className="font-bold text-ocean">€{rb.subtotal}</span>
+                                  <span className="font-bold text-ocean">€{Math.round(rb.subtotal)}</span>
                                 </div>
                                 <div className="flex flex-wrap gap-1.5">
                                   {rb.guestIds.map((gId) => {
@@ -1262,10 +1295,16 @@ export default function BookNow() {
                             {Object.entries(booking.addOns).filter(([, s]) => s.quantity > 0).map(([id, sel]) => {
                               const a = ADDONS.find((x) => x.id === id);
                               if (!a) return null;
-                              const lineTotal = a.priceUnit === "perNight" ? a.price * sel.quantity * nights : a.price * sel.quantity;
+                              const lineTotal = a.id === "airport-pickup"
+                                ? a.price * sel.quantity
+                                : a.priceUnit === "perNight"
+                                  ? a.price * sel.quantity * nights * totalPersons
+                                  : a.price * sel.quantity * totalPersons;
                               return (
                                 <div key={id} className="flex items-center justify-between py-1.5 text-sm">
-                                  <span className="text-stone-600">{a.name} ×{sel.quantity}</span>
+                                  <span className="text-stone-600">
+                                    {a.name} ×{sel.quantity}{a.id !== "airport-pickup" ? ` × ${totalPersons} guest${totalPersons > 1 ? "s" : ""}` : ""}
+                                  </span>
                                   <span className="font-semibold">€{lineTotal}</span>
                                 </div>
                               );
@@ -1482,7 +1521,7 @@ export default function BookNow() {
                       <div key={rb.room.id} className="mb-2">
                         <div className="flex justify-between text-xs">
                           <span className="text-stone-600">{rb.room.name}</span>
-                          <span className="font-semibold">€{rb.subtotal}</span>
+                          <span className="font-semibold">€{Math.round(rb.subtotal)}</span>
                         </div>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {rb.guestIds.map((gId) => {
@@ -1527,6 +1566,20 @@ export default function BookNow() {
                 </div>
                 {nights > 0 && price.total > 0 && (
                   <p className="text-[10px] text-stone-400 text-right mt-1">≈ €{Math.round(price.total / nights)} / night</p>
+                )}
+
+                {step < 6 && (
+                  <button
+                    onClick={goNext}
+                    disabled={!canProceed(step)}
+                    className={`mt-5 w-full flex items-center justify-center gap-2 rounded-2xl py-4 text-sm font-bold transition-all ${
+                      canProceed(step)
+                        ? "bg-ocean text-white hover:bg-ocean-dark shadow-lg shadow-ocean/20"
+                        : "bg-stone-200 text-stone-400 cursor-not-allowed"
+                    }`}
+                  >
+                    Continue <ChevronRight size={16} />
+                  </button>
                 )}
               </div>
             </div>
