@@ -69,6 +69,43 @@ const guestConfig: Record<GuestType, {
 };
 
 /* ═══════════════════════════════════════════════════════════════
+   ADDON PRICING — single source of truth
+   ═══════════════════════════════════════════════════════════════
+   Used by: addonsTotal calculation, the inline subtotal under each
+   addon card, and the right-side Booking Summary line item.
+
+   Rules:
+   - Taxi / airport-pickup: flat fare, one fare regardless of headcount.
+     (covers up to 5 guests in one ride per Tamount's policy)
+   - Group mode (other addons): "we want X for each member of the group"
+     → multiply by totalPersons.
+   - Per-person mode (other addons): quantity is already the SUM of
+     each guest's individual selections (handled by setAddonGuestQty),
+     so we don't multiply by headcount again — that would double-count.
+   - Per-night addons multiply by nights on top of the above.
+*/
+function calcAddonLineTotal(
+  addon: AddonDef,
+  quantity: number,
+  mode: "group" | "person",
+  totalPersons: number,
+  nights: number
+): number {
+  if (quantity <= 0) return 0;
+  const nightlyMultiplier = addon.priceUnit === "perNight" ? nights : 1;
+  // Flat-fare items: one fare regardless of group size or mode.
+  if (addon.id === "airport-pickup") {
+    return addon.price * quantity * nightlyMultiplier;
+  }
+  // Group mode: each group member gets one of the addon.
+  if (mode === "group") {
+    return addon.price * quantity * nightlyMultiplier * totalPersons;
+  }
+  // Per-person mode: quantity already encodes the right count.
+  return addon.price * quantity * nightlyMultiplier;
+}
+
+/* ═══════════════════════════════════════════════════════════════
    PRICE CALCULATION HOOK
    ═══════════════════════════════════════════════════════════════ */
 function usePriceBreakdown(liveData: Record<string, { avgNightly?: number; totalPrice?: number }> = {}) {
@@ -113,17 +150,9 @@ function usePriceBreakdown(liveData: Record<string, { avgNightly?: number; total
     return Object.entries(booking.addOns).reduce((sum, [id, sel]) => {
       const addon = ADDONS.find((a) => a.id === id);
       if (!addon || sel.quantity <= 0) return sum;
-
-      // sel.quantity already represents the correct count:
-      // - In group mode: quantity = number of items the group booked
-      // - In per-person mode: quantity = sum of per-guest selections
-      // So we never multiply by totalPersons here — that would double-count.
-      if (addon.priceUnit === "perNight") {
-        return sum + addon.price * sel.quantity * nights;
-      }
-      return sum + addon.price * sel.quantity;
+      return sum + calcAddonLineTotal(addon, sel.quantity, booking.addonMode, totalPersons, nights);
     }, 0);
-  }, [booking.addOns, nights]);
+  }, [booking.addOns, booking.addonMode, nights, totalPersons]);
 
   const total = accommodationTotal + addonsTotal;
   const depositAmount = Math.ceil(total * 0.3);
@@ -534,9 +563,7 @@ export default function BookNow() {
       .map(([id, selection]) => {
         const addon = ADDONS.find((item) => item.id === id);
         if (!addon) return null;
-        const lineTotal = addon.priceUnit === "perNight"
-          ? addon.price * selection.quantity * nights
-          : addon.price * selection.quantity;
+        const lineTotal = calcAddonLineTotal(addon, selection.quantity, booking.addonMode, totalPersons, nights);
         return `${addon.name} x${selection.quantity} - €${lineTotal}`;
       })
       .filter(Boolean) as string[];
@@ -1091,7 +1118,7 @@ export default function BookNow() {
 
                               {sel.quantity > 0 && (
                                 <p className="text-right text-xs text-ocean font-semibold mt-2">
-                                  Subtotal: €{addon.priceUnit === "perNight" ? addon.price * sel.quantity * nights : addon.price * sel.quantity}
+                                  Subtotal: €{calcAddonLineTotal(addon, sel.quantity, booking.addonMode, totalPersons, nights)}
                                 </p>
                               )}
                             </div>
@@ -1340,9 +1367,7 @@ export default function BookNow() {
                             {Object.entries(booking.addOns).filter(([, s]) => s.quantity > 0).map(([id, sel]) => {
                               const a = ADDONS.find((x) => x.id === id);
                               if (!a) return null;
-                              const lineTotal = a.priceUnit === "perNight"
-                                ? a.price * sel.quantity * nights
-                                : a.price * sel.quantity;
+                              const lineTotal = calcAddonLineTotal(a, sel.quantity, booking.addonMode, totalPersons, nights);
                               return (
                                 <div key={id} className="flex items-center justify-between py-1.5 text-sm">
                                   <span className="text-stone-600">

@@ -374,3 +374,53 @@ The two `price` shares (157.50 + 157.50) sum exactly to €315, which is the tot
 4. Edit `api/beds24.ts` to remove the hardcoded fallback strings — leave only `process.env.BEDS24_REFRESH_TOKEN || ""` so the code crashes loudly if the env var is missing instead of silently using a leaked token.
 
 Same for the property ID — though that's less sensitive than the token, it shouldn't be in source.
+
+---
+
+## Pass 10 — Restore "per-group" multiplication (the previous fix went too far)
+
+### What broke in Pass 8
+When fixing the per-person double-count bug, I removed the `× totalPersons` multiplier from **both** modes. But group mode legitimately needs that multiplier, because per the spec:
+
+> per group = the whole group wants the session/service
+> per person = only one person or selected persons want the service
+
+So if a group of 2 selects "2 surf lessons" in group mode, the intent is "we each want 2 lessons" → 4 sessions × €30 = €120. After Pass 8, the system was charging €60 (the price for 2 sessions total, shared between two people, which doesn't match how surf lessons work).
+
+### What changed in Pass 10
+Pricing now branches by **mode** and treats taxi as a flat-fare exception:
+
+```
+calcAddonLineTotal(addon, quantity, mode, totalPersons, nights):
+  if addon is taxi (airport-pickup):
+    return price × quantity × nightlyMultiplier
+  if mode === "group":
+    return price × quantity × nightlyMultiplier × totalPersons
+  else (per-person):
+    return price × quantity × nightlyMultiplier
+```
+
+### Single source of truth
+Extracted the calculation into one helper (`calcAddonLineTotal`) used in **four** places that previously each had their own copy of the math:
+
+1. `addonsTotal` (the running total used for the booking grand-total)
+2. The inline "Subtotal: €X" line under each addon card
+3. The right-side Booking Summary line items
+4. The `Extras: ... - €X` lines in the notes sent to Beds24
+
+This guarantees no drift: whatever the user sees in the addon card is exactly what's in the right-side summary, exactly what's in the booking total, and exactly what gets written into the Beds24 notes for audit.
+
+### Math verification (all 5 scenarios)
+
+| Scenario | Group size | Mode | Quantity | Expected | Calc | Result |
+|---|---|---|---|---|---|---|
+| Group, 2 lessons each | 2 | group | 2 | €120 | 30×2×2 | ✓ |
+| Group, 1 lesson each | 2 | group | 1 | €60 | 30×1×2 | ✓ |
+| Per-person, only G1 takes 1 | 2 | person | 1 (sum) | €30 | 30×1 | ✓ |
+| Per-person, both take 1 | 2 | person | 2 (sum) | €60 | 30×2 | ✓ |
+| Taxi (any mode) | 4 | any | 1 | €25 | 25×1 | ✓ |
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2173 modules, 659 KB → 188 KB gzipped)
+- ✅ All 4 callers refactored to use `calcAddonLineTotal` — no math repeated
