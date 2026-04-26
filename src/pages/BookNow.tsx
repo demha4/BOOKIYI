@@ -435,7 +435,8 @@ export default function BookNow() {
   const params = useParams<{ roomId?: string; packageId?: string }>();
   const ctx = useBooking();
   const { booking, setBooking, setGuestCounts, updateGuest, setPackage,
-    setAddonMode, setAddonGroupQty, setAddonGuestQty, nights, totalPersons } = ctx;
+    setAddonMode, setAddonGroupQty, setAddonGuestQty,
+    clearAllRoomAssignments, clearAddOns, nights, totalPersons } = ctx;
 
   const { liveData, loading: liveLoading, error: liveError, isLive, lastUpdated, refresh: refreshAvailability } =
     useLiveAvailability(booking.checkIn, booking.checkOut, totalPersons || 1, 30000);
@@ -457,6 +458,38 @@ export default function BookNow() {
   const unassignedGuests = booking.guests.filter((g) => g.roomId === null);
   const noGuests = totalPersons === 0;
   const noDates = nights === 0;
+
+  /* ─── Auto-reset on guest/date change ───────────────────────────
+     If the user changes dates or guest count after they have already
+     picked rooms, the previous selection becomes stale (different
+     pricing, possibly different availability). Snap them back to
+     Step 2 (Rooms) and clear room assignments + add-ons + payment
+     choice so they re-confirm everything against fresh Beds24 data.
+     We track the prior values in a ref so we only fire on actual
+     changes, not the initial mount. */
+  const lastResetKey = useRef<string | null>(null);
+  useEffect(() => {
+    const key = `${booking.checkIn}|${booking.checkOut}|${totalPersons}`;
+    if (lastResetKey.current === null) {
+      lastResetKey.current = key;
+      return;
+    }
+    if (lastResetKey.current === key) return;
+    lastResetKey.current = key;
+
+    // Only act if the user has progressed past room selection.
+    if (step > 2) {
+      clearAllRoomAssignments();
+      clearAddOns();
+      setBooking({ paymentChoice: null });
+      setStep(2);
+      // Force live availability to refetch with new params.
+      refreshAvailability?.();
+    }
+    // refreshAvailability is intentionally omitted — including it
+    // would create a loop because the hook returns a new fn each call.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [booking.checkIn, booking.checkOut, totalPersons, step, clearAllRoomAssignments, clearAddOns, setBooking]);
 
   /* ─── Room assignments for submission ─── */
   const buildRoomAssignments = () => {
@@ -490,21 +523,33 @@ export default function BookNow() {
     const guestName = parts.length > 1 ? parts[parts.length - 1] : fullName;
 
     const isDeposit = booking.paymentChoice === "deposit";
-    const selectedUpsellSummary = Object.entries(booking.addOns)
+
+    // Build per-line extras with prices, e.g.:
+    //   "Surf Lesson x2 - €60"
+    //   "Airport Transfer x1 - €25"
+    // The line total uses the same math as price.addonsTotal so what
+    // appears in the notes always matches the total sent in `price`.
+    const selectedUpsellLines = Object.entries(booking.addOns)
       .filter(([, selection]) => selection.quantity > 0)
       .map(([id, selection]) => {
         const addon = ADDONS.find((item) => item.id === id);
-        return addon ? `${addon.name} x${selection.quantity}` : null;
+        if (!addon) return null;
+        const lineTotal = addon.priceUnit === "perNight"
+          ? addon.price * selection.quantity * nights
+          : addon.price * selection.quantity;
+        return `${addon.name} x${selection.quantity} - €${lineTotal}`;
       })
-      .filter(Boolean)
-      .join(", ");
+      .filter(Boolean) as string[];
+    const selectedUpsellSummary = selectedUpsellLines.join(", ");
 
     const notesLines = [
       `Payment: ${isDeposit ? "30% deposit via bank transfer" : "Pay on arrival"}`,
       booking.arrivalTime ? `Estimated arrival: ${booking.arrivalTime}` : "",
       booking.packageId ? `Package: ${packages.find((p) => p.id === booking.packageId)?.name}` : "",
       `Guests: ${booking.guests.map((g) => g.label).join(", ")}`,
+      `Rooms total: €${price.accommodationTotal}`,
       selectedUpsellSummary ? `Extras: ${selectedUpsellSummary}` : "",
+      price.addonsTotal > 0 ? `Extras total: €${price.addonsTotal}` : "",
       booking.specialRequests ? `Special requests: ${booking.specialRequests}` : "",
       `Final total sent to Beds24: €${price.total}`,
     ].filter(Boolean);

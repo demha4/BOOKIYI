@@ -98,6 +98,7 @@ interface BookingContextType {
   setAddonGroupQty: (addonId: string, qty: number) => void;
   setAddonGuestQty: (addonId: string, guestId: string, qty: number) => void;
   clearAllRoomAssignments: () => void;
+  clearAddOns: () => void;
   nights: number;
   totalPersons: number;
   totalGuests: number;
@@ -141,6 +142,10 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       ...prev,
       guests: prev.guests.map((g) => ({ ...g, roomId: null })),
     }));
+  }, []);
+
+  const clearAddOns = useCallback(() => {
+    setBookingState((prev) => ({ ...prev, addOns: {} }));
   }, []);
 
   const setPackage = useCallback((packageId: string | null) => {
@@ -190,7 +195,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     <BookingContext.Provider value={{
       booking, setBooking, resetBooking, setGuestCounts, updateGuest,
       setPackage, setAddonMode, setAddonGroupQty, setAddonGuestQty,
-      clearAllRoomAssignments, nights, totalPersons, totalGuests,
+      clearAllRoomAssignments, clearAddOns, nights, totalPersons, totalGuests,
     }}>
       {children}
     </BookingContext.Provider>

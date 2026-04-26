@@ -283,3 +283,94 @@ Also removed the now-misleading "× N guests" suffix from the Booking Summary li
 ### Verified
 - ✅ `npx tsc --noEmit` passes
 - ✅ `npx vite build` succeeds (2173 modules, 659 KB → 188 KB gzipped)
+
+---
+
+## Pass 9 — Beds24 pricing flow + auto-reset (Apr 26, 2026)
+
+### Goal
+Tighten the contract between the frontend and Beds24 per spec: displayed total = exact price sent to Beds24, no stale state, extras are visible inside the booking as descriptions.
+
+### What was already correct (untouched)
+- `price.total` (rooms + extras) is sent in the `price` field of the createBooking payload — `BookNow.tsx` line 522.
+- The serverless proxy (`api/beds24.ts`) splits that single price across multiple rooms proportionally when a booking spans more than one room (V2 API requires an array of room-bookings, but the *sum* of their `price` shares always equals the original `price.total` thanks to the last-row-takes-the-remainder rounding).
+- An audit line `Final total sent to Beds24: €X` already lived in the notes for traceability.
+
+### What changed
+
+**1. Extras now include the line price in notes** (`BookNow.tsx`):
+- Before: `Extras: Surf Lesson x2, Airport Transfer x1`
+- After: `Extras: Surf Lesson x2 - €60, Airport Transfer x1 - €25`
+
+The line-total math is the *same* function used by `addonsTotal` (`price × quantity`, plus `× nights` for per-night items), so the prices in the notes always match what's in the `price` field. Also added an explicit `Rooms total: €X` and `Extras total: €X` line so the breakdown in Beds24 is fully self-explanatory.
+
+**2. Auto-reset to Room Selection on guest/date changes** (`BookNow.tsx`):
+A new `useEffect` watches `booking.checkIn`, `booking.checkOut`, and `totalPersons`. When any of those change *while the user is past Step 2 (Rooms)*, it:
+- Snaps `step` back to 2
+- Calls `clearAllRoomAssignments()` so guests aren't assigned to rooms that may have stale prices/availability
+- Calls a new `clearAddOns()` that empties `booking.addOns`
+- Resets `paymentChoice` to `null` so the user re-confirms after seeing fresh totals
+- Calls `refreshAvailability()` to force the live price fetch
+
+The effect uses a `useRef` to track the previous "key" of `(checkIn|checkOut|totalPersons)`, so it does *not* fire on initial mount — only on real user-driven changes.
+
+**3. New `clearAddOns()` action on `BookingContext`:**
+Added to the context interface, implemented as `setAddOns: {}`, exposed through the provider value. This makes it a first-class operation usable from anywhere in the booking flow.
+
+### Final booking payload — what Beds24 actually receives
+
+For a 2-night stay, 2 male guests, 1 Economy Double Room (€110/night × 2 = €220) + 1 Bed in dorm (€20/night × 2 = €40), with 1 Surf Lesson (€30) and 1 Airport Transfer (€25):
+
+```json
+[
+  {
+    "propertyId": 309994,
+    "roomId": 645891,
+    "arrival": "2026-04-27",
+    "departure": "2026-04-29",
+    "status": "request",
+    "numAdult": 1,
+    "numChild": 0,
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "email": "[email protected]",
+    "phone": "+212600000000",
+    "notes": "Payment: Pay on arrival | Guests: Guest 1 (Male), Guest 2 (Male) | Rooms total: €260 | Extras: Surf Lesson x1 - €30, Airport Transfer x1 - €25 | Extras total: €55 | Final total sent to Beds24: €315 | Room booking 1/2",
+    "referer": "tamount-website",
+    "price": 157.50
+  },
+  {
+    "propertyId": 309994,
+    "roomId": 645890,
+    "arrival": "2026-04-27",
+    "departure": "2026-04-29",
+    "status": "request",
+    "numAdult": 1,
+    "numChild": 0,
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "email": "[email protected]",
+    "phone": "+212600000000",
+    "notes": "Payment: Pay on arrival | Guests: Guest 1 (Male), Guest 2 (Male) | Rooms total: €260 | Extras: Surf Lesson x1 - €30, Airport Transfer x1 - €25 | Extras total: €55 | Final total sent to Beds24: €315 | Room booking 2/2",
+    "referer": "tamount-website",
+    "price": 157.50
+  }
+]
+```
+
+The two `price` shares (157.50 + 157.50) sum exactly to €315, which is the total displayed to the user.
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2173 modules, 659 KB → 188 KB gzipped)
+- ✅ Reset logic is mount-safe (won't trigger on first render)
+- ✅ `addonsTotal` math is identical to the per-line math in notes — no rounding mismatch possible
+
+### Known issue, NOT fixed in this pass — flagging it for you
+**Your Beds24 refresh token is committed in plaintext** in `api/beds24.ts` line 11, with the property ID at line 13. This means anyone who clones the GitHub repo (it's public — `demha4/BOOKIYI`) has full booking-creation access to your Beds24 account. After deploying this pass, please:
+1. Log into Beds24 → API → revoke that refresh token
+2. Generate a new one
+3. Set it in Vercel as `BEDS24_REFRESH_TOKEN` env var (Settings → Environment Variables)
+4. Edit `api/beds24.ts` to remove the hardcoded fallback strings — leave only `process.env.BEDS24_REFRESH_TOKEN || ""` so the code crashes loudly if the env var is missing instead of silently using a leaked token.
+
+Same for the property ID — though that's less sensitive than the token, it shouldn't be in source.
