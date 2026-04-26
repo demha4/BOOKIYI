@@ -72,7 +72,7 @@ export default function SEO({
       if (defaultDesc) {
         defaultDesc.setAttribute(
           "content",
-          "Tamount Surf House is a small, family-run surf hostel in Anza Beach, Agadir. Dorm beds and private rooms from €12/night, rooftop terrace, surf lessons, and local trips."
+          "Tamount Surf House is a small, family-run surf hostel in Anza Beach, Agadir. Dorm beds and private rooms from €20/night, rooftop terrace, surf lessons, and local trips."
         );
       }
     };

@@ -138,7 +138,13 @@ function usePriceBreakdown(liveData: Record<string, { avgNightly?: number; total
   const selectedPkg = packages.find((p) => p.id === booking.packageId);
 
   const accommodationTotal = useMemo(() => {
-    if (selectedPkg) {
+    // The "bed-and-breakfast" package is just the marketing label for the
+    // standard room-by-room flow — no flat package rate. The actual price
+    // comes from whatever rooms the guest assigns. Only "real" packages
+    // (Surf Camp Pack and similar) trigger the flat-rate calculation.
+    const isFlatRatePackage = selectedPkg && selectedPkg.id !== "bed-and-breakfast";
+
+    if (isFlatRatePackage) {
       return selectedPkg.priceUnit === "total"
         ? selectedPkg.priceFrom * totalPersons
         : selectedPkg.priceFrom * nights * totalPersons;

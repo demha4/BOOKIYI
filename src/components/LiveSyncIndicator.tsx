@@ -220,7 +220,7 @@ export function LiveSyncBanner({
       <div>
         <div className="font-medium text-green-900">Live availability</div>
         <div className="text-sm text-green-600">
-          Synced with Beds24 • Last updated {timeAgo}
+          Last updated {timeAgo}
         </div>
       </div>
     </div>

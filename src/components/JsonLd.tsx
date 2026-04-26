@@ -19,7 +19,7 @@ export default function JsonLd() {
       "latitude": 30.51,
       "longitude": -9.68
     },
-    "priceRange": "€12 - €150",
+    "priceRange": "€20 - €150",
     "starRating": {
       "@type": "Rating",
       "ratingValue": "4.9"

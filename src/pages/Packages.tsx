@@ -7,7 +7,7 @@ import SEO from "../components/SEO";
 const packageCards = [
   {
     title: "Bed & Breakfast",
-    price: "From €12 / night",
+    price: "From €20 / night",
     copy1:
       "The flexible option. Pick your room, stay as long as you want, and start every morning with a proper Moroccan breakfast on the rooftop.",
     copy2:
@@ -29,7 +29,7 @@ const packageCards = [
     minimum: "Minimum stay: 3 nights",
     image: "/images/surf-camp.jpg",
     detailPath: "/packages/surf-camp",
-    bookPath: "/book/package/beginner-week",
+    bookPath: "/book/package/surf-camp-pack",
     badge: "All-inclusive",
     badgeClass: "bg-[#F7E8D3] text-[#A56D2A]",
   },
@@ -40,7 +40,7 @@ export default function Packages() {
     <div className="pt-32 sm:pt-36 bg-cream">
       <SEO
         title="Surf Packages"
-        description="Two ways to stay: Bed & Breakfast from €12/night or Surf Camp Pack from €45/day. Flexible booking, no hidden fees, direct WhatsApp support."
+        description="Two ways to stay: Bed & Breakfast from €20/night or Surf Camp Pack from €45/day. Flexible booking, no hidden fees, direct WhatsApp support."
         ogImage="/images/surf-camp.jpg"
       />
       <section className="py-24 sm:py-28 text-center">

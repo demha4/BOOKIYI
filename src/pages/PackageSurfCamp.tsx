@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Check, ArrowRight, MessageCircle } from "lucide-react";
+import { Check, ArrowRight, MessageCircle, Clock, LogIn, LogOut } from "lucide-react";
 import { siteInfo, testimonials } from "../data/content";
 import SEO from "../components/SEO";
 
@@ -33,7 +33,6 @@ const pricing = [
   ["Dorm bed", "€145", "€235", "€315", true],
   ["Double room (per person, 2 sharing)", "€175", "€285", "€385", false],
   ["Triple room (per person, 3 sharing)", "€165", "€270", "€365", false],
-  ["Private room (solo occupancy)", "€245", "€405", "€555", false],
 ] as const;
 
 const skillLevels = [
@@ -66,7 +65,7 @@ export default function PackageSurfCamp() {
           <p className="text-stone mt-2">In the dorm — private rooms from €65 / day</p>
           <p className="text-stone mt-1">Minimum stay: 3 nights</p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to="/book/package/beginner-week" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-7 py-3.5 font-semibold text-sm sm:text-base hover:bg-charcoal/90 transition-colors">
+            <Link to="/book/package/surf-camp-pack" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-7 py-3.5 font-semibold text-sm sm:text-base hover:bg-charcoal/90 transition-colors">
               Book Surf Camp Pack
             </Link>
             <a href="#pricing" className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 text-charcoal px-7 py-3.5 font-medium text-sm sm:text-base hover:bg-stone-50 transition-colors">
@@ -167,6 +166,48 @@ export default function PackageSurfCamp() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="pb-20">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-11 h-11 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center shrink-0">
+                <Clock size={20} />
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal">Conditions of reservation</h2>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-3 text-stone text-sm sm:text-base leading-7">
+              <div className="flex items-center gap-3">
+                <LogIn size={18} className="text-ocean shrink-0" />
+                <span>Check-in from <strong className="text-charcoal">12:00 PM</strong></span>
+              </div>
+              <div className="flex items-center gap-3">
+                <LogOut size={18} className="text-ocean shrink-0" />
+                <span>Check-out by <strong className="text-charcoal">10:00 AM</strong></span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Check size={18} className="text-ocean shrink-0" />
+                <span>Minimum stay 3 nights</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Check size={18} className="text-ocean shrink-0" />
+                <span>30% deposit confirms instantly</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Check size={18} className="text-ocean shrink-0" />
+                <span>Free cancellation up to 7 days before check-in</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Check size={18} className="text-ocean shrink-0" />
+                <span>Passport / national ID on arrival</span>
+              </div>
+            </div>
+            <p className="text-xs text-stone-400 mt-5 leading-6">
+              Lunches, extra activities, airport transfer, and personal insurance are not included. We keep the main pack clear and let you add the rest if you want.
+            </p>
           </div>
         </div>
       </section>

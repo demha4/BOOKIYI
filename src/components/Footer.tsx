@@ -40,9 +40,9 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-lg mb-4">Stay details</h4>
             <div className="space-y-2.5 text-sm text-white/65 leading-7">
-              <p>Dorm beds from €12 / night</p>
-              <p>Double room from €30 / night</p>
-              <p>Triple room from €35 / night</p>
+              <p>Dorm beds from €20 / night</p>
+              <p>Double room from €55 / night</p>
+              <p>Triple room from €50 / night</p>
               <p>Breakfast included</p>
               <p>Surf lessons, rentals, and local trips available</p>
             </div>

@@ -424,3 +424,94 @@ This guarantees no drift: whatever the user sees in the addon card is exactly wh
 - ✅ `npx tsc --noEmit` passes
 - ✅ `npx vite build` succeeds (2173 modules, 659 KB → 188 KB gzipped)
 - ✅ All 4 callers refactored to use `calcAddonLineTotal` — no math repeated
+
+---
+
+## Pass 11 — Beds24 brand removal + real packages on Book page + 3-row pricing table
+
+### `src/components/LiveSyncIndicator.tsx`
+Dropped "Synced with Beds24 • " from the live availability label. Now just shows "Last updated 27 seconds ago" — no provider name exposed to guests.
+
+### `src/data/content.ts` — `packages` array replaced
+Removed the three fake packages (`surf-start`, `beginner-week`, `progression-week`). Replaced with the **two real packages** that match the homepage and the dedicated detail pages:
+
+- **bed-and-breakfast** — Flexible, minimum 1 night, from €12/night. Includes accommodation, daily Moroccan breakfast, rooftop terrace, bed linen + towels, fast WiFi, 24/7 reception.
+- **surf-camp-pack** — Minimum 3 nights, from €45/night. Includes accommodation, breakfast + dinner, daily surf lessons, board + wetsuit, transport to spots, video analysis.
+
+### Link updates (3 places)
+All references to the deleted `beginner-week` updated to `surf-camp-pack`:
+- `src/pages/Home.tsx` line ~410
+- `src/pages/Packages.tsx` line ~32 (`bookPath`)
+- `src/pages/PackageSurfCamp.tsx` line ~69 (CTA)
+
+### `src/pages/BookNow.tsx` — B&B is room-only, not a flat-rate package
+The "bed-and-breakfast" package id is treated as the standard room-by-room flow — `accommodationTotal` only applies the flat-rate package price for *real* package bundles like `surf-camp-pack`. Selecting B&B in the package step doesn't override room pricing, so a guest who picks B&B + Double Room pays the actual Double Room rate from Beds24, not a synthetic "€12 × persons" total.
+
+### `src/pages/PackageSurfCamp.tsx` — pricing table now 3 rows
+Removed the "Private room (solo occupancy)" row. The hostel only has 3 real accommodation types (Dorm, Economy Double = 1 queen, Economy Double = 1 twin + 1 queen / triple), so the table now matches reality:
+- Dorm bed
+- Double room (per person, 2 sharing)
+- Triple room (per person, 3 sharing)
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2173 modules, 659 KB → 188 KB gzipped)
+- ✅ All `/book/package/*` links resolve to real package ids
+
+---
+
+## Pass 12 — Real Beds24 prices + package detail content enrichment
+
+### Room price update — `src/data/content.ts`
+Static fallback prices now reflect the real Beds24 numbers. The site uses live Beds24 pricing whenever the API is reachable, but these static numbers are what shows during the brief loading state and on pages that don't query Beds24 (Footer, Home hero copy, meta descriptions, etc.):
+
+| Room | Old fallback | New fallback | Source |
+|---|---|---|---|
+| Bed in 6-Bed Mixed Dormitory | €12 | **€20** | Beds24 Website-DE rate |
+| Economy Double (1 queen) | €30 | **€55** | Beds24 OTA rate (will drop when Website rate is set) |
+| Economy Double (1 twin + 1 queen) | €35 | **€50** | Beds24 OTA rate (will drop when Website rate is set) |
+
+Once the Website-DE rates are set in Beds24 for the private rooms (the user said this is pending), the live API will return the lower numbers and the displayed prices will follow automatically without code changes.
+
+### Static "From €X" copy updated across the site
+Every place that hard-coded the old prices now reflects €20 dorm / €50–€55 private:
+
+- `Footer.tsx` — three lines in the contact column
+- `JsonLd.tsx` — `priceRange` for SEO structured data: `€12 - €150` → `€20 - €150`
+- `SEO.tsx` — default site meta description
+- `Rooms.tsx` — page meta description
+- `Home.tsx` — homepage meta description + B&B card "From €12" → "From €20"
+- `PackageBedAndBreakfast.tsx` — meta description, hero "From €12 / night" → "From €20 / night", subheadline "private rooms from €30" → "from €50"
+- `Packages.tsx` — page meta description + B&B card price label
+- `data/content.ts` — `packages[0].priceFrom` for B&B: 12 → 20
+
+Surf-related prices (board rental, surf lessons) were left untouched — those are unrelated to Beds24 room rates.
+
+### Package detail pages — content enrichment in Tamount style
+
+Per your direction (Q1: adapt the screenshot content into Tamount's existing visual style, not copy waveshuntersurfhouse's orange/dark layout), I added a **Conditions of Reservation** card to both detail pages, matching the cream-and-blue card style already used everywhere else on the site.
+
+**`PackageBedAndBreakfast.tsx`** — added two new cards before the final WhatsApp CTA:
+
+1. *Conditions of Reservation* — Check-in 12:00 PM, Check-out 10:00 AM, no deposit required for direct bookings, free cancellation up to 24 hours, ID on arrival per Moroccan law. Friendly footer about late arrivals being fine.
+2. *Available on Request* — The activities not yet in the experiences page but doable through trusted local partners: camel/horse riding on the beach, quad & buggy adventures, sandboarding at Timlalin dunes, traditional hammam & massage, day surf trips, cultural tours, sunrise/sunset yoga.
+
+**`PackageSurfCamp.tsx`** — added one Conditions card before the final CTA:
+
+Check-in 12:00 PM, Check-out 10:00 AM, minimum 3 nights, 30% deposit confirms instantly, free cancellation up to 7 days before, ID on arrival. Footer line clarifying what's *not* in the pack ("Lunches, extra activities, airport transfer, and personal insurance are not included") — same disclaimer your screenshot shows under the pricing table.
+
+Both cards use:
+- The standard `bg-white rounded-[2rem] border border-stone-200 shadow-sm` card style
+- Lucide icons (`Clock`, `LogIn`, `LogOut`, `Check`) in the `bg-[#E8F4F8] text-ocean` icon-tile style used elsewhere
+- `<strong className="text-charcoal">` for the time values to make them pop without breaking the muted body text
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2173 modules, 664 KB → 189 KB gzipped)
+- ✅ All static price references in sync with the new Beds24 numbers
+- ✅ Live Beds24 pricing still drives the booking flow — these are display-only fallbacks
+
+### Note on the OTA rates for private rooms
+Double €55 and Triple €50 are the OTA channel rates from your Beds24 screenshot. The Website-DE rate (€3.50 lower per night, per your spec) hasn't been configured yet for these rooms. Once you set those in Beds24, the live API will return the lower number and the booking page will reflect it automatically. The static fallbacks here are conservative — guests will see the lower live price as soon as availability loads.
+
+If you want me to lower these static fallbacks too once you've set the Website rates, just send the new numbers and I'll update them.

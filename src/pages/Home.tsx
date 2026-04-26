@@ -81,7 +81,7 @@ export default function Home() {
     <div className="bg-cream">
       <SEO
         title="Surf Hostel in Anza, Agadir"
-        description="Small, family-run surf hostel in Anza Beach, Agadir. Dorm beds from €12/night, private rooms, rooftop terrace, surf lessons, and local trips. Book direct & save."
+        description="Small, family-run surf hostel in Anza Beach, Agadir. Dorm beds from €20/night, private rooms, rooftop terrace, surf lessons, and local trips. Book direct & save."
         ogImage="/images/hero-surf.jpg"
       />
       {/* Hero Section */}
@@ -369,7 +369,7 @@ export default function Home() {
               <div className="inline-flex w-fit rounded-full bg-ocean/10 text-ocean px-3 py-1 text-xs font-medium mb-4">Flexible stay</div>
               <p className="text-xs font-medium text-stone-500 mb-2">Minimum stay: 1 night</p>
               <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-2">Bed &amp; Breakfast</h3>
-              <p className="text-ocean font-semibold text-lg mb-4">From €12 / night</p>
+              <p className="text-ocean font-semibold text-lg mb-4">From €20 / night</p>
               <p className="card-copy text-stone mb-4">
                 The flexible option. Pick your room, stay as long as you want, and start every morning with a proper Moroccan breakfast on the rooftop.
               </p>
@@ -407,7 +407,7 @@ export default function Home() {
                 <Link to="/packages/surf-camp" className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 text-charcoal px-5 py-3.5 text-sm font-medium hover:bg-stone-50 transition-colors">
                   See full details
                 </Link>
-                <Link to="/book/package/beginner-week" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-5 py-3.5 text-sm font-semibold hover:bg-charcoal/90 transition-colors">
+                <Link to="/book/package/surf-camp-pack" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-5 py-3.5 text-sm font-semibold hover:bg-charcoal/90 transition-colors">
                   Book Surf Camp
                 </Link>
               </div>
