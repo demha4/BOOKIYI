@@ -138,19 +138,38 @@ function usePriceBreakdown(liveData: Record<string, { avgNightly?: number; total
   const selectedPkg = packages.find((p) => p.id === booking.packageId);
 
   const accommodationTotal = useMemo(() => {
-    // The "bed-and-breakfast" package is just the marketing label for the
-    // standard room-by-room flow — no flat package rate. The actual price
-    // comes from whatever rooms the guest assigns. Only "real" packages
-    // (Surf Camp Pack and similar) trigger the flat-rate calculation.
-    const isFlatRatePackage = selectedPkg && selectedPkg.id !== "bed-and-breakfast";
+    // Two contributions to the accommodation total:
+    //   1. Room subtotals (always — sum of each assigned room × nights × occupants)
+    //   2. Flat-rate package fee (only for packages other than B&B)
+    //
+    // The Surf Camp Pack is a per-day surf-services + meals fee that bills
+    // ON TOP OF the chosen room. Different rooms = different totals because
+    // accommodation is billed separately. B&B is just the marketing label
+    // for the standard room-by-room flow — no flat fee.
+    const roomsSubtotal = roomBreakdown.reduce((sum, r) => sum + r.subtotal, 0);
 
-    if (isFlatRatePackage) {
-      return selectedPkg.priceUnit === "total"
-        ? selectedPkg.priceFrom * totalPersons
-        : selectedPkg.priceFrom * nights * totalPersons;
+    const isFlatRatePackage = selectedPkg && selectedPkg.id !== "bed-and-breakfast";
+    if (!isFlatRatePackage) {
+      return roomsSubtotal;
     }
-    return roomBreakdown.reduce((sum, r) => sum + r.subtotal, 0);
+
+    const packageFee = selectedPkg.priceUnit === "total"
+      ? selectedPkg.priceFrom * totalPersons
+      : selectedPkg.priceFrom * nights * totalPersons;
+
+    return roomsSubtotal + packageFee;
   }, [selectedPkg, roomBreakdown, nights, totalPersons]);
+
+  // Just the flat-rate package fee on its own (0 when no flat package is
+  // selected). Used by the right-side summary to display Package and Rooms
+  // as separate line items that visibly sum to accommodationTotal.
+  const packageFee = useMemo(() => {
+    const isFlatRatePackage = selectedPkg && selectedPkg.id !== "bed-and-breakfast";
+    if (!isFlatRatePackage) return 0;
+    return selectedPkg.priceUnit === "total"
+      ? selectedPkg.priceFrom * totalPersons
+      : selectedPkg.priceFrom * nights * totalPersons;
+  }, [selectedPkg, nights, totalPersons]);
 
   const addonsTotal = useMemo(() => {
     return Object.entries(booking.addOns).reduce((sum, [id, sel]) => {
@@ -163,7 +182,7 @@ function usePriceBreakdown(liveData: Record<string, { avgNightly?: number; total
   const total = accommodationTotal + addonsTotal;
   const depositAmount = Math.ceil(total * 0.3);
 
-  return { selectedPkg, roomBreakdown, accommodationTotal, addonsTotal, total, depositAmount };
+  return { selectedPkg, roomBreakdown, packageFee, accommodationTotal, addonsTotal, total, depositAmount };
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -575,12 +594,14 @@ export default function BookNow() {
       .filter(Boolean) as string[];
     const selectedUpsellSummary = selectedUpsellLines.join(", ");
 
+    const roomsSubtotal = price.accommodationTotal - price.packageFee;
     const notesLines = [
       `Payment: ${isDeposit ? "30% deposit via bank transfer" : "Pay on arrival"}`,
       booking.arrivalTime ? `Estimated arrival: ${booking.arrivalTime}` : "",
       booking.packageId ? `Package: ${packages.find((p) => p.id === booking.packageId)?.name}` : "",
       `Guests: ${booking.guests.map((g) => g.label).join(", ")}`,
-      `Rooms total: €${price.accommodationTotal}`,
+      price.packageFee > 0 ? `Package fee: €${price.packageFee} (${price.selectedPkg?.priceFrom}/day × ${nights} nights × ${totalPersons} guests)` : "",
+      `Rooms total: €${roomsSubtotal}`,
       selectedUpsellSummary ? `Extras: ${selectedUpsellSummary}` : "",
       price.addonsTotal > 0 ? `Extras total: €${price.addonsTotal}` : "",
       booking.specialRequests ? `Special requests: ${booking.specialRequests}` : "",
@@ -628,7 +649,14 @@ export default function BookNow() {
   /* ─── Navigation ─── */
   const canProceed = (s: number) => {
     switch (s) {
-      case 1: return totalPersons > 0 && nights > 0;
+      case 1: {
+        if (totalPersons <= 0 || nights <= 0) return false;
+        // Block Continue if a package is selected but the date range is shorter
+        // than its minimum. The user can either extend dates or pick another pack.
+        const pkg = packages.find((p) => p.id === booking.packageId);
+        if (pkg?.minNights && nights < pkg.minNights) return false;
+        return true;
+      }
       case 2: return booking.guests.every((g) => g.roomId !== null);
       case 3: return true;
       case 4: return booking.contactName.trim() !== "" && booking.contactEmail.trim() !== "";
@@ -871,10 +899,24 @@ export default function BookNow() {
                                       {pkg.includes.length > 4 && <li className="text-ocean font-semibold">+{pkg.includes.length - 4} more included</li>}
                                     </ul>
                                     {isSelected && (
-                                      <div className="mt-3 p-2 bg-ocean/10 rounded-lg">
-                                        <p className="text-xs font-semibold text-ocean">
-                                          {totalPersons} person{totalPersons > 1 ? "s" : ""} × €{pkg.priceFrom} = <span className="text-sm">€{pkgPrice}</span>
-                                        </p>
+                                      <div className="mt-3 space-y-2">
+                                        {pkg.minNights && nights > 0 && nights < pkg.minNights ? (
+                                          <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
+                                            <p className="text-xs font-semibold text-amber-800 flex items-start gap-1.5">
+                                              <AlertCircle size={12} className="mt-0.5 shrink-0" />
+                                              <span>
+                                                This pack requires a minimum of <strong>{pkg.minNights} nights</strong>. You picked {nights} night{nights > 1 ? "s" : ""}. Extend your dates or pick another option.
+                                              </span>
+                                            </p>
+                                          </div>
+                                        ) : (
+                                          <div className="p-2 bg-ocean/10 rounded-lg">
+                                            <p className="text-xs font-semibold text-ocean">
+                                              {totalPersons} person{totalPersons > 1 ? "s" : ""} × €{pkg.priceFrom}/day × {nights} night{nights > 1 ? "s" : ""} = <span className="text-sm">€{pkgPrice}</span>
+                                            </p>
+                                            <p className="text-[10px] text-stone-500 mt-0.5">+ accommodation (added when you pick rooms)</p>
+                                          </div>
+                                        )}
                                       </div>
                                     )}
                                   </div>
@@ -1331,13 +1373,14 @@ export default function BookNow() {
                         )}
 
                         {/* Package */}
-                        {price.selectedPkg && (
+                        {price.selectedPkg && price.packageFee > 0 && (
                           <div className="mb-4 p-3 bg-ocean/5 border border-ocean/20 rounded-xl flex items-center justify-between">
                             <div>
                               <span className="text-xs font-bold text-ocean uppercase">Package</span>
                               <p className="font-semibold text-stone-800">{price.selectedPkg.name}</p>
+                              <p className="text-xs text-stone-500 mt-0.5">€{price.selectedPkg.priceFrom}/day × {nights} night{nights > 1 ? "s" : ""} × {totalPersons} guest{totalPersons > 1 ? "s" : ""}</p>
                             </div>
-                            <span className="font-bold text-ocean text-lg">€{price.accommodationTotal}</span>
+                            <span className="font-bold text-ocean text-lg">€{price.packageFee}</span>
                           </div>
                         )}
 

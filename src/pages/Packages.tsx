@@ -26,7 +26,7 @@ const packageCards = [
       "Everything sorted. Accommodation, breakfast and dinner, daily surf lessons, board and wetsuit, transport to the best spots, and rooftop video analysis.",
     copy2:
       "Just show up with your swimsuit and a sense of humor.",
-    minimum: "Minimum stay: 3 nights",
+    minimum: "Minimum stay: 7 nights",
     image: "/images/surf-camp.jpg",
     detailPath: "/packages/surf-camp",
     bookPath: "/book/package/surf-camp-pack",

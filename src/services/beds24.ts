@@ -280,7 +280,7 @@ export function buildBeds24Url(
 }
 
 export function buildWhatsAppUrl(message: string): string {
-  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || "212612345678";
+  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || "212628623344";
   return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 }
 

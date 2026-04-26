@@ -28,7 +28,7 @@ export default function Contact() {
     <div className="pt-32 sm:pt-36 bg-cream">
       <SEO
         title="Contact Us"
-        description="WhatsApp +212 6 12 34 56 78 or email tamountsurfhouse@gmail.com. Fast replies for booking questions, surf conditions, and local tips."
+        description={`WhatsApp ${siteInfo.phone} or email ${siteInfo.email}. Fast replies for booking questions, surf conditions, and local tips.`}
         ogImage="/images/hostel-living.jpg"
       />
       <section className="py-24 sm:py-28 text-center">

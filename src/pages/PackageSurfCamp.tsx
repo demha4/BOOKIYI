@@ -29,12 +29,6 @@ const dayFlow = [
   ["7:30pm", "Dinner on the rooftop"],
 ];
 
-const pricing = [
-  ["Dorm bed", "€145", "€235", "€315", true],
-  ["Double room (per person, 2 sharing)", "€175", "€285", "€385", false],
-  ["Triple room (per person, 3 sharing)", "€165", "€270", "€365", false],
-] as const;
-
 const skillLevels = [
   ["Beginner", "Never surfed or only tried once. We focus on paddling, pop-up, ocean awareness, and the right soft first days."],
   ["Intermediate", "You can catch waves but want to turn, position better, and read the point breaks with more confidence."],
@@ -46,7 +40,7 @@ export default function PackageSurfCamp() {
     <div className="pt-32 sm:pt-36 bg-cream">
       <SEO
         title="Surf Camp Pack"
-        description="All-inclusive surf camp from €45/day. Daily lessons, board + wetsuit, breakfast + dinner, transport to best spots, and video analysis. Minimum stay: 3 nights."
+        description="Surf services + meals from €45/day per person, billed on top of your room. Daily lessons, board + wetsuit, breakfast + dinner, transport, video analysis. Minimum stay: 7 nights."
         ogImage="/images/surf-camp.jpg"
         ogType="product"
       />
@@ -61,9 +55,9 @@ export default function PackageSurfCamp() {
           <motion.p initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="section-copy text-stone max-w-3xl mx-auto mb-6">
             Surf every morning. Eat proper food. Learn fast with video analysis. Sleep in a clean bed. Watch the sunset from the rooftop. Wake up and do it again.
           </motion.p>
-          <div className="text-2xl sm:text-3xl font-bold text-ocean">From €45 / day</div>
-          <p className="text-stone mt-2">In the dorm — private rooms from €65 / day</p>
-          <p className="text-stone mt-1">Minimum stay: 3 nights</p>
+          <div className="text-2xl sm:text-3xl font-bold text-ocean">€45 / day per person</div>
+          <p className="text-stone mt-2">Surf services + meals + transport. Accommodation billed separately on top.</p>
+          <p className="text-stone mt-1 font-semibold">Minimum stay: 7 nights</p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <Link to="/book/package/surf-camp-pack" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-7 py-3.5 font-semibold text-sm sm:text-base hover:bg-charcoal/90 transition-colors">
               Book Surf Camp Pack
@@ -104,41 +98,52 @@ export default function PackageSurfCamp() {
       </section>
 
       <section id="pricing" className="py-20 sm:py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="section-title text-charcoal mb-5">Straightforward prices, no hidden fees.</h2>
+            <h2 className="section-title text-charcoal mb-5">Straightforward pricing, no hidden fees.</h2>
+            <p className="section-copy text-stone max-w-2xl mx-auto">
+              The pack is billed per day, on top of the room you pick. Stay 7 nights or longer at the same daily rate.
+            </p>
           </div>
-          <div className="overflow-hidden rounded-[2rem] border border-stone-200 shadow-sm bg-cream">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-left">
-                <thead className="bg-white border-b border-stone-200">
-                  <tr>
-                    <th className="px-6 py-5 text-sm font-semibold text-stone">Room type</th>
-                    <th className="px-6 py-5 text-sm font-semibold text-stone">3 nights</th>
-                    <th className="px-6 py-5 text-sm font-semibold text-stone">5 nights</th>
-                    <th className="px-6 py-5 text-sm font-semibold text-stone">7 nights</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pricing.map(([label, p3, p5, p7, featured]) => (
-                    <tr key={label} className="border-b last:border-0 border-stone-200/70 bg-transparent">
-                      <td className="px-6 py-5 text-charcoal font-medium">{label}</td>
-                      <td className="px-6 py-5 text-stone">{p3}</td>
-                      <td className="px-6 py-5 text-stone">{p5}</td>
-                      <td className="px-6 py-5">
-                        <div className="flex items-center gap-2">
-                          <span className={`font-semibold ${featured ? "text-ocean text-lg" : "text-charcoal"}`}>{p7}</span>
-                          {featured && <span className="rounded-full bg-ocean text-white px-2.5 py-1 text-[11px] font-medium">Most booked</span>}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+
+          <div className="grid md:grid-cols-2 gap-5">
+            <div className="rounded-[2rem] border border-stone-200 p-7 sm:p-8 bg-cream">
+              <p className="text-xs font-bold text-ocean uppercase tracking-wider mb-2">The pack</p>
+              <h3 className="text-xl font-semibold text-charcoal mb-1">Surf services + meals</h3>
+              <p className="text-3xl font-bold text-ocean mt-3 mb-1">€45 <span className="text-base font-medium text-stone">/ day / person</span></p>
+              <p className="text-sm text-stone leading-6 mt-3">
+                Daily lessons, board + wetsuit, breakfast + dinner, transport to the spots, video analysis. Same daily rate whether you stay 7 nights or 21.
+              </p>
+              <p className="text-xs text-stone-500 mt-4">
+                Example for 1 person, 7 nights: €315.
+              </p>
+            </div>
+
+            <div className="rounded-[2rem] border border-stone-200 p-7 sm:p-8 bg-cream">
+              <p className="text-xs font-bold text-ocean uppercase tracking-wider mb-2">The room</p>
+              <h3 className="text-xl font-semibold text-charcoal mb-1">Accommodation, billed per night</h3>
+              <ul className="mt-4 space-y-2 text-sm text-stone leading-6">
+                <li className="flex items-center justify-between gap-3">
+                  <span>Dorm bed</span>
+                  <span className="font-semibold text-charcoal">€20 / night</span>
+                </li>
+                <li className="flex items-center justify-between gap-3">
+                  <span>Triple room <span className="text-stone-500">(per room)</span></span>
+                  <span className="font-semibold text-charcoal">€50 / night</span>
+                </li>
+                <li className="flex items-center justify-between gap-3">
+                  <span>Double room <span className="text-stone-500">(per room)</span></span>
+                  <span className="font-semibold text-charcoal">€55 / night</span>
+                </li>
+              </ul>
+              <p className="text-xs text-stone-500 mt-4">
+                Live availability and final prices shown when you pick dates on the booking page.
+              </p>
             </div>
           </div>
-          <div className="mt-5 text-sm sm:text-base text-stone leading-7">
-            Lunches, extra activities, airport transfer, and personal insurance are not included. We keep the main pack clear and let you add the rest if you want.
+
+          <div className="mt-8 rounded-2xl bg-stone-50 border border-stone-200 p-5 text-sm sm:text-base text-stone leading-7">
+            <strong className="text-charcoal">Example total for 1 person, 7 nights in the dorm:</strong> €315 (pack) + €140 (dorm) = <strong className="text-ocean">€455</strong>. Pick your real dates and rooms on the booking page for the live total. Lunches, extra activities, airport transfer, and personal insurance are not included.
           </div>
         </div>
       </section>
@@ -190,7 +195,7 @@ export default function PackageSurfCamp() {
               </div>
               <div className="flex items-center gap-3">
                 <Check size={18} className="text-ocean shrink-0" />
-                <span>Minimum stay 3 nights</span>
+                <span>Minimum stay 7 nights</span>
               </div>
               <div className="flex items-center gap-3">
                 <Check size={18} className="text-ocean shrink-0" />

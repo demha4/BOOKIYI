@@ -613,3 +613,71 @@ The user's earlier screenshot showed two "Economy Double Room" cards (€55 and 
 - Economy Double Room — €55 — 14 m² Max 2 — 1 queen
 
 Each card now has a distinct name; no more visual duplication.
+
+---
+
+## Pass 16 — Package pricing model corrected (rooms billed on top + 7-night minimum)
+
+User flagged two related bugs after testing the Surf Camp Pack flow:
+
+### Bug 1 — Room cost not added to total when a package is selected
+
+**Symptom:** With the Surf Camp Pack, 13 nights, 3 guests in the dorm, the right-side Booking Summary showed PACKAGE €1755 + ROOMS €780 but Total only said €1755. The room line was visually present but not in the math.
+
+**Root cause:** In Pass 11, when first wiring packages into the booking flow, I treated flat-rate packages as "all-inclusive" — meaning `accommodationTotal` returned the package price *instead of* the room subtotals. The room display was kept for transparency but the math ignored it. That was the wrong commercial model.
+
+**The right model (per user):**
+- The Surf Camp Pack `priceFrom` (€45/day per person) covers **surf services + meals + transport only** — *not* the room.
+- The room is billed **on top**, at whatever Beds24 returns for the chosen room and dates.
+- Different rooms = different totals because accommodation is billed separately.
+- The B&B "package" stays as a no-op (just the standard room-only flow with marketing wrapper).
+
+**Fix:** `accommodationTotal` now returns `roomsSubtotal + packageFee` for flat-rate packages. Added a separate `packageFee` derived value so the right-side summary can display the package and the rooms as distinct line items that visibly sum to the total.
+
+```ts
+const accommodationTotal = useMemo(() => {
+  const roomsSubtotal = roomBreakdown.reduce((s, r) => s + r.subtotal, 0);
+  const isFlatRatePackage = selectedPkg && selectedPkg.id !== "bed-and-breakfast";
+  if (!isFlatRatePackage) return roomsSubtotal;
+  const packageFee = selectedPkg.priceUnit === "total"
+    ? selectedPkg.priceFrom * totalPersons
+    : selectedPkg.priceFrom * nights * totalPersons;
+  return roomsSubtotal + packageFee;
+}, [...]);
+```
+
+### Bug 2 — Minimum stay treated as a copy field, not a constraint
+
+The data said "Minimum 3 nights" for the Surf Camp Pack but the booking flow accepted any number of nights. Also the displayed text was wrong — the user wanted **7 nights** minimum, not 3, and the dedicated Surf Camp page had a fixed 3/5/7-night pricing table that suggested those were the *only* allowed durations.
+
+**Fix:**
+- Added a typed `minNights: number` field to package data in `content.ts`. B&B = 1, Surf Camp Pack = 7.
+- `canProceed(step)` for step 1 now returns `false` if `nights < pkg.minNights`. Continue button greys out automatically.
+- When the package card is selected and the date range is below the minimum, an inline amber warning replaces the math preview: *"This pack requires a minimum of 7 nights. You picked 5 nights. Extend your dates or pick another option."*
+- Updated all displayed copy: PackageSurfCamp.tsx header, Conditions card, Packages.tsx, Home.tsx, content.ts. All now say "Minimum 7 nights" / "Minimum stay: 7 nights".
+- **Removed** the misleading 3/5/7-night fixed pricing table on the Surf Camp page. Replaced with a two-card breakdown showing the per-day pack rate (€45/day/person) and the per-night room rates (€20 dorm / €50 triple / €55 double), plus a worked example: *"1 person, 7 nights in the dorm = €315 (pack) + €140 (dorm) = €455"*. Reads as "this is how the pricing works", not "these are your only three options".
+
+### Other cleanups in this pass
+
+- **Inline package math fixed.** The "X persons × €Y" line under the selected package card was missing the `× nights` factor — showed €135 for 3 guests at €45/day instead of €1755 for 13 nights. Now reads `3 persons × €45/day × 13 nights = €1755` plus a small line *"+ accommodation (added when you pick rooms)"* so the user knows the total isn't final yet.
+- **Beds24 notes split.** Notes now show `Package fee: €1755 (45/day × 13 nights × 3 guests) | Rooms total: €780 | Final total sent to Beds24: €2535` so the Beds24 UI shows the breakdown clearly instead of a single conflated "Rooms total" that included the pack.
+- **Updated package data** to reflect the new pricing model: tagline, description, and `includes` list now state explicitly that accommodation is billed separately.
+
+### Verified math on the user's exact screenshot scenario
+
+| | Before | After |
+|---|---|---|
+| PACKAGE line | €1755 | €1755 ✓ |
+| ROOMS line | €780 (display only) | €780 ✓ |
+| TOTAL | €1755 (wrong) | **€2535** ✓ |
+
+5 nights with Surf Camp Pack selected:
+- `canProceed(1)` returns `false` ✓
+- Continue button disabled ✓
+- Amber warning rendered ✓
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2173 modules, 667 KB → 190 KB gzipped)
+- ✅ All "3 nights" / "Minimum 3 nights" references swept and updated to 7
+- ✅ Stale `pricing` const removed from PackageSurfCamp.tsx

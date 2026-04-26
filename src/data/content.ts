@@ -1,11 +1,11 @@
 // Contact details — sourced from Vercel/Vite environment variables at build
 // time, with sensible fallbacks for local dev. Set these in Vercel:
-//   VITE_WHATSAPP_NUMBER  → digits only (e.g. "212612345678"), used in wa.me links
-//   VITE_PHONE_DISPLAY    → human-readable phone (e.g. "+212 6 12 34 56 78")
+//   VITE_WHATSAPP_NUMBER  → digits only (e.g. "212628623344"), used in wa.me links
+//   VITE_PHONE_DISPLAY    → human-readable phone (e.g. "+212 628 623 344")
 //   VITE_CONTACT_EMAIL    → contact email
 // These bake into the build, so changing them in Vercel requires a redeploy.
-const ENV_WHATSAPP = (import.meta.env.VITE_WHATSAPP_NUMBER as string | undefined) ?? "212612345678";
-const ENV_PHONE_DISPLAY = (import.meta.env.VITE_PHONE_DISPLAY as string | undefined) ?? "+212 6 12 34 56 78";
+const ENV_WHATSAPP = (import.meta.env.VITE_WHATSAPP_NUMBER as string | undefined) ?? "212628623344";
+const ENV_PHONE_DISPLAY = (import.meta.env.VITE_PHONE_DISPLAY as string | undefined) ?? "+212 628 623 344";
 const ENV_EMAIL = (import.meta.env.VITE_CONTACT_EMAIL as string | undefined) ?? "tamountsurfhouse@gmail.com";
 
 export const siteInfo = {
@@ -193,12 +193,22 @@ export function getFilteredRooms(guestType: "male" | "female" | "couple"): RoomT
 // Two real packages — match the homepage and the dedicated detail pages.
 // Prices are illustrative starting points; live availability/pricing is
 // driven by Beds24 once dates and rooms are picked.
+//
+// Pricing model:
+//   B&B → no flat rate, just standard room-by-room pricing.
+//   Surf Camp Pack → flat per-day price for surf services + meals + transport,
+//     ADDED ON TOP of the chosen room's accommodation price. So total is:
+//       (package.priceFrom × nights × persons) + (sum of room subtotals)
+//
+//   minNights → minimum nights required to book this package. Booking flow
+//     blocks Continue if the chosen date range is shorter than this.
 export const packages = [
   {
     id: "bed-and-breakfast",
     name: "Bed & Breakfast",
     tagline: "Stay as long as you want.",
     duration: "Flexible — minimum 1 night",
+    minNights: 1,
     priceFrom: 20,
     priceUnit: "perNight",
     image: "/images/private-room.jpg",
@@ -216,21 +226,22 @@ export const packages = [
   {
     id: "surf-camp-pack",
     name: "Surf Camp Pack",
-    tagline: "Everything sorted — accommodation, surf, meals.",
-    duration: "Minimum 3 nights",
+    tagline: "Everything sorted — surf, meals, transport. Add accommodation.",
+    duration: "Minimum 7 nights",
+    minNights: 7,
     priceFrom: 45,
     priceUnit: "perNight",
     image: "/images/surf-camp.jpg",
-    description: "Everything sorted. Accommodation, breakfast and dinner, daily surf lessons, board and wetsuit, transport to the best spots, and video analysis afterwards. Just show up with your swimsuit and a sense of humor.",
+    description: "The all-in-one surf experience. Daily surf lessons with a local coach, board + wetsuit included, breakfast and dinner, transport to the best spots, and video analysis. Add the accommodation of your choice — dorm bed for budget, double or triple for privacy.",
     includes: [
-      "Accommodation (3, 5, or 7 nights)",
-      "Daily breakfast & dinner",
       "Daily surf lessons with a local coach",
       "Board, wetsuit & all equipment",
+      "Breakfast & dinner",
       "Transport to the best surf spots",
       "Video analysis of your sessions",
+      "Accommodation billed separately — dorm, double or triple",
     ],
-    bestFor: ["Beginners & improvers", "Friends or solo travelers", "Surf-focused stays"],
+    bestFor: ["Beginners & improvers", "Friends or solo travelers", "Surf-focused stays of 1+ week"],
   },
 ];
 

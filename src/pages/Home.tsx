@@ -394,7 +394,7 @@ export default function Home() {
               className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm flex flex-col"
             >
               <div className="inline-flex w-fit rounded-full bg-sunset/10 text-sunset px-3 py-1 text-xs font-medium mb-4">All-inclusive</div>
-              <p className="text-xs font-medium text-stone-500 mb-2">Minimum stay: 3 nights</p>
+              <p className="text-xs font-medium text-stone-500 mb-2">Minimum stay: 7 nights</p>
               <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-2">Surf Camp Pack</h3>
               <p className="text-ocean font-semibold text-lg mb-4">From €45 / day</p>
               <p className="card-copy text-stone mb-4">
@@ -511,10 +511,10 @@ export default function Home() {
               <div className="rounded-[1.7rem] bg-white/8 border border-white/8 p-6 sm:p-7">
                 <p className="text-white/60 text-sm sm:text-base mb-3">Direct contact</p>
                 <a href={`tel:+${siteInfo.whatsapp}`} className="block text-white text-2xl sm:text-[2rem] font-semibold leading-tight mb-1 hover:text-blue-200 transition-colors">
-                  +212 6 12 34 56 78
+                  {siteInfo.phone}
                 </a>
-                <a href="mailto:tamountsurfhouse@gmail.com" className="block text-white/65 text-sm sm:text-base mb-6 hover:text-white transition-colors">
-                  tamountsurfhouse@gmail.com
+                <a href={`mailto:${siteInfo.email}`} className="block text-white/65 text-sm sm:text-base mb-6 hover:text-white transition-colors">
+                  {siteInfo.email}
                 </a>
 
                 <div className="space-y-3.5 text-white/75 text-sm sm:text-base">
