@@ -1,9 +1,21 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
-import { navLinks } from "../data/content";
+import { Menu, X, Phone, Mail, MessageCircle } from "lucide-react";
+import { navLinks, siteInfo } from "../data/content";
 import { motion, AnimatePresence } from "framer-motion";
 import Logo from "./Logo";
+
+// Inline Instagram SVG — lucide-react doesn't ship brand glyphs (trademark reasons),
+// so we use the official-style camera mark.
+function InstagramIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+    </svg>
+  );
+}
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -92,18 +104,7 @@ export default function Navbar() {
               className="max-w-[1240px] mx-auto rounded-[1.6rem] bg-cream/98 border border-[var(--color-border)] shadow-[0_18px_50px_rgba(15,42,58,0.18)] p-4 sm:p-5"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="flex items-center justify-between pb-4 border-b border-[var(--color-border)]">
-                <Logo className="h-8 w-auto" />
-                <button
-                  onClick={() => setMobileOpen(false)}
-                  className="w-10 h-10 rounded-full bg-white border border-[var(--color-border)] flex items-center justify-center text-charcoal"
-                  aria-label="Close menu"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className="grid gap-2 pt-4">
+              <div className="grid gap-2">
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.path}
@@ -142,6 +143,59 @@ export default function Navbar() {
                 >
                   Book Now
                 </Link>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="mt-5 pt-5 border-t border-[var(--color-border)]"
+              >
+                <div className="flex flex-col gap-2.5">
+                  <a
+                    href={`https://wa.me/${siteInfo.whatsapp}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white hover:bg-primary-50 text-charcoal text-sm font-medium transition-colors"
+                  >
+                    <MessageCircle size={18} className="text-ocean shrink-0" />
+                    <span>{siteInfo.phone}</span>
+                  </a>
+                  <a
+                    href={`mailto:${siteInfo.email}`}
+                    className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white hover:bg-primary-50 text-charcoal text-sm font-medium transition-colors"
+                  >
+                    <Mail size={18} className="text-ocean shrink-0" />
+                    <span className="truncate">{siteInfo.email}</span>
+                  </a>
+                </div>
+                <div className="flex items-center justify-center gap-3 mt-4">
+                  <a
+                    href={siteInfo.social.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Tamount Surf House on Instagram"
+                    className="w-11 h-11 rounded-full bg-white border border-[var(--color-border)] flex items-center justify-center text-charcoal hover:bg-ocean hover:text-white hover:border-ocean transition-colors"
+                  >
+                    <InstagramIcon size={18} />
+                  </a>
+                  <a
+                    href={`https://wa.me/${siteInfo.whatsapp}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="WhatsApp Tamount Surf House"
+                    className="w-11 h-11 rounded-full bg-white border border-[var(--color-border)] flex items-center justify-center text-charcoal hover:bg-ocean hover:text-white hover:border-ocean transition-colors"
+                  >
+                    <MessageCircle size={18} />
+                  </a>
+                  <a
+                    href={`tel:${siteInfo.phone.replace(/\s+/g, "")}`}
+                    aria-label="Call Tamount Surf House"
+                    className="w-11 h-11 rounded-full bg-white border border-[var(--color-border)] flex items-center justify-center text-charcoal hover:bg-ocean hover:text-white hover:border-ocean transition-colors"
+                  >
+                    <Phone size={18} />
+                  </a>
+                </div>
               </motion.div>
             </motion.div>
           </motion.div>

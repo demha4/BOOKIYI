@@ -176,3 +176,39 @@ Updated 4 experience modal images to use real, fitting photos:
 - ✅ `npx vite build` succeeds (2173 modules, 660 KB → 188 KB gzipped)
 - ✅ All 20 images present in `/public/images/`, total 5.2 MB
 - ✅ Hero image visually checked — natural ocean tones after enhancement-tuning revision
+
+---
+
+## Pass 5 — Booking-aligned room names + clean mobile menu (Apr 26, 2026)
+
+### `src/data/content.ts`
+**Room names now match Booking.com exactly:**
+
+| Internal `id` | Old name | New name (matches Booking listing) |
+|---|---|---|
+| `anza-dorm` | The Anza Dorm | **Bed in 6-Bed Mixed Dormitory Room** |
+| `double-room` | The Double Room | **Economy Double Room** (1 queen bed) |
+| `rooftop-triple` | The Rooftop Triple | **Economy Double Room** (1 twin + 1 queen) |
+
+Note: the two private rooms now share the same display name ("Economy Double Room"), exactly as on Booking. They're disambiguated by their `features[0]` ("1 queen bed" vs "1 twin bed and 1 queen bed"), price (€30 vs €35), image, and unique URL slug — same disambiguation pattern Booking itself uses.
+
+Also corrected dorm size: `maxGuests: 8 / availableBeds: 8` → `6 / 6` to match the real Booking listing ("6-Bed Mixed Dormitory").
+
+**Added social field:**
+- `siteInfo.social.instagram` — currently set to `https://www.instagram.com/tamountsurfhouse/`. Update if the real handle is different.
+
+### `src/components/Navbar.tsx`
+**Removed duplicate logo + close icon in the mobile menu.** When the drawer was open, the user saw two logos (one in the top navbar, one inside the drawer panel) and two ways to close (the X in the top navbar, plus another X inside the drawer header). Now the drawer panel just contains the link list and CTAs — the navbar at the top remains visible and its hamburger-turned-X serves as the single close action. Cleaner, less visually noisy.
+
+**Added contact footer to the mobile menu:**
+- WhatsApp / phone number row (taps to open chat)
+- Email row (taps to open mail client)
+- Three round social icon buttons at the bottom: **Instagram**, **WhatsApp**, **Phone**
+
+The Instagram glyph is inlined as an SVG component (`InstagramIcon`) because lucide-react v1.8.0 doesn't ship brand icons (a deliberate choice on lucide's side for trademark reasons).
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2173 modules, 658 KB → 188 KB gzipped)
+- ✅ `room.name` is used only for display (not as a React `key`) — duplicate names are safe
+- ✅ Logo import retained for the top navbar (still used there)
