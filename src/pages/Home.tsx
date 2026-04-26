@@ -327,10 +327,10 @@ export default function Home() {
                     <MapPin size={14} /> <span>{act.location}</span>
                   </div>
                   <h3 className="text-xl sm:text-2xl font-semibold text-charcoal leading-tight mb-2">{act.title}</h3>
-                  <p className="text-stone-600 text-[15px] sm:text-base leading-7 mb-4 flex-1">
+                  <div className="text-ocean text-sm sm:text-base font-semibold mb-4">{act.priceLogic}</div>
+                  <p className="text-stone-600 text-[15px] sm:text-base leading-7 mb-5 flex-1">
                     {act.benefit}
                   </p>
-                  <div className="text-ocean text-sm sm:text-base font-semibold mb-5">{act.priceLogic}</div>
                   <div className="space-y-2">
                     <Link to={`/book?activity=${act.id}`} className="block w-full text-center rounded-full bg-charcoal text-white px-4 py-3 text-sm font-medium hover:bg-charcoal/90 transition-colors">
                       Add To Stay
@@ -366,7 +366,10 @@ export default function Home() {
               viewport={{ once: true }}
               className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm flex flex-col"
             >
-              <div className="inline-flex w-fit rounded-full bg-ocean/10 text-ocean px-3 py-1 text-xs font-medium mb-5">Flexible stay</div>
+              <div className="flex items-center justify-between gap-3 mb-5">
+                <div className="inline-flex w-fit rounded-full bg-ocean/10 text-ocean px-3 py-1 text-xs font-medium">Flexible stay</div>
+                <span className="text-xs font-medium text-stone-500">Minimum stay: 1 night</span>
+              </div>
               <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-2">Bed &amp; Breakfast</h3>
               <p className="text-ocean font-semibold text-lg mb-4">From €12 / night</p>
               <p className="card-copy text-stone mb-4">
@@ -375,7 +378,6 @@ export default function Home() {
               <p className="card-copy text-stone mb-6 flex-1">
                 You handle your own days. We are here when you need local tips, transport, or a lesson booked on the fly.
               </p>
-              <p className="text-sm text-stone mb-6">Minimum stay: 1 night</p>
               <div className="grid sm:grid-cols-2 gap-3 mt-auto">
                 <Link to="/packages/bed-and-breakfast" className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 text-charcoal px-5 py-3.5 text-sm font-medium hover:bg-stone-50 transition-colors">
                   See full details
@@ -393,7 +395,10 @@ export default function Home() {
               transition={{ delay: 0.08 }}
               className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm flex flex-col"
             >
-              <div className="inline-flex w-fit rounded-full bg-sunset/10 text-sunset px-3 py-1 text-xs font-medium mb-5">All-inclusive</div>
+              <div className="flex items-center justify-between gap-3 mb-5">
+                <div className="inline-flex w-fit rounded-full bg-sunset/10 text-sunset px-3 py-1 text-xs font-medium">All-inclusive</div>
+                <span className="text-xs font-medium text-stone-500">Minimum stay: 3 nights</span>
+              </div>
               <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-2">Surf Camp Pack</h3>
               <p className="text-ocean font-semibold text-lg mb-4">From €45 / day</p>
               <p className="card-copy text-stone mb-4">
@@ -402,7 +407,6 @@ export default function Home() {
               <p className="card-copy text-stone mb-6 flex-1">
                 Just show up with your swimsuit and a sense of humor.
               </p>
-              <p className="text-sm text-stone mb-6">Minimum stay: 3 nights</p>
               <div className="grid sm:grid-cols-2 gap-3 mt-auto">
                 <Link to="/packages/surf-camp" className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 text-charcoal px-5 py-3.5 text-sm font-medium hover:bg-stone-50 transition-colors">
                   See full details
@@ -537,9 +541,9 @@ export default function Home() {
                     href="https://wa.me/212612345678?text=Hi!%20I%20need%20help%20choosing%20the%20best%20stay%20option."
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] text-white px-6 py-4 text-base sm:text-lg font-semibold hover:bg-[#1fb458] transition-colors w-full sm:w-auto"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] text-white px-6 py-3.5 text-sm sm:text-base font-semibold hover:bg-[#1fb458] transition-colors w-full sm:w-auto"
                   >
-                    <MessageCircle size={20} /> Message on WhatsApp
+                    <MessageCircle size={18} /> Message on WhatsApp
                   </a>
                 </div>
                 <div className="mt-3">
@@ -547,9 +551,9 @@ export default function Home() {
                     href="https://maps.google.com/?q=Anza,Agadir,Morocco"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-white/6 border border-white/12 text-white px-6 py-4 text-base sm:text-lg font-medium hover:bg-white/10 transition-colors w-full sm:w-auto"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-white/6 border border-white/12 text-white px-6 py-3.5 text-sm sm:text-base font-medium hover:bg-white/10 transition-colors w-full sm:w-auto"
                   >
-                    <MapPin size={18} /> Get Directions
+                    <MapPin size={16} /> Get Directions
                   </a>
                 </div>
               </div>

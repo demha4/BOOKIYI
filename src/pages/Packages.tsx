@@ -73,21 +73,18 @@ export default function Packages() {
                 <div className={`absolute top-5 left-5 inline-flex w-fit rounded-full px-3 py-1 text-xs font-medium ${pkg.badgeClass}`}>{pkg.badge}</div>
               </div>
               <div className="p-7 sm:p-8 flex flex-col flex-1">
+                <p className="text-xs font-medium text-stone-500 mb-2">{pkg.minimum}</p>
                 <h2 className="text-2xl sm:text-[2rem] font-semibold tracking-tight text-charcoal leading-tight mb-3">{pkg.title}</h2>
                 <p className="text-ocean font-semibold text-lg mb-6">{pkg.price}</p>
-                
+
                 <div className="border-t border-stone-100 pt-6 mb-6">
                   <p className="card-copy text-stone leading-8">{pkg.copy1}</p>
                 </div>
-                
-                <div className="border-t border-stone-100 pt-6 mb-6">
+
+                <div className="border-t border-stone-100 pt-6 mb-7">
                   <p className="card-copy text-stone leading-8">{pkg.copy2}</p>
                 </div>
-                
-                <div className="border-t border-stone-100 pt-6 mb-7">
-                  <p className="text-sm text-stone font-medium">{pkg.minimum}</p>
-                </div>
-                
+
                 <div className="grid grid-cols-1 gap-3 mt-auto">
                   <Link to={pkg.detailPath} className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 text-charcoal px-5 py-3.5 text-sm font-medium hover:bg-stone-50 transition-colors">
                     See full details

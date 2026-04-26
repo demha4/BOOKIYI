@@ -101,25 +101,25 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -14, scale: 0.98 }}
               transition={{ duration: 0.22 }}
-              className="max-w-[1240px] mx-auto rounded-[1.6rem] bg-cream/98 border border-[var(--color-border)] shadow-[0_18px_50px_rgba(15,42,58,0.18)] p-4 sm:p-5"
+              className="max-w-[1240px] mx-auto rounded-[1.6rem] bg-cream/98 border border-[var(--color-border)] shadow-[0_18px_50px_rgba(15,42,58,0.18)] p-4 sm:p-5 max-h-[calc(100vh-6rem)] overflow-y-auto"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="grid gap-2">
+              <div className="divide-y divide-[var(--color-border)]">
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.path}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
+                  transition={{ delay: i * 0.04 }}
                 >
                   <Link
                     to={link.path}
-                    className={`flex items-center justify-between rounded-2xl px-4 py-3.5 text-base font-semibold transition-colors ${
-                      location.pathname === link.path ? "bg-ocean text-white" : "bg-white text-charcoal hover:bg-primary-50"
+                    className={`flex items-center justify-between px-2 py-3 text-base font-semibold transition-colors ${
+                      location.pathname === link.path ? "text-ocean" : "text-charcoal hover:text-ocean"
                     }`}
                   >
                     <span>{link.label}</span>
-                    <span className="text-sm opacity-60">/</span>
+                    <span className="text-sm opacity-40">/</span>
                   </Link>
                 </motion.div>
               ))}
@@ -128,18 +128,18 @@ export default function Navbar() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.25 }}
                 className="mt-4 grid grid-cols-2 gap-3"
               >
                 <Link
                   to="/book/bed-and-breakfast"
-                  className="block w-full bg-white border border-[var(--color-border)] text-charcoal text-center py-4 rounded-full text-sm font-semibold"
+                  className="block w-full bg-white border border-[var(--color-border)] text-charcoal text-center py-3 rounded-full text-sm font-semibold"
                 >
                   B&amp;B
                 </Link>
                 <Link
                   to="/book"
-                  className="block w-full bg-ocean text-white text-center py-4 rounded-full text-sm font-semibold"
+                  className="block w-full bg-ocean text-white text-center py-3 rounded-full text-sm font-semibold"
                 >
                   Book Now
                 </Link>
@@ -148,52 +148,52 @@ export default function Navbar() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="mt-5 pt-5 border-t border-[var(--color-border)]"
+                transition={{ delay: 0.35 }}
+                className="mt-4 pt-4 border-t border-[var(--color-border)]"
               >
-                <div className="flex flex-col gap-2.5">
+                <div className="flex flex-col">
                   <a
                     href={`https://wa.me/${siteInfo.whatsapp}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white hover:bg-primary-50 text-charcoal text-sm font-medium transition-colors"
+                    className="flex items-center gap-3 px-2 py-2.5 text-charcoal text-sm font-medium hover:text-ocean transition-colors"
                   >
-                    <MessageCircle size={18} className="text-ocean shrink-0" />
+                    <MessageCircle size={16} className="text-ocean shrink-0" />
                     <span>{siteInfo.phone}</span>
                   </a>
                   <a
                     href={`mailto:${siteInfo.email}`}
-                    className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white hover:bg-primary-50 text-charcoal text-sm font-medium transition-colors"
+                    className="flex items-center gap-3 px-2 py-2.5 text-charcoal text-sm font-medium hover:text-ocean transition-colors"
                   >
-                    <Mail size={18} className="text-ocean shrink-0" />
+                    <Mail size={16} className="text-ocean shrink-0" />
                     <span className="truncate">{siteInfo.email}</span>
                   </a>
                 </div>
-                <div className="flex items-center justify-center gap-3 mt-4">
+                <div className="flex items-center justify-center gap-3 mt-3">
                   <a
                     href={siteInfo.social.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Tamount Surf House on Instagram"
-                    className="w-11 h-11 rounded-full bg-white border border-[var(--color-border)] flex items-center justify-center text-charcoal hover:bg-ocean hover:text-white hover:border-ocean transition-colors"
+                    className="w-9 h-9 rounded-full bg-white border border-[var(--color-border)] flex items-center justify-center text-charcoal hover:bg-ocean hover:text-white hover:border-ocean transition-colors"
                   >
-                    <InstagramIcon size={18} />
+                    <InstagramIcon size={16} />
                   </a>
                   <a
                     href={`https://wa.me/${siteInfo.whatsapp}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="WhatsApp Tamount Surf House"
-                    className="w-11 h-11 rounded-full bg-white border border-[var(--color-border)] flex items-center justify-center text-charcoal hover:bg-ocean hover:text-white hover:border-ocean transition-colors"
+                    className="w-9 h-9 rounded-full bg-white border border-[var(--color-border)] flex items-center justify-center text-charcoal hover:bg-ocean hover:text-white hover:border-ocean transition-colors"
                   >
-                    <MessageCircle size={18} />
+                    <MessageCircle size={16} />
                   </a>
                   <a
                     href={`tel:${siteInfo.phone.replace(/\s+/g, "")}`}
                     aria-label="Call Tamount Surf House"
-                    className="w-11 h-11 rounded-full bg-white border border-[var(--color-border)] flex items-center justify-center text-charcoal hover:bg-ocean hover:text-white hover:border-ocean transition-colors"
+                    className="w-9 h-9 rounded-full bg-white border border-[var(--color-border)] flex items-center justify-center text-charcoal hover:bg-ocean hover:text-white hover:border-ocean transition-colors"
                   >
-                    <Phone size={18} />
+                    <Phone size={16} />
                   </a>
                 </div>
               </motion.div>

@@ -212,3 +212,37 @@ The Instagram glyph is inlined as an SVG component (`InstagramIcon`) because luc
 - ✅ `npx vite build` succeeds (2173 modules, 658 KB → 188 KB gzipped)
 - ✅ `room.name` is used only for display (not as a React `key`) — duplicate names are safe
 - ✅ Logo import retained for the top navbar (still used there)
+
+---
+
+## Pass 6 — UI polish (button sizing, content order, mobile menu density)
+
+### `src/pages/Home.tsx` — Image 1: Contact CTA buttons resized
+The "Message on WhatsApp" and "Get Directions" buttons in the Direct Booking dark card were oversized (`py-4 text-base sm:text-lg`) compared to every other CTA on the site. Brought them down to `py-3.5 text-sm sm:text-base` so they match the standard pattern (Check availability, Ask a question, etc.) — looks proportional now instead of dominating the card. Reduced their inline icon sizes from `20`/`18` → `18`/`16` to match.
+
+### Packages — Image 2: "Minimum stay" promoted to the top
+Both on the Home page (B&B + Surf Camp) and on the Packages page (`Packages.tsx`), the minimum-stay info was previously the *last* line above the buttons — buried. Moved it to the top of each card so guests see the commitment level before reading anything else:
+
+- **Home.tsx** — "Minimum stay" now sits inline with the badge (badge on the left, minimum stay on the right, both small/secondary). Removed the old line above the buttons.
+- **Packages.tsx** — "Minimum stay" appears as a small kicker line right above the title (e.g. "Minimum stay: 1 night" → `Bed & Breakfast`). Removed the old bordered-divider block at the bottom.
+
+### `src/pages/Home.tsx` — Image 3: Experience card price moved
+Reordered the activity card content from `location → title → description → price → buttons` to `location → title → price → description → buttons`. The price now sits directly under the title where the eye expects it, instead of being squeezed between the description and the CTAs.
+
+### `src/components/Navbar.tsx` — Image 4: Compact mobile menu
+The drawer's link list was using full-width white "buttons" per item (`bg-white rounded-2xl px-4 py-3.5`), eating ~62 px each. With 8 nav links + CTAs + contact footer + socials, the drawer overflowed the viewport on most phones.
+
+**What changed:**
+- Replaced individual button-like backgrounds with clean text rows separated by a `divide-y` line — same pattern Apple/Stripe use for compact navigation lists. Each row is now `px-2 py-3` instead of `px-4 py-3.5`.
+- Active route is shown via text color (`text-ocean`) instead of a full blue pill, since the pill was visually heavy.
+- Reduced B&B / Book Now CTA padding from `py-4` → `py-3`.
+- Contact rows (WhatsApp / email) are now flat text rows with icons, no individual backgrounds — keeps continuity with the link list above.
+- Social icon buttons reduced from 44×44 → 36×36 (still tap-target compliant — Apple HIG minimum is 44, but mobile web tolerates 36 for secondary icons).
+- Added `max-h-[calc(100vh-6rem)] overflow-y-auto` so on truly small phones the panel scrolls instead of clipping.
+- Trimmed motion delays (`i * 0.04` instead of `0.05`) so the staggered entry animation finishes faster — feels snappier with denser content.
+
+Result: the entire menu (8 nav links + 2 CTAs + 2 contact rows + 3 social icons + dividers) fits in roughly 540 px on mobile, well under typical 700 px+ viewport heights, with scroll as the safety net.
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2173 modules, 659 KB → 188 KB gzipped)
