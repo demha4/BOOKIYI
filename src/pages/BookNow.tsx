@@ -113,22 +113,17 @@ function usePriceBreakdown(liveData: Record<string, { avgNightly?: number; total
     return Object.entries(booking.addOns).reduce((sum, [id, sel]) => {
       const addon = ADDONS.find((a) => a.id === id);
       if (!addon || sel.quantity <= 0) return sum;
-      
-      // Airport transfer is per-booking (fixed), all other add-ons are per-guest
-      if (addon.id === "airport-pickup") {
-        if (addon.priceUnit === "perNight") {
-          return sum + addon.price * sel.quantity * nights;
-        }
-        return sum + addon.price * sel.quantity;
-      }
-      
-      // All other add-ons multiply by number of guests
+
+      // sel.quantity already represents the correct count:
+      // - In group mode: quantity = number of items the group booked
+      // - In per-person mode: quantity = sum of per-guest selections
+      // So we never multiply by totalPersons here — that would double-count.
       if (addon.priceUnit === "perNight") {
-        return sum + addon.price * sel.quantity * nights * totalPersons;
+        return sum + addon.price * sel.quantity * nights;
       }
-      return sum + addon.price * sel.quantity * totalPersons;
+      return sum + addon.price * sel.quantity;
     }, 0);
-  }, [booking.addOns, nights, totalPersons]);
+  }, [booking.addOns, nights]);
 
   const total = accommodationTotal + addonsTotal;
   const depositAmount = Math.ceil(total * 0.3);
@@ -1011,13 +1006,18 @@ export default function BookNow() {
                                 </div>
                               </div>
 
-                              {booking.addonMode === "group" ? (
-                                <div className="flex items-center justify-end gap-3 mt-3">
-                                  <button onClick={() => setAddonGroupQty(addon.id, sel.quantity - 1)} disabled={sel.quantity <= 0}
-                                    className="w-8 h-8 rounded-lg border border-stone-200 flex items-center justify-center disabled:opacity-30 hover:bg-stone-50"><Minus size={14} /></button>
-                                  <span className="w-8 text-center font-bold text-stone-800">{sel.quantity}</span>
-                                  <button onClick={() => setAddonGroupQty(addon.id, sel.quantity + 1)} disabled={sel.quantity >= addon.maxPerUnit}
-                                    className="w-8 h-8 rounded-lg border border-stone-200 flex items-center justify-center disabled:opacity-30 hover:bg-stone-50"><Plus size={14} /></button>
+                              {booking.addonMode === "group" || addon.id === "airport-pickup" ? (
+                                <div className="flex items-center justify-between gap-3 mt-3">
+                                  {addon.id === "airport-pickup" && booking.addonMode === "person" && (
+                                    <span className="text-[11px] text-stone-500 italic">Flat rate — covers up to 5 guests in one ride</span>
+                                  )}
+                                  <div className="flex items-center gap-3 ml-auto">
+                                    <button onClick={() => setAddonGroupQty(addon.id, sel.quantity - 1)} disabled={sel.quantity <= 0}
+                                      className="w-8 h-8 rounded-lg border border-stone-200 flex items-center justify-center disabled:opacity-30 hover:bg-stone-50"><Minus size={14} /></button>
+                                    <span className="w-8 text-center font-bold text-stone-800">{sel.quantity}</span>
+                                    <button onClick={() => setAddonGroupQty(addon.id, sel.quantity + 1)} disabled={sel.quantity >= addon.maxPerUnit}
+                                      className="w-8 h-8 rounded-lg border border-stone-200 flex items-center justify-center disabled:opacity-30 hover:bg-stone-50"><Plus size={14} /></button>
+                                  </div>
                                 </div>
                               ) : (
                                 <div className="mt-3 space-y-2 pl-1">
@@ -1295,15 +1295,13 @@ export default function BookNow() {
                             {Object.entries(booking.addOns).filter(([, s]) => s.quantity > 0).map(([id, sel]) => {
                               const a = ADDONS.find((x) => x.id === id);
                               if (!a) return null;
-                              const lineTotal = a.id === "airport-pickup"
-                                ? a.price * sel.quantity
-                                : a.priceUnit === "perNight"
-                                  ? a.price * sel.quantity * nights * totalPersons
-                                  : a.price * sel.quantity * totalPersons;
+                              const lineTotal = a.priceUnit === "perNight"
+                                ? a.price * sel.quantity * nights
+                                : a.price * sel.quantity;
                               return (
                                 <div key={id} className="flex items-center justify-between py-1.5 text-sm">
                                   <span className="text-stone-600">
-                                    {a.name} ×{sel.quantity}{a.id !== "airport-pickup" ? ` × ${totalPersons} guest${totalPersons > 1 ? "s" : ""}` : ""}
+                                    {a.name} ×{sel.quantity}
                                   </span>
                                   <span className="font-semibold">€{lineTotal}</span>
                                 </div>

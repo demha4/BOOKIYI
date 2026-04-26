@@ -246,3 +246,40 @@ Result: the entire menu (8 nav links + 2 CTAs + 2 contact rows + 3 social icons 
 ### Verified
 - ✅ `npx tsc --noEmit` passes
 - ✅ `npx vite build` succeeds (2173 modules, 659 KB → 188 KB gzipped)
+
+---
+
+## Pass 8 — Booking flow pricing fixes (Apr 26, 2026)
+
+### Bug 1 — Per-person add-on pricing was double-counted
+
+**Symptom (from user screenshot):** 2 guests, Guest 1 selects 1 surf lesson, Guest 2 selects 0. The line subtotal correctly showed €30, but the right-side "Booking Summary → Add-ons" line showed **€60**. So the customer sees two different totals on the same screen.
+
+**Root cause:** In `usePriceBreakdown` (`BookNow.tsx`), the addon total was computing `price × quantity × totalPersons` for non-airport addons. But `setAddonGuestQty` (in `BookingContext.tsx`) already sums per-guest quantities into `quantity`. Multiplying by `totalPersons` again was double-counting in per-person mode and over-counting in group mode (a group buying 2 lessons doesn't pay for "2 lessons × N people").
+
+**Fix:** Removed the `× totalPersons` multiplier entirely. New formula in both `addonsTotal` and the right-side line item:
+- Standard add-on: `price × quantity`
+- Per-night add-on: `price × quantity × nights`
+
+`quantity` is already the right number in both modes (group mode = items the group booked, person mode = sum of per-guest selections), so no further multiplication is correct.
+
+Also removed the now-misleading "× N guests" suffix from the Booking Summary line item display.
+
+### Bug 2 — Taxi could be selected per-guest, multiplying the flat fare
+
+**Symptom:** In per-person mode, each guest had a `+/-` selector for the taxi/airport-pickup add-on. Two guests adding "1 taxi each" would compute as €50 (2 × €25) when in reality there's still only one taxi ride.
+
+**Why it was wrong:** Taxi is paid per drive, not per seat. One taxi covers up to 5 guests for €25 flat. The taxi already had `maxPerUnit: 1` to prevent the group from booking 2 taxis, but the per-person UI bypassed that.
+
+**Fix:** Force the taxi (`addon.id === "airport-pickup"`) to always show the **group selector** (one +/- counter, max 1), regardless of whether the user is in Per Group or Per Person mode. When the user is in Per Person mode, an italic helper line appears on the taxi card: *"Flat rate — covers up to 5 guests in one ride"*, so the inconsistency is explained rather than silent.
+
+### Verified math (post-fix)
+- Group of 2, 1 surf lesson booked → **€30** ✓
+- Group of 2, 2 surf lessons booked → **€60** ✓
+- Per-person mode: G1 picks 1 lesson, G2 picks 0 → **€30** ✓
+- Per-person mode: both pick 1 lesson → **€60** ✓
+- Taxi (any mode, any group size 1–5) → **€25 flat** ✓
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2173 modules, 659 KB → 188 KB gzipped)

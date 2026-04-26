@@ -366,10 +366,8 @@ export default function Home() {
               viewport={{ once: true }}
               className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm flex flex-col"
             >
-              <div className="flex items-center justify-between gap-3 mb-5">
-                <div className="inline-flex w-fit rounded-full bg-ocean/10 text-ocean px-3 py-1 text-xs font-medium">Flexible stay</div>
-                <span className="text-xs font-medium text-stone-500">Minimum stay: 1 night</span>
-              </div>
+              <div className="inline-flex w-fit rounded-full bg-ocean/10 text-ocean px-3 py-1 text-xs font-medium mb-4">Flexible stay</div>
+              <p className="text-xs font-medium text-stone-500 mb-2">Minimum stay: 1 night</p>
               <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-2">Bed &amp; Breakfast</h3>
               <p className="text-ocean font-semibold text-lg mb-4">From €12 / night</p>
               <p className="card-copy text-stone mb-4">
@@ -395,10 +393,8 @@ export default function Home() {
               transition={{ delay: 0.08 }}
               className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm flex flex-col"
             >
-              <div className="flex items-center justify-between gap-3 mb-5">
-                <div className="inline-flex w-fit rounded-full bg-sunset/10 text-sunset px-3 py-1 text-xs font-medium">All-inclusive</div>
-                <span className="text-xs font-medium text-stone-500">Minimum stay: 3 nights</span>
-              </div>
+              <div className="inline-flex w-fit rounded-full bg-sunset/10 text-sunset px-3 py-1 text-xs font-medium mb-4">All-inclusive</div>
+              <p className="text-xs font-medium text-stone-500 mb-2">Minimum stay: 3 nights</p>
               <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-2">Surf Camp Pack</h3>
               <p className="text-ocean font-semibold text-lg mb-4">From €45 / day</p>
               <p className="card-copy text-stone mb-4">
