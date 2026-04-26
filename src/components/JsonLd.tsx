@@ -1,3 +1,5 @@
+import { siteInfo } from "../data/content";
+
 export default function JsonLd() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
@@ -5,8 +7,8 @@ export default function JsonLd() {
     "name": "Tamount Surf House",
     "description": "Small, family-run surf hostel in Anza Beach, Agadir. Dorm beds and private rooms with rooftop terrace, surf lessons, and local trips.",
     "url": "https://tamountsurfhouse.com",
-    "telephone": "+212612345678",
-    "email": "tamountsurfhouse@gmail.com",
+    "telephone": `+${siteInfo.whatsapp}`,
+    "email": siteInfo.email,
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Anza Beach",

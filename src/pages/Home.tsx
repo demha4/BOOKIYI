@@ -510,7 +510,7 @@ export default function Home() {
 
               <div className="rounded-[1.7rem] bg-white/8 border border-white/8 p-6 sm:p-7">
                 <p className="text-white/60 text-sm sm:text-base mb-3">Direct contact</p>
-                <a href="tel:+212612345678" className="block text-white text-2xl sm:text-[2rem] font-semibold leading-tight mb-1 hover:text-blue-200 transition-colors">
+                <a href={`tel:+${siteInfo.whatsapp}`} className="block text-white text-2xl sm:text-[2rem] font-semibold leading-tight mb-1 hover:text-blue-200 transition-colors">
                   +212 6 12 34 56 78
                 </a>
                 <a href="mailto:tamountsurfhouse@gmail.com" className="block text-white/65 text-sm sm:text-base mb-6 hover:text-white transition-colors">
@@ -534,7 +534,7 @@ export default function Home() {
 
                 <div className="mt-7">
                   <a
-                    href="https://wa.me/212612345678?text=Hi!%20I%20need%20help%20choosing%20the%20best%20stay%20option."
+                    href={`https://wa.me/${siteInfo.whatsapp}?text=Hi!%20I%20need%20help%20choosing%20the%20best%20stay%20option.`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] text-white px-6 py-3.5 text-sm sm:text-base font-semibold hover:bg-[#1fb458] transition-colors w-full sm:w-auto"

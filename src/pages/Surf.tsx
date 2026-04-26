@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Waves, Shield, Bus, Thermometer, Clock3 } from "lucide-react";
 import SEO from "../components/SEO";
+import { siteInfo } from "../data/content";
 
 const lessons = [
   {
@@ -142,7 +143,7 @@ export default function Surf() {
             <div className="w-14 h-14 rounded-2xl bg-white/10 text-blue-300 flex items-center justify-center mx-auto mb-5"><Clock3 size={24} /></div>
             <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight leading-tight mb-4">Want us to tell you where the waves are best for your dates?</h2>
             <p className="text-white/70 text-base sm:text-lg leading-8 max-w-2xl mx-auto mb-7">Send your dates and your surf level. We will tell you honestly if it is the right week for Anza, Taghazout, or an Imsouane day trip.</p>
-            <a href="https://wa.me/212612345678?text=Hi!%20I%20want%20to%20ask%20about%20surf%20conditions%20and%20lessons." target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full bg-white text-charcoal px-7 py-3.5 font-semibold text-sm sm:text-base hover:bg-white/90 transition-colors">
+            <a href={`https://wa.me/${siteInfo.whatsapp}?text=Hi!%20I%20want%20to%20ask%20about%20surf%20conditions%20and%20lessons.`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full bg-white text-charcoal px-7 py-3.5 font-semibold text-sm sm:text-base hover:bg-white/90 transition-colors">
               Ask about surf on WhatsApp
             </a>
           </div>

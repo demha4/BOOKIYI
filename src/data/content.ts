@@ -1,9 +1,19 @@
+// Contact details — sourced from Vercel/Vite environment variables at build
+// time, with sensible fallbacks for local dev. Set these in Vercel:
+//   VITE_WHATSAPP_NUMBER  → digits only (e.g. "212612345678"), used in wa.me links
+//   VITE_PHONE_DISPLAY    → human-readable phone (e.g. "+212 6 12 34 56 78")
+//   VITE_CONTACT_EMAIL    → contact email
+// These bake into the build, so changing them in Vercel requires a redeploy.
+const ENV_WHATSAPP = (import.meta.env.VITE_WHATSAPP_NUMBER as string | undefined) ?? "212612345678";
+const ENV_PHONE_DISPLAY = (import.meta.env.VITE_PHONE_DISPLAY as string | undefined) ?? "+212 6 12 34 56 78";
+const ENV_EMAIL = (import.meta.env.VITE_CONTACT_EMAIL as string | undefined) ?? "tamountsurfhouse@gmail.com";
+
 export const siteInfo = {
   name: "Tamount Surf House",
   tagline: "A small surf house, a big welcome. 4 minutes' walk to Anza Beach.",
-  phone: "+212 6 12 34 56 78",
-  whatsapp: "212612345678",
-  email: "tamountsurfhouse@gmail.com",
+  phone: ENV_PHONE_DISPLAY,
+  whatsapp: ENV_WHATSAPP,
+  email: ENV_EMAIL,
   location: "Bloc B, Dalas Anza, Agadir, Morocco",
   mapsUrl: "https://share.google/WBpcrme1YV7ypgfXq",
   social: {
@@ -118,7 +128,7 @@ export const rooms: RoomType[] = [
   {
     id: "anza-dorm",
     beds24RoomId: "645890",
-    name: "Bed in 6-Bed Mixed Dormitory Room",
+    name: "Bed in 8-Bed Mixed Dormitory Room",
     type: "dorm",
     genderPolicy: "mixed",
     price: 20,
@@ -127,20 +137,20 @@ export const rooms: RoomType[] = [
     description: "The social heart of the house. Sturdy bunks with privacy curtains, lockers for your stuff, and usually new friends by morning.",
     features: ["1 bunk bed", "Privacy curtains", "Reading light", "Power socket", "Lockable locker", "Breakfast included", "Shared bathroom"],
     size: "22 m²",
-    maxGuests: 6,
+    maxGuests: 8,
     available: true,
-    availableBeds: 6,
+    availableBeds: 8,
   },
   {
     id: "rooftop-triple",
     beds24RoomId: "645892",
-    name: "Economy Double Room",
+    name: "Triple Room",
     type: "private",
     genderPolicy: "any",
     price: 50,
     priceUnit: "night",
     image: "/images/triple-room.jpg",
-    description: "Private room with a calm feel, soft light, and direct access to the rooftop terrace. Works for friends, a couple with extra space, or a small family.",
+    description: "Private room with a calm feel, soft light, and direct access to the rooftop terrace. Sleeps up to three — one twin and one queen bed. Good for friends, a couple with extra space, or a small family.",
     features: ["1 twin bed and 1 queen bed", "Breakfast included", "Fresh linens", "Shared bathroom", "Fast WiFi", "Wardrobe"],
     size: "16 m²",
     maxGuests: 3,

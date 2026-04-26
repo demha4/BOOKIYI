@@ -133,7 +133,24 @@ export async function getLiveRoomData(
         const roomId = String(room.roomId);
         const bestOffer = room.offers?.[0]; // take first/best offer
 
-        if (!bestOffer) continue;
+        if (!bestOffer) {
+          // Beds24 returned the room but no rate plan is configured for these
+          // dates. Don't silently drop the room — surface it with zero price
+          // so the booking page still shows it. The UI will fall back to the
+          // static `room.price` from content.ts and the room is visible.
+          // Setting `available: -1` is the convention this code uses for
+          // "rate plan missing"; UI checks for available > 0 to gate booking.
+          result[roomId] = {
+            available: -1,
+            totalPrice: 0,
+            avgNightly: 0,
+            minStay: 1,
+          };
+          if (import.meta.env.DEV) {
+            console.warn(`[Beds24] Room ${roomId} has no offers for ${checkIn}..${checkOut}. Likely no rate plan set — surfacing with static fallback.`);
+          }
+          continue;
+        }
 
         const totalPrice = Number(bestOffer.price) || 0;
         const unitsAvailable = Number(bestOffer.unitsAvailable) || 0;

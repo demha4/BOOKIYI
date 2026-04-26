@@ -935,7 +935,9 @@ export default function BookNow() {
                       {/* No availability */}
                       {!liveLoading && filteredRooms.filter((room) => {
                         const live = liveData[room.beds24RoomId];
-                        return live && (live.available ?? 0) > 0;
+                        // -1 = rate plan not configured (still bookable on request)
+                        // > 0 = real availability
+                        return live && ((live.available ?? 0) > 0 || live.available === -1);
                       }).length === 0 && booking.guests.length > 0 && (
                         <div className="text-center py-12 bg-stone-50 rounded-2xl border-2 border-dashed border-stone-200">
                           <AlertCircle className="mx-auto text-amber-500 mb-3" size={48} strokeWidth={1.5} />
@@ -1000,11 +1002,16 @@ export default function BookNow() {
                                       <p className="text-[10px] text-stone-400 uppercase">
                                         {room.type === "dorm" ? "/ guest / night" : "/ room / night"}
                                       </p>
-                                      {hasLiveData && (
+                                      {hasLiveData && liveAvail >= 0 && (
                                         <p className={`text-[10px] font-semibold mt-0.5 ${
                                           (liveAvail ?? 99) <= 2 ? "text-red-600" : "text-green-600"
                                         }`}>
                                           {liveAvail} {room.type === "dorm" ? "bed" : "unit"}{liveAvail !== 1 ? "s" : ""} left
+                                        </p>
+                                      )}
+                                      {hasLiveData && liveAvail === -1 && (
+                                        <p className="text-[10px] font-semibold mt-0.5 text-amber-600">
+                                          Rate on request
                                         </p>
                                       )}
                                     </div>

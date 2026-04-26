@@ -515,3 +515,101 @@ Both cards use:
 Double €55 and Triple €50 are the OTA channel rates from your Beds24 screenshot. The Website-DE rate (€3.50 lower per night, per your spec) hasn't been configured yet for these rooms. Once you set those in Beds24, the live API will return the lower number and the booking page will reflect it automatically. The static fallbacks here are conservative — guests will see the lower live price as soon as availability loads.
 
 If you want me to lower these static fallbacks too once you've set the Website rates, just send the new numbers and I'll update them.
+
+---
+
+## Pass 13 — "Missing" Triple Room investigation
+
+The user reported that the Triple Room wasn't appearing on the Book page or Home page. The Beds24 control panel screenshot showed it was synced and configured correctly (Room id 645892), so the issue was on the site side.
+
+Two distinct problems found:
+
+### Problem 1 — Triple Room visually indistinguishable on the Home page
+
+In Pass 5 ("Booking-aligned room names"), both private rooms were renamed to **"Economy Double Room"** to match Booking.com's listing exactly (Booking shows them with identical names, disambiguated only by bed configuration). On Booking's listing page that's tolerable because each entry has a bed-config row underneath. On the Tamount Home page, three room cards rendered side by side with the *same* name on two of them — making it look like the Double appeared twice and the Triple was missing.
+
+**The fix:** renamed `rooftop-triple` back to **"Triple Room"** — the name Beds24 itself uses for this room (visible in the user's screenshot: "Triple Room (Room id 645892)"). Beds24 is the operational source of truth here, not Booking's listing-page rendering. Updated `description` to mention the bed config inline ("Sleeps up to three — one twin and one queen bed"). Now the three Home cards show distinct, recognizable names.
+
+### Problem 2 — Silent room dropping when no rate plan is configured
+
+While investigating Problem 1, found a real bug in `src/services/beds24.ts`. The `getLiveRoomData` parser was silently skipping any room where Beds24 returned no `offers` array (line 136: `if (!bestOffer) continue;`). This happens when a room exists in Beds24 but doesn't yet have a Website-DE rate plan set for the requested dates.
+
+The user mentioned they had set the dorm's Website rate but **not yet** the rates for the private rooms. So Beds24 was returning the Triple Room (and possibly the Double too) with an empty `offers` array, the parser silently dropped them, `liveData["645892"]` was `undefined`, the BookNow page check `if (!hasLiveData && !hasGuests) return null;` hid the room entirely. Guest sees nothing, no error message, no clue why.
+
+**The fix:** when Beds24 returns a room with no offers, the parser now emits a `{ available: -1, totalPrice: 0, avgNightly: 0 }` sentinel value instead of skipping. The BookNow page surfaces these rooms using the static `room.price` from `content.ts` as the fallback, with an amber **"Rate on request"** badge instead of the green/red "X beds left" badge. The "No availability" empty-state filter was also updated to not flag `-1` rooms as zero-available.
+
+This means: as soon as the user sets the missing rate plans in Beds24, the rooms automatically pick up live pricing and the "Rate on request" badge disappears — no code change needed. Until then, guests can still see all rooms and book them via WhatsApp at the listed fallback price.
+
+### Files changed
+- `src/data/content.ts` — `rooftop-triple` name + description
+- `src/services/beds24.ts` — `getLiveRoomData` no longer drops rooms silently
+- `src/pages/BookNow.tsx` — render logic respects the new `available: -1` sentinel; "Rate on request" badge replaces the count badge in that case
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2173 modules, 668 KB → 189 KB gzipped)
+
+---
+
+## Pass 14 — Dorm to 8-bed, env-driven contact info, Google verification
+
+### Dorm capacity: 6 → 8
+
+Updated to match the planned Beds24 update. Changed in `src/data/content.ts`:
+- Name: `Bed in 6-Bed Mixed Dormitory Room` → `Bed in 8-Bed Mixed Dormitory Room`
+- `maxGuests`: 6 → 8
+- `availableBeds`: 6 → 8
+
+Also updated `src/pages/Rooms.tsx` meta description ("6-bed dorm" → "8-bed dorm").
+
+**Important — set in Beds24 too:** make sure the Beds24 control panel for room 645890 also reads "8-Bed Mixed Dormitory" and the inventory/availability count is set to 8 beds. Otherwise the live availability badge will say "X beds left" with the wrong cap.
+
+### Contact info now driven by Vercel env vars
+
+`src/data/content.ts` now reads contact details from Vite environment variables at build time, with fallbacks for local dev:
+
+```
+VITE_WHATSAPP_NUMBER  → digits only, e.g. "212612345678" (used in wa.me links and tel:)
+VITE_PHONE_DISPLAY    → human-readable, e.g. "+212 6 12 34 56 78"
+VITE_CONTACT_EMAIL    → contact email
+```
+
+**Set these in Vercel** (Project → Settings → Environment Variables) and trigger a redeploy. Every `wa.me/...` link, `tel:` link, displayed phone, and contact email on the site will pick up the values.
+
+### Hardcoded `212612345678` references replaced
+
+The number was hardcoded in 7 places that were *not* reading from `siteInfo`. All now go through `siteInfo.whatsapp` (which reads from the env var):
+
+- `src/components/WhatsAppButton.tsx` — floating green WhatsApp button
+- `src/components/JsonLd.tsx` — `telephone` and `email` in the SEO structured data
+- `src/pages/Home.tsx` — tel link in the contact card + WhatsApp CTA in the dark "Direct Booking" section
+- `src/pages/Experiences.tsx` — modal "Book on WhatsApp" + bottom CTA (added `siteInfo` import)
+- `src/pages/Surf.tsx` — bottom WhatsApp CTA (added `siteInfo` import)
+
+### Google Search Console verification
+
+Added the meta tag verification method in `index.html`:
+
+```html
+<meta name="google-site-verification" content="h7inht7WKXzqAE9UAFnkQn7WMRrepzDtTEGQVroy3lY" />
+```
+
+This is the **HTML tag method** — Google accepts either the DNS TXT record OR this meta tag. After deploying, in Google Search Console click "Verify" — it'll find the meta tag in the live HTML and confirm ownership immediately, no DNS wait.
+
+For belt-and-braces you can also keep the DNS TXT record (different verification path, also works). Both can coexist.
+
+Bonus: also fixed the stale `€12/night` in `index.html`'s static `<meta name="description">` → `€20/night` (this one wasn't catching the React-side meta updates because the homepage SEO component overrides it on render, but the static value matters for crawlers that scrape the raw HTML).
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2173 modules, 665 KB → 189 KB gzipped)
+- ✅ Verification token confirmed present in `dist/index.html`
+- ✅ All `wa.me` and `tel:` links go through `siteInfo.whatsapp`
+
+### Note on the room name confusion observed in Pass 13's screenshot
+The user's earlier screenshot showed two "Economy Double Room" cards (€55 and €61) with mismatched specs. This is the *pre-Pass-13 deploy* — the previous build still had both private rooms named "Economy Double Room". After deploying the Pass 13 zip (or this one), the page will correctly show:
+- Bed in 8-Bed Mixed Dormitory Room (after this pass) — €20
+- **Triple Room** — €50 — 16 m² Max 3 — 1 twin + 1 queen
+- Economy Double Room — €55 — 14 m² Max 2 — 1 queen
+
+Each card now has a distinct name; no more visual duplication.

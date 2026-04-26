@@ -64,7 +64,7 @@ export default function Rooms() {
     <div className="bg-cream">
       <SEO
         title="Rooms & Accommodation"
-        description="Three rooms at Tamount Surf House: 6-bed dorm from €20/night, triple room from €50, double room from €55. All include breakfast, WiFi, and rooftop access."
+        description="Three rooms at Tamount Surf House: 8-bed dorm from €20/night, triple room from €50, double room from €55. All include breakfast, WiFi, and rooftop access."
         ogImage="/images/dorm-room.jpg"
         ogType="product"
       />

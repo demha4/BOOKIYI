@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Mountain, Waves, Sunset, Sparkles, X } from "lucide-react";
 import SEO from "../components/SEO";
+import { siteInfo } from "../data/content";
 
 // Experiences sourced from real local options in Anza, Agadir, Tamraght and Taghazout —
 // the same activities you'll find on Google, Tripadvisor, and GetYourGuide for the area.
@@ -247,7 +248,7 @@ export default function Experiences() {
 
                 <div className="border-t border-stone-100 pt-6 mt-6">
                   <a
-                    href={`https://wa.me/212612345678?text=Hi!%20I'm%20interested%20in%20${encodeURIComponent(selectedExperience.name)}`}
+                    href={`https://wa.me/${siteInfo.whatsapp}?text=Hi!%20I'm%20interested%20in%20${encodeURIComponent(selectedExperience.name)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-6 py-3.5 text-sm font-semibold hover:bg-charcoal/90 transition-colors w-full sm:w-auto"
@@ -268,7 +269,7 @@ export default function Experiences() {
             <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight leading-tight mb-4">Not sure what fits your stay?</h2>
             <p className="text-white/70 text-base sm:text-lg leading-8 max-w-2xl mx-auto mb-7">Tell us how long you are here and whether you want more surf, more rest, or a mix. We will suggest the right add-ons without overloading your week.</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a href="https://wa.me/212612345678?text=Hi!%20I%20want%20help%20choosing%20activities%20for%20my%20stay." target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full bg-white text-charcoal px-7 py-3.5 font-semibold text-sm sm:text-base hover:bg-white/90 transition-colors">
+              <a href={`https://wa.me/${siteInfo.whatsapp}?text=Hi!%20I%20want%20help%20choosing%20activities%20for%20my%20stay.`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full bg-white text-charcoal px-7 py-3.5 font-semibold text-sm sm:text-base hover:bg-white/90 transition-colors">
                 Ask on WhatsApp
               </a>
               <Link to="/book" className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 text-white px-7 py-3.5 font-medium text-sm sm:text-base hover:bg-white/10 transition-colors">
