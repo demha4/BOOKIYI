@@ -1129,11 +1129,11 @@ export default function BookNow() {
                           onClick={() => setBooking({ paymentChoice: "deposit" })}
                           icon={<Banknote size={22} />}
                           title="Pay 30% Deposit Now"
-                          badge="Confirmed instantly"
+                          badge="Room guaranteed"
                           badgeColor="bg-green-100 text-green-700"
                         >
-                          <p className="mb-2">Secure your room with a <strong className="text-stone-700">€{price.depositAmount}</strong> deposit. Your booking is confirmed immediately.</p>
-                          <p className="text-xs text-stone-400">Remaining €{price.total - price.depositAmount} payable on arrival.</p>
+                          <p className="mb-2">A <strong className="text-stone-700">€{price.depositAmount}</strong> deposit locks in your room. The dates are blocked for you the moment we receive it — no risk of someone else booking over you.</p>
+                          <p className="text-xs text-stone-400">Remaining €{price.total - price.depositAmount} payable on arrival. Deposit is refundable up to 7 days before check-in.</p>
                         </PaymentOptionCard>
 
                         {booking.paymentChoice === "deposit" && (
@@ -1161,7 +1161,7 @@ export default function BookNow() {
                             <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
                               <p className="text-xs text-amber-800 flex items-start gap-1.5">
                                 <AlertCircle size={12} className="mt-0.5 shrink-0" />
-                                Please include your name as the payment reference. Send proof of payment to <strong>tamountsurfhouse@gmail.com</strong> to confirm.
+                                Use your name as the payment reference. Once we receive the transfer, we'll get back to you within 24 hours to confirm your booking.
                               </p>
                             </div>
                           </motion.div>
@@ -1172,11 +1172,11 @@ export default function BookNow() {
                           onClick={() => setBooking({ paymentChoice: "arrival" })}
                           icon={<Clock size={22} />}
                           title="Pay on Arrival"
-                          badge="Pending confirmation"
+                          badge="Request only"
                           badgeColor="bg-amber-100 text-amber-700"
                         >
-                          <p>No payment required now. Your booking will be a <strong className="text-stone-700">pending request</strong> until we confirm availability.</p>
-                          <p className="text-xs text-stone-400 mt-1">We'll confirm within 24 hours. Full amount paid on check-in.</p>
+                          <p>No deposit, no guarantee. Your dates stay <strong className="text-stone-700">open</strong> — if someone else books with a deposit before we reply, the room may be gone.</p>
+                          <p className="text-xs text-stone-400 mt-1">We reply within 24 hours either way. Full amount paid in cash on arrival.</p>
                         </PaymentOptionCard>
                       </div>
 
@@ -1185,13 +1185,13 @@ export default function BookNow() {
                           <div className="flex items-center gap-2 mb-2">
                             <CheckCircle2 size={16} className={booking.paymentChoice === "deposit" ? "text-green-500" : "text-amber-500"} />
                             <span className="font-semibold text-stone-800 text-sm">
-                              {booking.paymentChoice === "deposit" ? "Booking will be CONFIRMED" : "Booking will be sent as a REQUEST"}
+                              {booking.paymentChoice === "deposit" ? "Your room will be GUARANTEED" : "Your booking will be a REQUEST"}
                             </span>
                           </div>
                           <p className="text-xs text-stone-500">
                             {booking.paymentChoice === "deposit"
-                              ? "After bank transfer confirmation, your room is secured. You'll receive an email with full details."
-                              : "We'll review your request and confirm within 24 hours. You'll receive an email either way."}
+                              ? "Once we receive your deposit, the room is yours — fully blocked off for your dates. We'll send a confirmation by email within 24 hours."
+                              : "Without a deposit we can't hold the room. We review every request, but a guest paying a deposit can take it before we reply. We'll be in touch within 24 hours either way."}
                           </p>
                         </div>
                       )}
@@ -1325,7 +1325,7 @@ export default function BookNow() {
                             <p className="text-xs text-stone-500">
                               {booking.paymentChoice === "deposit"
                                 ? `Deposit: €${price.depositAmount} · Remaining: €${price.total - price.depositAmount} on arrival`
-                                : "Full amount on check-in · Booking pending confirmation"}
+                                : "Full amount on arrival · Request only — room not guaranteed"}
                             </p>
                           </div>
                         </div>
@@ -1363,13 +1363,13 @@ export default function BookNow() {
                             <CheckCircle2 size={36} className="text-white" />
                           </div>
                           <h3 className="font-display text-2xl font-bold text-stone-800 mb-2">
-                            {booking.paymentChoice === "deposit" ? "Booking Confirmed!" : "Booking Request Received!"}
+                            {booking.paymentChoice === "deposit" ? "Your room is being secured!" : "Request received!"}
                           </h3>
                           <p className="text-stone-600 max-w-md mx-auto mb-5">
                             Thanks {booking.contactName.split(" ")[0]}!{" "}
                             {booking.paymentChoice === "deposit"
-                              ? "Complete your bank transfer to finalize. We'll confirm as soon as we receive payment."
-                              : "We'll review and confirm within 24 hours. Check your email for details."
+                              ? "Complete the bank transfer using the details below — once it lands, your dates are locked in. We'll be in touch within 24 hours to confirm everything."
+                              : "We've received your request and will get back to you within 24 hours."
                             }
                           </p>
 

@@ -18,6 +18,7 @@ import PackageBedAndBreakfast from "./pages/PackageBedAndBreakfast";
 import PackageSurfCamp from "./pages/PackageSurfCamp";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
             <Route path="/book/bed-and-breakfast" element={<BookNow />} />
             <Route path="/book/room/:roomId" element={<BookNow />} />
             <Route path="/book/package/:packageId" element={<BookNow />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
         <Footer />

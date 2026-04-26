@@ -79,3 +79,44 @@ Original Terms of Service covering: about the terms, booking confirmation, payme
 - ✅ Desktop nav: 8 links + Book Now button still fits at the `xl:` breakpoint (1280 px+) within the 1240 px container
 - ✅ Mobile menu: picks up Packages automatically (iterates `navLinks`)
 - ✅ Footer "Explore" column: picks up Packages automatically (iterates `navLinks`)
+
+---
+
+## Pass 3 — 404 page + booking copy clarity (Apr 26, 2026)
+
+### `src/pages/NotFound.tsx` (new)
+Surf-themed 404 page. Headline: "Couldn't catch the wave." Animated wave icon, "404 · Lost at sea" kicker, two primary CTAs (**Back to home** in charcoal, **See availability** in ocean blue), plus a row of secondary jump links (Rooms / Surf / Packages / Experiences / Contact). Uses the same `pt-32 sm:pt-36 bg-cream` shell and motion patterns as the rest of the site.
+
+### `src/App.tsx`
+- Imported `NotFound`.
+- Added catch-all `<Route path="*" element={<NotFound />} />` at the end of the routes list. Any unknown URL now lands on the 404 page instead of a blank screen.
+
+### `src/pages/BookNow.tsx` — confirmation message tone
+- **Old:** "Please include your name as the payment reference. Send proof of payment to **tamountsurfhouse@gmail.com** to confirm."
+- **New:** "Use your name as the payment reference. Once we receive the transfer, we'll get back to you within 24 hours to confirm your booking."
+
+Removes the demand to send proof to a Gmail address (looked unofficial), softens the tone, and shifts the burden from the guest ("you must send proof") to the host ("we'll get back to you").
+
+### `src/pages/BookNow.tsx` — confirmed vs. request distinction
+The two payment options now make the **guarantee** explicit, which is the real difference between them:
+
+| | Old badge | New badge |
+|---|---|---|
+| **Pay 30% Deposit** | "Confirmed instantly" | "Room guaranteed" |
+| **Pay on Arrival** | "Pending confirmation" | "Request only" |
+
+Helper text now clearly states:
+- **Deposit option:** "A €X deposit locks in your room. The dates are blocked for you the moment we receive it — no risk of someone else booking over you."
+- **Arrival option:** "No deposit, no guarantee. Your dates stay open — if someone else books with a deposit before we reply, the room may be gone."
+
+Summary callout updated to "Your room will be GUARANTEED" / "Your booking will be a REQUEST" with explanations that reflect the real business mechanic: the deposit is what protects both sides — guest from being bumped, host from no-shows.
+
+Success messages also softened:
+- "Booking Confirmed!" → "Your room is being secured!"
+- "Booking Request Received!" → "Request received!"
+- Bottom-of-summary subtext: "Full amount on check-in · Booking pending confirmation" → "Full amount on arrival · Request only — room not guaranteed"
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2173 modules, 658 KB → 187 KB gzipped)
+- ✅ Catch-all route placed last so existing routes still take priority
