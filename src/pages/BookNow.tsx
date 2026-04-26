@@ -1129,7 +1129,7 @@ export default function BookNow() {
                           onClick={() => setBooking({ paymentChoice: "deposit" })}
                           icon={<Banknote size={22} />}
                           title="Pay 30% Deposit Now"
-                          badge="Room guaranteed"
+                          badge="Confirmed instantly"
                           badgeColor="bg-green-100 text-green-700"
                         >
                           <p className="mb-2">A <strong className="text-stone-700">€{price.depositAmount}</strong> deposit locks in your room. The dates are blocked for you the moment we receive it — no risk of someone else booking over you.</p>

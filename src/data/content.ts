@@ -136,7 +136,7 @@ export const rooms: RoomType[] = [
     genderPolicy: "any",
     price: 35,
     priceUnit: "night",
-    image: "/images/hostel-living.jpg",
+    image: "/images/triple-room.jpg",
     description: "Private room for three with a calm feel, soft light, and direct access to the rooftop terrace. Great for friends or a small family.",
     features: ["3 single beds", "Breakfast included", "Fresh linens", "Shared bathroom", "Fast WiFi", "Wardrobe"],
     size: "16 m²",
@@ -281,17 +281,35 @@ export const experiences = [
   },
 ];
 
-// Gallery images — keep filenames stable so you can drop in real Booking.com photos
-// at /public/images/ with the same names. See BOOKING-IMAGES.md for the mapping.
+// Gallery images — real photos from the property, organized by category for the gallery page filter.
 export const galleryImages = [
+  // Surf
   { src: "/images/hero-surf.jpg", alt: "Anza beach surfers near Tamount Surf House Agadir", category: "Surf" },
-  { src: "/images/surf-camp.jpg", alt: "guests at Tamount Surf House Anza", category: "Community" },
-  { src: "/images/yoga-sunset.jpg", alt: "rooftop terrace at Tamount Surf House Anza Agadir", category: "Rooftop" },
-  { src: "/images/hostel-living.jpg", alt: "common area and lounge at Tamount Surf House", category: "Hostel" },
-  { src: "/images/private-room.jpg", alt: "double room at Tamount Surf House Anza", category: "Rooms" },
-  { src: "/images/dorm-room.jpg", alt: "dorm room with bunk beds at Tamount Surf House", category: "Rooms" },
-  { src: "/images/moroccan-sunset.jpg", alt: "Paradise Valley day trip from Anza Agadir", category: "Trips" },
-  { src: "/images/surf-lesson.jpg", alt: "surf lesson at Anza beach Agadir Morocco", category: "Surf" },
+  { src: "/images/surf-camp.jpg", alt: "colourful surfboards at the entrance of Tamount Surf House", category: "Surf" },
+  { src: "/images/surf-lesson.jpg", alt: "Berber on a camel and a surfer at Anza beach", category: "Surf" },
+  { src: "/images/anza-coast.jpg", alt: "Anza coastline looking across to Agadir bay", category: "Surf" },
+
+  // Rooftop
+  { src: "/images/yoga-sunset.jpg", alt: "rooftop terrace with Berber rugs and floor cushions at Tamount Surf House", category: "Rooftop" },
+  { src: "/images/rooftop-view.jpg", alt: "rooftop view of Anza neighbourhood with surfboard", category: "Rooftop" },
+  { src: "/images/breakfast.jpg", alt: "rooftop breakfast at Tamount Surf House with mountain backdrop", category: "Rooftop" },
+
+  // Rooms
+  { src: "/images/dorm-room.jpg", alt: "wooden bunk beds dorm room at Tamount Surf House", category: "Rooms" },
+  { src: "/images/private-room.jpg", alt: "Moroccan-styled double room at Tamount Surf House Anza", category: "Rooms" },
+  { src: "/images/triple-room.jpg", alt: "triple room with two beds at Tamount Surf House", category: "Rooms" },
+  { src: "/images/lockers.jpg", alt: "wooden lockers in the dorm room at Tamount Surf House", category: "Rooms" },
+  { src: "/images/bathroom.jpg", alt: "Moroccan-tiled bathroom at Tamount Surf House", category: "Rooms" },
+
+  // Hostel
+  { src: "/images/hostel-living.jpg", alt: "common space with laptop and Moroccan tea on Berber rugs", category: "Hostel" },
+  { src: "/images/kitchen.jpg", alt: "shared kitchen with tagine at Tamount Surf House", category: "Hostel" },
+
+  // Trips & experiences
+  { src: "/images/moroccan-sunset.jpg", alt: "sunset at Timlalin sand dunes near Agadir", category: "Trips" },
+  { src: "/images/argan-goats.jpg", alt: "argan tree with goats — classic Moroccan countryside scene", category: "Trips" },
+  { src: "/images/sand-dunes.jpg", alt: "sand dunes near Agadir at sunset", category: "Trips" },
+  { src: "/images/outdoor-trip.jpg", alt: "off-road trip to the desert near Anza", category: "Trips" },
 ];
 
 export const faqs = [

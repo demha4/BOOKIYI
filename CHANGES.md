@@ -120,3 +120,59 @@ Success messages also softened:
 - ✅ `npx tsc --noEmit` passes
 - ✅ `npx vite build` succeeds (2173 modules, 658 KB → 187 KB gzipped)
 - ✅ Catch-all route placed last so existing routes still take priority
+
+---
+
+## Pass 4 — Real photos + booking copy revert (Apr 26, 2026)
+
+### `public/images/` — replaced all stock placeholders with real property photos
+Processed 28 source photos provided by the host into 20 web-optimized images:
+
+**Pipeline:**
+- Subtle global enhancement: brightness +2%, contrast +4%, saturation +5%, UnsharpMask (radius 0.8, percent 80, threshold 3)
+- Center-cover crop to consistent 1400×1050 (or 1200×630 for OG)
+- JPEG quality 85, progressive, optimized
+- Total folder size: 5.2 MB across 21 images (avg ~250 KB each)
+
+**Mapping (source → site filename):**
+
+| Site slot | Source photo | Notes |
+|---|---|---|
+| `hero-surf.jpg` | Waves.jpg | Surfer + jet ski + Anza wave (also used for OG) |
+| `surf-camp.jpg` | The Door.jpg | Three coloured boards at the entrance — *the* brand image |
+| `yoga-sunset.jpg` | Rooftop.jpg | Berber rugs, floor cushions, plants on the rooftop |
+| `hostel-living.jpg` | Commun Space.jpg | Editorial flatlay: laptop + Moroccan tea + Berber rug |
+| `private-room.jpg` | Double Room.jpg | Moroccan-styled double, Berber painting, pom-pom throw |
+| `dorm-room.jpg` | Dorms.jpg | Wooden bunks + guitar + rattan chandelier |
+| `triple-room.jpg` | Triple Room (2).jpg | NEW slot — was previously sharing `hostel-living.jpg` |
+| `moroccan-sunset.jpg` | Activities (4).jpg | Sunset at the dunes |
+| `surf-lesson.jpg` | Activities(2).jpg | Berber on camel + surfer in background |
+| `og-tamount.jpg` | Waves.jpg (1200×630) | Social-share preview |
+
+**Bonus images now available for gallery / experiences:**
+`breakfast.jpg`, `kitchen.jpg`, `bathroom.jpg`, `lockers.jpg`, `rooftop-view.jpg`, `anza-coast.jpg`, `argan-goats.jpg`, `sand-dunes.jpg`, `timlalin.jpg`, `outdoor-trip.jpg`
+
+### `src/data/content.ts`
+- **`rooms[1].image`**: `/images/hostel-living.jpg` → `/images/triple-room.jpg` (Triple Room now has its own real photo).
+- **`galleryImages`**: expanded from 8 to 18 photos, organized into 5 categories (Surf, Rooftop, Rooms, Hostel, Trips). The Gallery page picks up the new categories and photos automatically.
+
+### `src/pages/Experiences.tsx`
+Updated 4 experience modal images to use real, fitting photos:
+- **Paradise Valley**: `moroccan-sunset.jpg` → `argan-goats.jpg` (countryside)
+- **Sand Dunes**: `hero-surf.jpg` → `sand-dunes.jpg` (actual dunes)
+- **Hammam**: `hostel-living.jpg` → `bathroom.jpg` (Moroccan-tiled wellness vibe)
+- **Airport Transfer**: `hostel-living.jpg` → `outdoor-trip.jpg` (off-road vehicle shot)
+
+### `src/pages/BookNow.tsx` — revert
+- Restored the original "Confirmed instantly" badge on the deposit option (was briefly changed to "Room guaranteed" in pass 3).
+- Kept the clarifying helper text about *why* the deposit confirms instantly (it locks the dates so no one else can book over the guest), so both the punchy badge and the operational clarity are preserved.
+
+### Removed
+- `BOOKING-IMAGES.md` — no longer needed; we have real photos now, mapped directly.
+- `public/images/og-tamount.png` — stale leftover; `og-tamount.jpg` is the active 1200×630 social image.
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2173 modules, 660 KB → 188 KB gzipped)
+- ✅ All 20 images present in `/public/images/`, total 5.2 MB
+- ✅ Hero image visually checked — natural ocean tones after enhancement-tuning revision
