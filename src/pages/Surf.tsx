@@ -73,7 +73,7 @@ export default function Surf() {
           <div className="grid md:grid-cols-3 gap-6">
             {lessons.map((lesson, i) => (
               <motion.div key={lesson.title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="card-soft">
-                <div className="w-14 h-14 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center mb-5"><Waves size={24} /></div>
+                <div className="w-14 h-14 rounded-xl bg-primary-100 text-ocean flex items-center justify-center mb-5"><Waves size={24} /></div>
                 <h3 className="card-title font-semibold text-charcoal mb-2">{lesson.title}</h3>
                 <p className="text-ocean font-semibold text-sm sm:text-base mb-4">{lesson.price}</p>
                 <p className="card-copy text-stone">{lesson.text}</p>
@@ -91,7 +91,7 @@ export default function Surf() {
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             {spots.map(([name, level, distance, desc], i) => (
-              <motion.div key={name} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }} className="bg-cream rounded-3xl border border-stone-200 p-6 sm:p-7">
+              <motion.div key={name} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }} className="bg-cream rounded-xl border border-stone-200 p-6 sm:p-7">
                 <div className="flex flex-wrap items-center gap-2 mb-3">
                   <span className="text-lg sm:text-xl font-semibold text-charcoal">{name}</span>
                   <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-stone">{level}</span>
@@ -112,17 +112,17 @@ export default function Surf() {
           </div>
           <div className="grid lg:grid-cols-3 gap-6">
             <div className="card-soft">
-              <div className="w-14 h-14 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center mb-5"><Bus size={24} /></div>
+              <div className="w-14 h-14 rounded-xl bg-primary-100 text-ocean flex items-center justify-center mb-5"><Bus size={24} /></div>
               <h3 className="card-title font-semibold text-charcoal mb-3">Spot transfers included</h3>
               <p className="card-copy text-stone">If you book surf with us, we sort the transport to wherever is working — Anza, Tamraght, Taghazout, or farther when the day calls for it.</p>
             </div>
             <div className="card-soft">
-              <div className="w-14 h-14 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center mb-5"><Thermometer size={24} /></div>
+              <div className="w-14 h-14 rounded-xl bg-primary-100 text-ocean flex items-center justify-center mb-5"><Thermometer size={24} /></div>
               <h3 className="card-title font-semibold text-charcoal mb-3">When to come</h3>
               <p className="card-copy text-stone">October to April is peak swell. Summer stays smaller and friendlier for first-timers. Either way, there is usually something rideable nearby.</p>
             </div>
             <div className="card-soft">
-              <div className="w-14 h-14 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center mb-5"><Shield size={24} /></div>
+              <div className="w-14 h-14 rounded-xl bg-primary-100 text-ocean flex items-center justify-center mb-5"><Shield size={24} /></div>
               <h3 className="card-title font-semibold text-charcoal mb-3">Equipment rental</h3>
               <div className="space-y-2 text-sm sm:text-base text-stone leading-7">
                 {rentals.map(([name, price]) => (
@@ -139,8 +139,8 @@ export default function Surf() {
 
       <section className="pb-24">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-charcoal text-white rounded-[2rem] p-8 sm:p-10 text-center shadow-[0_18px_60px_rgba(20,28,43,0.18)]">
-            <div className="w-14 h-14 rounded-2xl bg-white/10 text-blue-300 flex items-center justify-center mx-auto mb-5"><Clock3 size={24} /></div>
+          <div className="bg-charcoal text-white rounded-xl p-8 sm:p-10 text-center shadow-[0_18px_60px_rgba(20,28,43,0.18)]">
+            <div className="w-14 h-14 rounded-xl bg-white/10 text-blue-300 flex items-center justify-center mx-auto mb-5"><Clock3 size={24} /></div>
             <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight leading-tight mb-4">Want us to tell you where the waves are best for your dates?</h2>
             <p className="text-white/70 text-base sm:text-lg leading-8 max-w-2xl mx-auto mb-7">Send your dates and your surf level. We will tell you honestly if it is the right week for Anza, Taghazout, or an Imsouane day trip.</p>
             <a href={`https://wa.me/${siteInfo.whatsapp}?text=Hi!%20I%20want%20to%20ask%20about%20surf%20conditions%20and%20lessons.`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full bg-white text-charcoal px-7 py-3.5 font-semibold text-sm sm:text-base hover:bg-white/90 transition-colors">

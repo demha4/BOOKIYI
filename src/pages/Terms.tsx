@@ -39,7 +39,7 @@ export default function Terms() {
 
       <section className="pb-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-10 shadow-sm space-y-10">
+          <div className="bg-white rounded-xl border border-stone-200 p-7 sm:p-10 shadow-sm space-y-10">
 
             <div>
               <h2 className="text-xl sm:text-2xl font-semibold text-charcoal mb-3">About these terms</h2>

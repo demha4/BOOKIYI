@@ -66,7 +66,7 @@ export default function PackageBedAndBreakfast() {
 
       <section className="pb-20 sm:pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm">
+          <div className="bg-white rounded-xl border border-stone-200 p-7 sm:p-8 shadow-sm">
             <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-6">Every single night you get:</h2>
             <div className="grid gap-3">
               {included.map((item) => (
@@ -78,11 +78,11 @@ export default function PackageBedAndBreakfast() {
             </div>
           </div>
 
-          <div className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm">
+          <div className="bg-white rounded-xl border border-stone-200 p-7 sm:p-8 shadow-sm">
             <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-6">Choose your room, choose your pace.</h2>
             <div className="space-y-4 mb-6">
               {rooms.map((room) => (
-                <div key={room.id} className="flex items-center justify-between gap-4 rounded-2xl bg-cream border border-stone-200 px-4 py-4">
+                <div key={room.id} className="flex items-center justify-between gap-4 rounded-xl bg-cream border border-stone-200 px-4 py-4">
                   <div>
                     <div className="font-semibold text-charcoal">{room.name}</div>
                     <div className="text-sm text-stone">Sleeps up to {room.maxGuests}</div>
@@ -104,7 +104,7 @@ export default function PackageBedAndBreakfast() {
 
       <section className="py-20 sm:py-24 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-6">
-          <div className="bg-cream rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm">
+          <div className="bg-cream rounded-xl border border-stone-200 p-7 sm:p-8 shadow-sm">
             <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-6">Add anything you want on top.</h2>
             <div className="grid gap-3">
               {extras.map((item) => (
@@ -121,7 +121,7 @@ export default function PackageBedAndBreakfast() {
             </div>
           </div>
 
-          <div className="bg-cream rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm">
+          <div className="bg-cream rounded-xl border border-stone-200 p-7 sm:p-8 shadow-sm">
             <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-6">Bed & Breakfast is for you if...</h2>
             <div className="grid gap-3">
               {idealFor.map((item) => (
@@ -137,9 +137,9 @@ export default function PackageBedAndBreakfast() {
 
       <section className="pb-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm">
+          <div className="bg-white rounded-xl border border-stone-200 p-7 sm:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-11 h-11 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center shrink-0">
+              <div className="w-11 h-11 rounded-xl bg-primary-100 text-ocean flex items-center justify-center shrink-0">
                 <Clock size={20} />
               </div>
               <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal">Conditions of reservation</h2>
@@ -171,7 +171,7 @@ export default function PackageBedAndBreakfast() {
             </p>
           </div>
 
-          <div className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm">
+          <div className="bg-white rounded-xl border border-stone-200 p-7 sm:p-8 shadow-sm">
             <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-6">Available on request</h2>
             <p className="text-stone text-sm sm:text-base leading-7 mb-5">
               Beyond the listed experiences, we can also arrange these through trusted local partners — just message us when you arrive (or before) and we will sort the rest:
@@ -198,7 +198,7 @@ export default function PackageBedAndBreakfast() {
 
       <section className="pb-24">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-[2rem] bg-charcoal text-white p-8 sm:p-10 shadow-[0_18px_60px_rgba(20,28,43,0.18)] text-center">
+          <div className="rounded-xl bg-charcoal text-white p-8 sm:p-10 shadow-[0_18px_60px_rgba(20,28,43,0.18)] text-center">
             <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight leading-tight mb-4">Book your B&B stay</h2>
             <p className="text-white/70 text-base sm:text-lg leading-8 max-w-2xl mx-auto mb-7">
               Message us with your dates. We will tell you what rooms are free, and you can decide from there.

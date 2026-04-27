@@ -180,9 +180,9 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="bg-cream rounded-3xl p-7 sm:p-10 border border-stone-100 shadow-sm"
+                className="bg-cream rounded-xl p-7 sm:p-10 border border-stone-100 shadow-sm"
               >
-                <div className="rounded-[1.35rem] bg-slate-100 flex items-center justify-center mb-6 sm:mb-8 w-[70px] h-[70px] sm:w-[76px] sm:h-[76px]">
+                <div className="rounded-lg bg-slate-100 flex items-center justify-center mb-6 sm:mb-8 w-[70px] h-[70px] sm:w-[76px] sm:h-[76px]">
                   {item.icon}
                 </div>
                 <h3 className="card-title font-display font-semibold text-charcoal mb-3 sm:mb-4">{item.title}</h3>
@@ -266,7 +266,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15 }}
-                className="relative rounded-3xl overflow-hidden h-[420px] sm:h-[470px] md:h-[540px] group flex flex-col justify-end"
+                className="relative rounded-xl overflow-hidden h-[420px] sm:h-[470px] md:h-[540px] group flex flex-col justify-end"
               >
                 <div className="absolute inset-0">
                   <img src={room.image} alt={room.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -317,7 +317,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15 }}
-                className="bg-white rounded-3xl overflow-hidden border border-stone-200 hover:shadow-lg transition-shadow flex flex-col h-full"
+                className="bg-white rounded-xl overflow-hidden border border-stone-200 hover:shadow-lg transition-shadow flex flex-col h-full"
               >
                 <div className="h-52 sm:h-56 overflow-hidden bg-slate-100">
                   <img src={act.img} alt={act.title} className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
@@ -364,7 +364,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm flex flex-col"
+              className="bg-white rounded-xl border border-stone-200 p-7 sm:p-8 shadow-sm flex flex-col"
             >
               <div className="inline-flex w-fit rounded-full bg-ocean/10 text-ocean px-3 py-1 text-xs font-medium mb-4">Flexible stay</div>
               <p className="text-xs font-medium text-stone-500 mb-2">Minimum stay: 1 night</p>
@@ -391,7 +391,7 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.08 }}
-              className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm flex flex-col"
+              className="bg-white rounded-xl border border-stone-200 p-7 sm:p-8 shadow-sm flex flex-col"
             >
               <div className="inline-flex w-fit rounded-full bg-sunset/10 text-sunset px-3 py-1 text-xs font-medium mb-4">All-inclusive</div>
               <p className="text-xs font-medium text-stone-500 mb-2">Minimum stay: 7 nights</p>
@@ -420,7 +420,7 @@ export default function Home() {
       {/* CTA Help Card */}
       <section className="py-16 sm:py-20 bg-cream">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-charcoal text-white rounded-[2rem] p-8 sm:p-12 text-center shadow-[0_18px_60px_rgba(20,28,43,0.18)]">
+          <div className="bg-charcoal text-white rounded-xl p-8 sm:p-12 text-center shadow-[0_18px_60px_rgba(20,28,43,0.18)]">
             <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight leading-tight mb-4">Not sure which one fits?</h2>
             <p className="text-white/70 text-base sm:text-lg leading-8 max-w-2xl mx-auto mb-8">Message Abdelwahd on WhatsApp. He will help you figure it out in two minutes without trying to upsell you into something you do not need.</p>
             <a href={`https://wa.me/${siteInfo.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-white text-charcoal px-8 py-4 font-semibold text-base hover:bg-white/90 transition-colors">
@@ -482,7 +482,7 @@ export default function Home() {
               Contact & Help
             </div>
           </div>
-          <div className="rounded-[2rem] sm:rounded-[2.4rem] bg-[#182136] text-white shadow-[0_18px_60px_rgba(20,28,43,0.18)] p-6 sm:p-8 lg:p-10">
+          <div className="rounded-xl sm:rounded-[2.4rem] bg-[#182136] text-white shadow-[0_18px_60px_rgba(20,28,43,0.18)] p-6 sm:p-8 lg:p-10">
             <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-6 lg:gap-8 items-stretch">
               <div className="py-2 sm:py-4">
                 <div className="kicker text-blue-300 mb-5 sm:mb-6">Direct Booking</div>
@@ -508,7 +508,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="rounded-[1.7rem] bg-white/8 border border-white/8 p-6 sm:p-7">
+              <div className="rounded-xl bg-white/8 border border-white/8 p-6 sm:p-7">
                 <p className="text-white/60 text-sm sm:text-base mb-3">Direct contact</p>
                 <a href={`tel:+${siteInfo.whatsapp}`} className="block text-white text-2xl sm:text-[2rem] font-semibold leading-tight mb-1 hover:text-blue-200 transition-colors">
                   {siteInfo.phone}

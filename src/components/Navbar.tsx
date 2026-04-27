@@ -44,7 +44,7 @@ export default function Navbar() {
     <>
       <nav className="fixed top-3 sm:top-4 left-0 right-0 z-50 px-3 sm:px-5 lg:px-6 pointer-events-none">
         <div className="max-w-[1240px] mx-auto pointer-events-auto">
-          <div className={`rounded-[1.4rem] sm:rounded-[1.6rem] transition-all duration-300 ${shellClass}`}>
+          <div className={`rounded-[1.4rem] sm:rounded-xl transition-all duration-300 ${shellClass}`}>
             <div className="px-4 sm:px-5 lg:px-7">
               <div className="flex items-center justify-between h-[68px] sm:h-[74px] lg:h-[82px] gap-4">
                 <Link to="/" className="transition-colors shrink-0" aria-label="Tamount Surf House home">
@@ -101,7 +101,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -14, scale: 0.98 }}
               transition={{ duration: 0.22 }}
-              className="max-w-[1240px] mx-auto rounded-[1.6rem] bg-cream/98 border border-[var(--color-border)] shadow-[0_18px_50px_rgba(15,42,58,0.18)] p-4 sm:p-5 max-h-[calc(100vh-6rem)] overflow-y-auto"
+              className="max-w-[1240px] mx-auto rounded-xl bg-cream/98 border border-[var(--color-border)] shadow-[0_18px_50px_rgba(15,42,58,0.18)] p-4 sm:p-5 max-h-[calc(100vh-6rem)] overflow-y-auto"
               onClick={(event) => event.stopPropagation()}
             >
               <div className="divide-y divide-[var(--color-border)]">

@@ -98,7 +98,7 @@ export default function Rooms() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="bg-white rounded-[2rem] overflow-hidden border border-stone-200 shadow-sm"
+                className="bg-white rounded-xl overflow-hidden border border-stone-200 shadow-sm"
               >
                 <div className="grid lg:grid-cols-[0.95fr_1.05fr]">
                   <div className="image-hover-zoom h-72 lg:h-full bg-slate-100">
@@ -168,7 +168,7 @@ export default function Rooms() {
           <div className="grid md:grid-cols-3 gap-6">
             {sharedSpaces.map((space, i) => (
               <motion.div key={space.title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="card-soft">
-                <div className="w-14 h-14 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center mb-5">{space.icon}</div>
+                <div className="w-14 h-14 rounded-xl bg-primary-100 text-ocean flex items-center justify-center mb-5">{space.icon}</div>
                 <h3 className="card-title font-semibold text-charcoal mb-3">{space.title}</h3>
                 <p className="card-copy text-stone">{space.text}</p>
               </motion.div>
@@ -179,9 +179,9 @@ export default function Rooms() {
 
       <section className="py-20 sm:py-24 bg-cream">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-[2rem] border border-stone-200 p-8 sm:p-10 shadow-sm">
+          <div className="bg-white rounded-xl border border-stone-200 p-8 sm:p-10 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center"><KeyRound size={24} /></div>
+              <div className="w-14 h-14 rounded-xl bg-primary-100 text-ocean flex items-center justify-center"><KeyRound size={24} /></div>
               <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal">A few small rules so everyone has a good stay.</h2>
             </div>
             <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">

@@ -5,7 +5,7 @@ import {
   Calendar, Users, ChevronRight, Check, Bed, Package, Plus,
   Minus, Shield, Clock, CreditCard, ArrowLeft,
   Waves, Sun, Plane, Dumbbell, Sparkles,
-  User, Mail, Phone, FileText, Tag, Heart, X,
+  User, Mail, Phone, FileText, Heart, X,
   ToggleLeft, ToggleRight, ChevronDown, AlertCircle, CheckCircle2,
   Copy, Loader2, Building2, Banknote, Timer, UserCheck,
 } from "lucide-react";
@@ -333,10 +333,11 @@ function DatePicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: -8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.95 }}
       className="absolute top-full right-0 md:left-0 mt-2 bg-white rounded-xl shadow-2xl border border-stone-200 p-5 w-[340px] z-[100]">
+      <p className="text-[11px] font-bold text-stone-400 uppercase tracking-wider mb-3">How long?</p>
       <div className="flex flex-wrap gap-2 mb-4">
         {quickNights.map((n) => (
           <button key={n} onClick={() => setQuickNights(n)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               nights === n ? "bg-ocean text-white" : "bg-stone-100 text-stone-600 hover:bg-ocean/10"
             }`}>
             {n} nights
@@ -346,21 +347,13 @@ function DatePicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
       <CustomCalendar checkIn={booking.checkIn} checkOut={booking.checkOut}
         onSelect={(ci, co) => setBooking({ checkIn: ci, checkOut: co })} />
       {nights > 0 && (
-        <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-xl text-sm">
-          <p className="font-semibold text-green-800">{fmtDate(booking.checkIn)} → {fmtDate(booking.checkOut)}</p>
-          <p className="text-green-600 text-xs">{nights} night{nights > 1 ? "s" : ""}</p>
+        <div className="mt-3 p-3 bg-primary-50 border border-primary-200 rounded-lg text-sm">
+          <p className="font-semibold text-charcoal">{fmtDate(booking.checkIn)} → {fmtDate(booking.checkOut)}</p>
+          <p className="text-ocean text-xs">{nights} night{nights > 1 ? "s" : ""}</p>
         </div>
       )}
-      <div className="mt-3">
-        <div className="relative">
-          <Tag size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
-          <input type="text" placeholder="Promo code" value={booking.promoCode}
-            onChange={(e) => setBooking({ promoCode: e.target.value.toUpperCase() })}
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50 focus:ring-2 focus:ring-ocean/30 focus:border-ocean outline-none text-xs" />
-        </div>
-      </div>
       <button onClick={onClose}
-        className="w-full mt-3 py-2 text-sm font-semibold text-ocean hover:bg-ocean/5 rounded-xl transition-all">
+        className="w-full mt-3 py-2.5 text-sm font-semibold text-white bg-ocean hover:bg-ocean-dark rounded-lg transition-all">
         Done
       </button>
     </motion.div>

@@ -71,7 +71,7 @@ export default function PackageSurfCamp() {
 
       <section className="pb-20 sm:pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm">
+          <div className="bg-white rounded-xl border border-stone-200 p-7 sm:p-8 shadow-sm">
             <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-6">Your surf week, completely sorted:</h2>
             <div className="grid gap-3">
               {included.map((item) => (
@@ -83,7 +83,7 @@ export default function PackageSurfCamp() {
             </div>
           </div>
 
-          <div className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm">
+          <div className="bg-white rounded-xl border border-stone-200 p-7 sm:p-8 shadow-sm">
             <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-6">What your day actually looks like:</h2>
             <div className="space-y-4">
               {dayFlow.map(([time, text]) => (
@@ -107,7 +107,7 @@ export default function PackageSurfCamp() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-5">
-            <div className="rounded-[2rem] border border-stone-200 p-7 sm:p-8 bg-cream">
+            <div className="rounded-xl border border-stone-200 p-7 sm:p-8 bg-cream">
               <p className="text-xs font-bold text-ocean uppercase tracking-wider mb-2">The pack</p>
               <h3 className="text-xl font-semibold text-charcoal mb-1">Surf services + meals</h3>
               <p className="text-3xl font-bold text-ocean mt-3 mb-1">€45 <span className="text-base font-medium text-stone">/ day / person</span></p>
@@ -119,7 +119,7 @@ export default function PackageSurfCamp() {
               </p>
             </div>
 
-            <div className="rounded-[2rem] border border-stone-200 p-7 sm:p-8 bg-cream">
+            <div className="rounded-xl border border-stone-200 p-7 sm:p-8 bg-cream">
               <p className="text-xs font-bold text-ocean uppercase tracking-wider mb-2">The room</p>
               <h3 className="text-xl font-semibold text-charcoal mb-1">Accommodation, billed per night</h3>
               <ul className="mt-4 space-y-2 text-sm text-stone leading-6">
@@ -142,7 +142,7 @@ export default function PackageSurfCamp() {
             </div>
           </div>
 
-          <div className="mt-8 rounded-2xl bg-stone-50 border border-stone-200 p-5 text-sm sm:text-base text-stone leading-7">
+          <div className="mt-8 rounded-xl bg-stone-50 border border-stone-200 p-5 text-sm sm:text-base text-stone leading-7">
             <strong className="text-charcoal">Example total for 1 person, 7 nights in the dorm:</strong> €315 (pack) + €140 (dorm) = <strong className="text-ocean">€455</strong>. Pick your real dates and rooms on the booking page for the live total. Lunches, extra activities, airport transfer, and personal insurance are not included.
           </div>
         </div>
@@ -150,7 +150,7 @@ export default function PackageSurfCamp() {
 
       <section className="py-20 sm:py-24 bg-cream">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm">
+          <div className="bg-white rounded-xl border border-stone-200 p-7 sm:p-8 shadow-sm">
             <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-6">For every level. Really.</h2>
             <div className="space-y-5">
               {skillLevels.map(([title, text]) => (
@@ -161,7 +161,7 @@ export default function PackageSurfCamp() {
               ))}
             </div>
           </div>
-          <div className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm">
+          <div className="bg-white rounded-xl border border-stone-200 p-7 sm:p-8 shadow-sm">
             <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-6">What guests say about the pack</h2>
             <div className="space-y-5">
               {testimonials.slice(0, 3).map((item) => (
@@ -177,9 +177,9 @@ export default function PackageSurfCamp() {
 
       <section className="pb-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm">
+          <div className="bg-white rounded-xl border border-stone-200 p-7 sm:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-11 h-11 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center shrink-0">
+              <div className="w-11 h-11 rounded-xl bg-primary-100 text-ocean flex items-center justify-center shrink-0">
                 <Clock size={20} />
               </div>
               <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal">Conditions of reservation</h2>
@@ -219,7 +219,7 @@ export default function PackageSurfCamp() {
 
       <section className="pb-24">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-[2rem] bg-charcoal text-white p-8 sm:p-10 shadow-[0_18px_60px_rgba(20,28,43,0.18)] text-center">
+          <div className="rounded-xl bg-charcoal text-white p-8 sm:p-10 shadow-[0_18px_60px_rgba(20,28,43,0.18)] text-center">
             <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight leading-tight mb-4">Book your Surf Camp Pack</h2>
             <p className="text-white/70 text-base sm:text-lg leading-8 max-w-2xl mx-auto mb-7">
               If you want the whole week handled, this is the one. Message us your dates and room preference and we will sort the rest.

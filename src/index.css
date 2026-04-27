@@ -4,29 +4,35 @@
   --font-sans: 'Inter', sans-serif;
   --font-serif: 'Mochiy Pop One', sans-serif;
   --font-script: 'Caveat', cursive;
-  --color-primary-50: #EFF8FC;
-  --color-primary-100: #D6ECF6;
-  --color-primary-200: #A8D6EB;
-  --color-primary-300: #72BBDB;
-  --color-primary-400: #3E9CC4;
-  --color-primary-500: #2B84AD;
-  --color-primary-600: #22688B;
-  --color-primary-700: #1C5170;
-  --color-primary-800: #163D54;
-  --color-primary-900: #0F2A3A;
-  --color-ocean: #2B84AD;
-  --color-ocean-dark: #22688B;
-  --color-ocean-light: #72BBDB;
-  --color-blue-accent: #5db0da;
-  --color-sand: #F5E6D3;
-  --color-sand-light: #FFF8F0;
-  --color-sand-dark: #E8D5C0;
-  --color-accent: #E8A85C;
-  --color-cream: #FBF7F2;
-  --color-charcoal: #1A1A1A;
-  --color-stone: #5B5B5B;
-  --color-soft-gray: #F3ECE2;
-  --color-border: #E8DFD1;
+  /* ── Cool-blue primary scale (inspired by Tennis Club + Travel Agency refs) ── */
+  --color-primary-50: #F0F7FF;
+  --color-primary-100: #DBEAFE;
+  --color-primary-200: #BFDBFE;
+  --color-primary-300: #93C5FD;
+  --color-primary-400: #60A5FA;
+  --color-primary-500: #3B82F6;
+  --color-primary-600: #2563EB;
+  --color-primary-700: #1D4ED8;
+  --color-primary-800: #1E40AF;
+  --color-primary-900: #1E3A5F;
+  /* ── Semantic aliases ── */
+  --color-ocean: #2EB2FF;
+  --color-ocean-dark: #1A8FD6;
+  --color-ocean-light: #7CC8F5;
+  --color-blue-accent: #60A5FA;
+  /* ── Neutrals — cool instead of warm ── */
+  --color-cream: #F7FAFC;
+  --color-charcoal: #0F1A2D;
+  --color-stone: #64748B;
+  --color-soft-gray: #EDF2F7;
+  --color-border: #E2E8F0;
+  /* ── Sand tones repurposed as cool tints ── */
+  --color-sand: #E8F0F8;
+  --color-sand-light: #F0F7FF;
+  --color-sand-dark: #D4E3F0;
+  /* ── Accent — kept warm amber for CTAs/prices where warmth helps ── */
+  --color-accent: #F59E0B;
+  --color-sunset: #F97316;
 }
 
 html {
@@ -120,28 +126,28 @@ body {
 
 .card-shell {
   background: #fff;
-  border: 1px solid #F0E9E4;
-  border-radius: 28px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
   overflow: hidden;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
-  box-shadow: 0 4px 20px rgba(15, 42, 58, 0.06);
+  box-shadow: 0 2px 12px rgba(15, 42, 58, 0.05);
 }
 
 .card-shell:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 40px -12px rgba(15, 42, 58, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px -8px rgba(15, 42, 58, 0.10);
 }
 
 .card-soft {
-  background: #F9F5F1;
-  border: 1px solid #F0E9E4;
-  border-radius: 24px;
+  background: var(--color-soft-gray);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
   padding: 2rem;
   transition: box-shadow 0.25s ease;
 }
 
 .card-soft:hover {
-  box-shadow: 0 8px 30px rgba(15, 42, 58, 0.08);
+  box-shadow: 0 6px 20px rgba(15, 42, 58, 0.06);
 }
 
 .tag-pill {
@@ -156,18 +162,18 @@ body {
 }
 
 .tag-pill-blue {
-  background: #E8F4F8;
-  color: #2B84AD;
+  background: #DBEAFE;
+  color: #1D4ED8;
 }
 
 .tag-pill-cream {
-  background: #F9F5F1;
-  color: #5B5B5B;
+  background: var(--color-soft-gray);
+  color: var(--color-stone);
 }
 
 .tag-pill-accent {
-  background: #F7E8D3;
-  color: #A56D2A;
+  background: #FEF3C7;
+  color: #92400E;
 }
 
 .tag-pill-green {
@@ -212,7 +218,7 @@ body {
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: 12px;
 }
 
 .gallery-item img {

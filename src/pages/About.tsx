@@ -102,7 +102,7 @@ export default function About() {
                 >
                   <div className={`card-soft ${index % 2 === 1 ? "lg:col-start-2" : ""}`}>
                     <div className="flex items-start gap-4">
-                      <div className="w-14 h-14 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center shrink-0">
+                      <div className="w-14 h-14 rounded-xl bg-primary-100 text-ocean flex items-center justify-center shrink-0">
                         {step.icon}
                       </div>
                       <div>
@@ -132,7 +132,7 @@ export default function About() {
           <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
             {values.map((value, i) => (
               <motion.div key={value.title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="card-soft text-center">
-                <div className="w-14 h-14 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center mx-auto mb-5">{value.icon}</div>
+                <div className="w-14 h-14 rounded-xl bg-primary-100 text-ocean flex items-center justify-center mx-auto mb-5">{value.icon}</div>
                 <h3 className="card-title font-semibold text-charcoal mb-3">{value.title}</h3>
                 <p className="card-copy text-stone">{value.description}</p>
               </motion.div>
@@ -143,7 +143,7 @@ export default function About() {
 
       <section className="py-20 sm:py-24 bg-cream">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-8 items-center">
-          <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="image-hover-zoom rounded-[2rem] overflow-hidden bg-slate-100">
+          <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="image-hover-zoom rounded-xl overflow-hidden bg-slate-100">
             <img src="/images/yoga-sunset.jpg" alt="rooftop evening at tamount surf house" className="w-full h-[420px] object-cover" />
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>

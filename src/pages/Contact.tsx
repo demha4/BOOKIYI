@@ -48,7 +48,7 @@ export default function Contact() {
       <section className="pb-20 sm:pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[0.95fr_1.05fr] gap-8">
           <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="space-y-6">
-            <div className="bg-white rounded-[2rem] border border-stone-200 p-7 shadow-sm">
+            <div className="bg-white rounded-xl border border-stone-200 p-7 shadow-sm">
               <h2 className="text-2xl font-semibold tracking-tight text-charcoal mb-5">Contact details</h2>
               <div className="space-y-5 text-sm sm:text-base">
                 <a href={`https://wa.me/${siteInfo.whatsapp}`} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 text-stone hover:text-charcoal transition-colors">
@@ -90,7 +90,7 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-[2rem] border border-stone-200 shadow-sm h-[340px] sm:h-[420px] bg-slate-100">
+            <div className="overflow-hidden rounded-xl border border-stone-200 shadow-sm h-[340px] sm:h-[420px] bg-slate-100">
               <iframe
                 src="https://www.google.com/maps?q=Anza%20Beach%2C%20Agadir%2C%20Morocco&z=14&output=embed"
                 width="100%"
@@ -105,7 +105,7 @@ export default function Contact() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="space-y-6">
-            <div className="bg-white rounded-[2rem] border border-stone-200 p-7 sm:p-8 shadow-sm">
+            <div className="bg-white rounded-xl border border-stone-200 p-7 sm:p-8 shadow-sm">
               {submitted ? (
                 <div className="text-center py-10">
                   <CheckCircle size={48} className="text-green-500 mx-auto mb-4" />
@@ -119,13 +119,13 @@ export default function Contact() {
                     <p className="text-stone text-sm sm:text-base leading-7">Keep it simple. Dates, guest count, and anything we should know.</p>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4">
-                    <input type="text" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-4 py-3.5 rounded-2xl border border-stone-200 focus:border-ocean focus:ring-2 focus:ring-ocean/15 outline-none bg-cream" placeholder="Your name" />
-                    <input type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full px-4 py-3.5 rounded-2xl border border-stone-200 focus:border-ocean focus:ring-2 focus:ring-ocean/15 outline-none bg-cream" placeholder="Email" />
-                    <input type="text" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full px-4 py-3.5 rounded-2xl border border-stone-200 focus:border-ocean focus:ring-2 focus:ring-ocean/15 outline-none bg-cream" placeholder="WhatsApp / phone (optional)" />
-                    <input type="text" value={formData.dates} onChange={(e) => setFormData({ ...formData, dates: e.target.value })} className="w-full px-4 py-3.5 rounded-2xl border border-stone-200 focus:border-ocean focus:ring-2 focus:ring-ocean/15 outline-none bg-cream" placeholder="Dates you're thinking about" />
+                    <input type="text" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-stone-200 focus:border-ocean focus:ring-2 focus:ring-ocean/15 outline-none bg-cream" placeholder="Your name" />
+                    <input type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-stone-200 focus:border-ocean focus:ring-2 focus:ring-ocean/15 outline-none bg-cream" placeholder="Email" />
+                    <input type="text" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-stone-200 focus:border-ocean focus:ring-2 focus:ring-ocean/15 outline-none bg-cream" placeholder="WhatsApp / phone (optional)" />
+                    <input type="text" value={formData.dates} onChange={(e) => setFormData({ ...formData, dates: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-stone-200 focus:border-ocean focus:ring-2 focus:ring-ocean/15 outline-none bg-cream" placeholder="Dates you're thinking about" />
                   </div>
-                  <input type="text" value={formData.guests} onChange={(e) => setFormData({ ...formData, guests: e.target.value })} className="w-full px-4 py-3.5 rounded-2xl border border-stone-200 focus:border-ocean focus:ring-2 focus:ring-ocean/15 outline-none bg-cream" placeholder="How many people" />
-                  <textarea required rows={6} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} className="w-full px-4 py-3.5 rounded-2xl border border-stone-200 focus:border-ocean focus:ring-2 focus:ring-ocean/15 outline-none bg-cream resize-none" placeholder="Anything we should know? Surf level, arrival time, special needs..." />
+                  <input type="text" value={formData.guests} onChange={(e) => setFormData({ ...formData, guests: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-stone-200 focus:border-ocean focus:ring-2 focus:ring-ocean/15 outline-none bg-cream" placeholder="How many people" />
+                  <textarea required rows={6} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-stone-200 focus:border-ocean focus:ring-2 focus:ring-ocean/15 outline-none bg-cream resize-none" placeholder="Anything we should know? Surf level, arrival time, special needs..." />
                   <button type="submit" className="w-full bg-charcoal hover:bg-charcoal/90 text-white py-3.5 rounded-full font-semibold transition-all active:scale-95 flex items-center justify-center gap-2">
                     <Send size={18} /> Send inquiry
                   </button>
@@ -133,7 +133,7 @@ export default function Contact() {
               )}
             </div>
 
-            <div className="bg-white rounded-[2rem] border border-stone-200 p-7 shadow-sm">
+            <div className="bg-white rounded-xl border border-stone-200 p-7 shadow-sm">
               <div className="flex items-center gap-3 mb-4">
                 <CircleHelp size={20} className="text-ocean" />
                 <h3 className="text-xl font-semibold tracking-tight text-charcoal">Quick FAQ</h3>

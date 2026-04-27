@@ -66,7 +66,7 @@ export default function Packages() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08 }}
-              className="bg-white rounded-[2rem] border border-stone-200 shadow-sm overflow-hidden flex flex-col"
+              className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden flex flex-col"
             >
               <div className="relative h-64 overflow-hidden bg-slate-100">
                 <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
@@ -101,7 +101,7 @@ export default function Packages() {
 
       <section className="pb-24">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-[2rem] bg-charcoal text-white p-8 sm:p-10 shadow-[0_18px_60px_rgba(20,28,43,0.18)] text-center">
+          <div className="rounded-xl bg-charcoal text-white p-8 sm:p-10 shadow-[0_18px_60px_rgba(20,28,43,0.18)] text-center">
             <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-4">Not sure which one fits?</h3>
             <p className="text-white/70 text-base sm:text-lg leading-8 max-w-2xl mx-auto mb-7">
               Message Abdelwahd on WhatsApp. He will help you figure it out in two minutes without trying to upsell you into something you do not need.

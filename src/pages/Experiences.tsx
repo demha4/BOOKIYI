@@ -144,9 +144,9 @@ export default function Experiences() {
       <section className="pb-24">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           {groups.map((group, gi) => (
-            <motion.div key={group.title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: gi * 0.06 }} className="bg-white rounded-[2.2rem] border border-stone-200 p-8 sm:p-10 shadow-[0_8px_30px_rgba(15,42,58,0.06)]">
+            <motion.div key={group.title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: gi * 0.06 }} className="bg-white rounded-xl border border-stone-200 p-8 sm:p-10 shadow-[0_8px_30px_rgba(15,42,58,0.06)]">
               <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 rounded-2xl bg-[#E8F4F8] text-ocean flex items-center justify-center">{group.icon}</div>
+                <div className="w-12 h-12 rounded-xl bg-primary-100 text-ocean flex items-center justify-center">{group.icon}</div>
                 <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal">{group.title}</h2>
               </div>
               <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
@@ -192,7 +192,7 @@ export default function Experiences() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white rounded-[2rem] max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative h-64 sm:h-72 overflow-hidden rounded-t-[2rem]">
@@ -254,8 +254,8 @@ export default function Experiences() {
 
       <section className="pb-24">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-[2rem] bg-charcoal text-white p-8 sm:p-10 shadow-[0_18px_60px_rgba(20,28,43,0.18)] text-center">
-            <div className="w-14 h-14 rounded-2xl bg-white/10 text-blue-300 flex items-center justify-center mx-auto mb-5"><Sunset size={24} /></div>
+          <div className="rounded-xl bg-charcoal text-white p-8 sm:p-10 shadow-[0_18px_60px_rgba(20,28,43,0.18)] text-center">
+            <div className="w-14 h-14 rounded-xl bg-white/10 text-blue-300 flex items-center justify-center mx-auto mb-5"><Sunset size={24} /></div>
             <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight leading-tight mb-4">Not sure what fits your stay?</h2>
             <p className="text-white/70 text-base sm:text-lg leading-8 max-w-2xl mx-auto mb-7">Tell us how long you are here and whether you want more surf, more rest, or a mix. We will suggest the right add-ons without overloading your week.</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
