@@ -116,17 +116,20 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const resetBooking = useCallback(() => setBookingState(defaultState), []);
 
   const setGuestCounts = useCallback((male: number, female: number, couple: number) => {
+    const m = Math.max(0, male);
+    const f = Math.max(0, female);
+    const c = Math.max(0, couple);
+    // Property has 13 beds total (8 dorm + 3 triple + 2 double).
+    // Couples count as 2. Reject any call that would exceed capacity —
+    // the UI prevents this for normal flows; this is defense-in-depth
+    // for programmatic callers (URL params, restored state, etc.).
+    if (m + f + c * 2 > 13) return;
     setBookingState((prev) => ({
       ...prev,
-      maleCount: Math.max(0, male),
-      femaleCount: Math.max(0, female),
-      coupleCount: Math.max(0, couple),
-      guests: buildGuests(
-        Math.max(0, male),
-        Math.max(0, female),
-        Math.max(0, couple),
-        prev.guests
-      ),
+      maleCount: m,
+      femaleCount: f,
+      coupleCount: c,
+      guests: buildGuests(m, f, c, prev.guests),
     }));
   }, []);
 

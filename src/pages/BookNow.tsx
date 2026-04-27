@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar, Users, ChevronRight, Check, Bed, Package, Plus,
   Minus, Shield, Clock, CreditCard, ArrowLeft,
-  Waves, Sun, Plane, UtensilsCrossed, Dumbbell, Sparkles,
+  Waves, Sun, Plane, Dumbbell, Sparkles,
   User, Mail, Phone, FileText, Tag, Heart, X,
   ToggleLeft, ToggleRight, ChevronDown, AlertCircle, CheckCircle2,
   Copy, Loader2, Building2, Banknote, Timer, UserCheck,
@@ -46,7 +46,6 @@ const ADDONS: AddonDef[] = [
   { id: "paradise-valley", name: "Paradise Valley", description: "Valley trip with lunch included", price: 30, priceUnit: "fixed", icon: <Sparkles size={18} />, maxPerUnit: 10 },
   { id: "sand-dunes", name: "Sand Dunes", description: "Dunes trip with dinner included", price: 30, priceUnit: "fixed", icon: <Sun size={18} />, maxPerUnit: 10 },
   { id: "airport-pickup", name: "Taxi", description: "Taxi / airport transfer support", price: 25, priceUnit: "fixed", icon: <Plane size={18} />, maxPerUnit: 1 },
-  { id: "washing-machine", name: "Washing Machine", description: "Laundry wash during your stay", price: 5, priceUnit: "fixed", icon: <UtensilsCrossed size={18} />, maxPerUnit: 10 },
   { id: "skate-park", name: "Skate Park Sunset", description: "Sunset skate park session", price: 5, priceUnit: "fixed", icon: <Dumbbell size={18} />, maxPerUnit: 10 },
 ];
 
@@ -212,6 +211,10 @@ function GuestPicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
   const { booking, setGuestCounts } = useBooking();
   const ref = useRef<HTMLDivElement>(null);
 
+  // Property has 13 beds total (8 dorm + 3 triple + 2 double).
+  // Couples count as 2 toward this cap.
+  const MAX_GUESTS = 13;
+
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) onClose();
@@ -222,20 +225,24 @@ function GuestPicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
 
   if (!isOpen) return null;
 
-  const rows: { key: GuestType; label: string; icon: React.ReactNode; count: number; note?: string }[] = [
-    { key: "male",   label: "Males",   icon: <User size={16} />,  count: booking.maleCount },
-    { key: "female", label: "Females", icon: <User size={16} />,  count: booking.femaleCount },
-    { key: "couple", label: "Couples", icon: <Heart size={16} />, count: booking.coupleCount, note: "2 guests each" },
+  const rows: { key: GuestType; label: string; icon: React.ReactNode; count: number; note?: string; weight: number }[] = [
+    { key: "male",   label: "Males",   icon: <User size={16} />,  count: booking.maleCount,   weight: 1 },
+    { key: "female", label: "Females", icon: <User size={16} />,  count: booking.femaleCount, weight: 1 },
+    { key: "couple", label: "Couples", icon: <Heart size={16} />, count: booking.coupleCount, note: "2 guests each", weight: 2 },
   ];
 
   const total = booking.maleCount + booking.femaleCount + booking.coupleCount * 2;
+  const atCap = total >= MAX_GUESTS;
 
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: -8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.95 }}
       className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-stone-200 p-5 w-72 z-[100]">
       <p className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-4">Select guests</p>
       <div className="space-y-4">
-        {rows.map((r) => (
+        {rows.map((r) => {
+          // Adding this row's increment would push past the cap?
+          const wouldExceed = total + r.weight > MAX_GUESTS;
+          return (
           <div key={r.key} className="flex items-center justify-between">
             <span className="text-sm font-medium text-stone-700 flex items-center gap-2">
               <span className={guestConfig[r.key].color}>{r.icon}</span>
@@ -263,19 +270,27 @@ function GuestPicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
                   else if (r.key === "female") setGuestCounts(m, f + 1, c);
                   else setGuestCounts(m, f, c + 1);
                 }}
-                className="w-9 h-9 rounded-full border-2 border-stone-300 flex items-center justify-center hover:border-ocean hover:text-ocean transition-all"
+                disabled={wouldExceed}
+                className="w-9 h-9 rounded-full border-2 border-stone-300 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:border-ocean hover:text-ocean transition-all"
               >
                 <Plus size={14} />
               </button>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="border-t border-stone-200 mt-4 pt-3 flex items-center justify-between">
         <span className="text-sm font-semibold text-stone-600">Total persons</span>
-        <span className="font-bold text-ocean text-xl">{total}</span>
+        <span className={`font-bold text-xl ${atCap ? "text-amber-600" : "text-ocean"}`}>{total} / {MAX_GUESTS}</span>
       </div>
+
+      {atCap && (
+        <p className="text-[11px] text-amber-700 mt-2 leading-5">
+          That is the full house — 13 places across all rooms. For larger groups, message us on WhatsApp.
+        </p>
+      )}
 
       <button onClick={onClose}
         className="w-full mt-3 py-2.5 text-sm font-semibold text-white bg-ocean rounded-xl hover:bg-ocean/90 transition-all">

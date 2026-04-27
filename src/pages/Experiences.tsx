@@ -88,16 +88,6 @@ const experiences = [
     category: "service",
     includes: ["Door-to-door service", "Fixed price (cash)", "Reliable local drivers", "27 km / ~35 min"],
   },
-  {
-    id: "washing-machine",
-    name: "Laundry Service",
-    price: "€5 / load",
-    shortDesc: "Wash, dry, and fold during your stay.",
-    fullDesc: "Stay longer and need to wash clothes? Drop your laundry in the morning, pick it up clean and folded by evening. Simple, affordable, one less thing to think about.",
-    image: "/images/private-room.jpg",
-    category: "service",
-    includes: ["Wash + dry", "Folded and returned", "Same-day service", "Available any day"],
-  },
 ];
 
 const groups = [

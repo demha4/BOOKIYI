@@ -681,3 +681,40 @@ The data said "Minimum 3 nights" for the Surf Camp Pack but the booking flow acc
 - ✅ `npx vite build` succeeds (2173 modules, 667 KB → 190 KB gzipped)
 - ✅ All "3 nights" / "Minimum 3 nights" references swept and updated to 7
 - ✅ Stale `pricing` const removed from PackageSurfCamp.tsx
+
+---
+
+## Pass 17 — Guest cap (13) + remove Laundry addon
+
+### Guest count capped at 13 — `BookNow.tsx` + `BookingContext.tsx`
+
+The property has 13 beds total: 8 in the dorm + 3 in the triple + 2 in the double = 13. Previously the GuestPicker had no cap — a user could keep clicking "+" indefinitely and end up requesting 30 guests for a 13-bed house.
+
+**UI cap (`BookNow.tsx` GuestPicker):**
+- New `MAX_GUESTS = 13` constant.
+- Each row tracks its `weight` (males/females = 1, couples = 2 each).
+- The `+` button is disabled when `total + weight > MAX_GUESTS`. Disabled state uses `disabled:opacity-30 disabled:cursor-not-allowed`.
+- Total counter now reads `7 / 13` instead of just `7`, and turns amber when at the cap.
+- When the cap is hit, an inline note appears: *"That is the full house — 13 places across all rooms. For larger groups, message us on WhatsApp."* — guides the largest groups to the right channel rather than dead-ending them.
+
+**Defense-in-depth (`BookingContext.tsx`):**
+- `setGuestCounts(m, f, c)` now silently no-ops if `m + f + c*2 > 13`. The UI already prevents user clicks from getting there, so this only matters for programmatic callers (URL params, restored sessions, future deep-link flows). Rejecting invalid input early prevents weird mid-flow states (e.g. 14 guests but only 13 bed slots, infinite "1 guest unassigned" warnings).
+
+### Washing Machine addon removed
+
+User flagged the Laundry/Washing Machine addon should no longer be bookable. Removed from three places to keep the UX consistent (booking flow + marketing + data layer):
+
+- **`src/pages/BookNow.tsx`** — dropped from the `ADDONS` array (no longer shown in the addons step).
+- **`src/data/upsells.ts`** — dropped from `UPSELL_ITEMS`.
+- **`src/pages/Experiences.tsx`** — removed the "Laundry Service" card from the Experiences page. Leaving it on the marketing page would have been misleading: guests would see it advertised, click through to "Add to Stay", and then find it absent from the booking flow.
+
+Also dropped the now-unused `UtensilsCrossed` icon import to keep the bundle and TypeScript clean.
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2173 modules, 667 KB → 189 KB gzipped)
+- ✅ Manually walked through scenarios:
+  - 12 guests selected → "+" buttons enabled (12+1=13 fits)
+  - 12 guests, click + on Couple → button disabled (12+2=14 exceeds)
+  - 13 guests reached → all "+" buttons disabled, amber note appears
+  - "Continue" still works at 13 (unchanged from before)
