@@ -14,9 +14,11 @@ import {
   Plane,
 } from "lucide-react";
 import { rooms, galleryImages, testimonials, siteInfo } from "../data/content";
+import { useLiveRoomPrices } from "../hooks/useLiveRoomPrices";
 import SEO from "../components/SEO";
 
 export default function Home() {
+  const { byId, cheapest, loading: pricesLoading } = useLiveRoomPrices();
   const easyItems = [
     {
       icon: <Waves size={28} className="text-ocean" />,
@@ -81,7 +83,7 @@ export default function Home() {
     <div className="bg-cream">
       <SEO
         title="Surf Hostel in Anza, Agadir"
-        description="Small, family-run surf hostel in Anza Beach, Agadir. Dorm beds from €20/night, private rooms, rooftop terrace, surf lessons, and local trips. Book direct & save."
+        description={`Small, family-run surf hostel in Anza Beach, Agadir. Dorm beds from €${cheapest}/night, private rooms, rooftop terrace, surf lessons, and local trips. Book direct & save.`}
         ogImage="/images/hero-surf.jpg"
       />
       {/* Hero Section */}
@@ -274,7 +276,7 @@ export default function Home() {
                 </div>
                 <div className="relative z-10 p-6 sm:p-8">
                   <div className="inline-block border border-white/60 bg-black/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4 text-sm font-medium text-white">
-                    From €{room.price} / Night
+                    From €{byId[room.id] ?? room.price} / Night
                   </div>
                   <h3 className="font-serif text-2xl sm:text-3xl leading-tight text-white mb-2">
                     {room.name}
@@ -369,7 +371,7 @@ export default function Home() {
               <div className="inline-flex w-fit rounded-full bg-ocean/10 text-ocean px-3 py-1 text-xs font-medium mb-4">Flexible stay</div>
               <p className="text-xs font-medium text-stone-500 mb-2">Minimum stay: 1 night</p>
               <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-charcoal mb-2">Bed &amp; Breakfast</h3>
-              <p className="text-ocean font-semibold text-lg mb-4">From €20 / night</p>
+              <p className="text-ocean font-semibold text-lg mb-4">From €{cheapest} / night</p>
               <p className="card-copy text-stone mb-4">
                 The flexible option. Pick your room, stay as long as you want, and start every morning with a proper Moroccan breakfast on the rooftop.
               </p>

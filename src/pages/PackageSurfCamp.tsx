@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, MessageCircle, Clock, LogIn, LogOut } from "lucide-react";
 import { siteInfo, testimonials } from "../data/content";
+import { useLiveRoomPrices } from "../hooks/useLiveRoomPrices";
 import SEO from "../components/SEO";
 
 const included = [
@@ -36,6 +37,14 @@ const skillLevels = [
 ];
 
 export default function PackageSurfCamp() {
+  const { byId, loading } = useLiveRoomPrices();
+  const dormPrice = byId["anza-dorm"] ?? 20;
+  const triplePrice = byId["rooftop-triple"] ?? 50;
+  const doublePrice = byId["double-room"] ?? 55;
+  const examplePack = 45 * 7;
+  const exampleDorm = dormPrice * 7;
+  const exampleTotal = examplePack + exampleDorm;
+
   return (
     <div className="pt-32 sm:pt-36 bg-cream">
       <SEO
@@ -125,15 +134,15 @@ export default function PackageSurfCamp() {
               <ul className="mt-4 space-y-2 text-sm text-stone leading-6">
                 <li className="flex items-center justify-between gap-3">
                   <span>Dorm bed</span>
-                  <span className="font-semibold text-charcoal">€20 / night</span>
+                  <span className="font-semibold text-charcoal">€{dormPrice} / night</span>
                 </li>
                 <li className="flex items-center justify-between gap-3">
                   <span>Triple room <span className="text-stone-500">(per room)</span></span>
-                  <span className="font-semibold text-charcoal">€50 / night</span>
+                  <span className="font-semibold text-charcoal">€{triplePrice} / night</span>
                 </li>
                 <li className="flex items-center justify-between gap-3">
                   <span>Double room <span className="text-stone-500">(per room)</span></span>
-                  <span className="font-semibold text-charcoal">€55 / night</span>
+                  <span className="font-semibold text-charcoal">€{doublePrice} / night</span>
                 </li>
               </ul>
               <p className="text-xs text-stone-500 mt-4">
@@ -143,7 +152,7 @@ export default function PackageSurfCamp() {
           </div>
 
           <div className="mt-8 rounded-xl bg-stone-50 border border-stone-200 p-5 text-sm sm:text-base text-stone leading-7">
-            <strong className="text-charcoal">Example total for 1 person, 7 nights in the dorm:</strong> €315 (pack) + €140 (dorm) = <strong className="text-ocean">€455</strong>. Pick your real dates and rooms on the booking page for the live total. Lunches, extra activities, airport transfer, and personal insurance are not included.
+            <strong className="text-charcoal">Example total for 1 person, 7 nights in the dorm:</strong> €{examplePack} (pack) + €{exampleDorm} (dorm) = <strong className="text-ocean">€{exampleTotal}</strong>. Pick your real dates and rooms on the booking page for the live total. Lunches, extra activities, airport transfer, and personal insurance are not included.
           </div>
         </div>
       </section>

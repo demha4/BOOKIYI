@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, MessageCircle, Clock, LogIn, LogOut } from "lucide-react";
 import { rooms, siteInfo } from "../data/content";
+import { useLiveRoomPrices } from "../hooks/useLiveRoomPrices";
 import SEO from "../components/SEO";
 
 const included = [
@@ -35,11 +36,14 @@ const idealFor = [
 ];
 
 export default function PackageBedAndBreakfast() {
+  const { byId, cheapest, loading } = useLiveRoomPrices();
+  const cheapestPrivate = Math.min(byId["rooftop-triple"] ?? 50, byId["double-room"] ?? 55);
+
   return (
     <div className="pt-32 sm:pt-36 bg-cream">
       <SEO
         title="Bed & Breakfast"
-        description="Flexible B&B from €20/night. Choose your room, enjoy Moroccan breakfast daily, rooftop access, and book activities as you go. Minimum stay: 1 night."
+        description={`Flexible B&B from €${cheapest}/night. Choose your room, enjoy Moroccan breakfast daily, rooftop access, and book activities as you go. Minimum stay: 1 night.`}
         ogImage="/images/private-room.jpg"
         ogType="product"
       />
@@ -54,8 +58,8 @@ export default function PackageBedAndBreakfast() {
           <motion.p initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="section-copy text-stone max-w-3xl mx-auto mb-6">
             The flexible pack. Choose your room, we sort the bed, the breakfast, the rooftop, and the WiFi. You sort the rest — with our help if you want it.
           </motion.p>
-          <div className="text-2xl sm:text-3xl font-bold text-ocean">From €20 / night</div>
-          <p className="text-stone mt-2">Dorm bed — private rooms from €50</p>
+          <div className="text-2xl sm:text-3xl font-bold text-ocean">From €{cheapest} / night</div>
+          <p className="text-stone mt-2">Dorm bed — private rooms from €{cheapestPrivate}</p>
           <div className="mt-8">
             <Link to="/book/bed-and-breakfast" className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal text-white px-7 py-3.5 font-semibold text-sm sm:text-base hover:bg-charcoal/90 transition-colors">
               Book Bed & Breakfast
@@ -88,7 +92,7 @@ export default function PackageBedAndBreakfast() {
                     <div className="text-sm text-stone">Sleeps up to {room.maxGuests}</div>
                   </div>
                   <div className="text-right">
-                    <div className="font-semibold text-ocean">From €{room.price}</div>
+                    <div className="font-semibold text-ocean">From €{byId[room.id] ?? room.price}</div>
                     <div className="text-xs text-stone">/ night</div>
                   </div>
                 </div>

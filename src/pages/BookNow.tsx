@@ -21,10 +21,10 @@ import { AlertTriangle } from "lucide-react";
    BANK TRANSFER CONFIG — update with real details
    ═══════════════════════════════════════════════════════════════ */
 const BANK_DETAILS = {
-  bankName: "Attijariwafa Bank",
-  accountName: "TAMOUNT Surf House",
-  iban: "MA64 0211 1234 5678 9012 3456 789",
-  swift: "BCMAMAMC",
+  bankName: "CIH Bank",
+  accountName: "ABDELWAHD BALLOUCH",
+  iban: "MA64 2300 1046 2196 3211 0002 0097",
+  swift: "CIHMMAMC",
   reference: "Booking deposit",
 };
 

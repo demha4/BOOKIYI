@@ -2,12 +2,16 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MessageCircle } from "lucide-react";
 import { siteInfo } from "../data/content";
+import { useLiveRoomPrices } from "../hooks/useLiveRoomPrices";
 import SEO from "../components/SEO";
 
-const packageCards = [
+export default function Packages() {
+  const { cheapest } = useLiveRoomPrices();
+
+  const packageCards = [
   {
     title: "Bed & Breakfast",
-    price: "From €20 / night",
+    price: `From €${cheapest} / night`,
     copy1:
       "The flexible option. Pick your room, stay as long as you want, and start every morning with a proper Moroccan breakfast on the rooftop.",
     copy2:
@@ -35,12 +39,11 @@ const packageCards = [
   },
 ];
 
-export default function Packages() {
   return (
     <div className="pt-32 sm:pt-36 bg-cream">
       <SEO
         title="Surf Packages"
-        description="Two ways to stay: Bed & Breakfast from €20/night or Surf Camp Pack from €45/day. Flexible booking, no hidden fees, direct WhatsApp support."
+        description={`Two ways to stay: Bed & Breakfast from €${cheapest}/night or Surf Camp Pack from €45/day. Flexible booking, no hidden fees, direct WhatsApp support.`}
         ogImage="/images/surf-camp.jpg"
       />
       <section className="py-24 sm:py-28 text-center">
