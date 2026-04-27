@@ -718,3 +718,70 @@ Also dropped the now-unused `UtensilsCrossed` icon import to keep the bundle and
   - 12 guests, click + on Couple → button disabled (12+2=14 exceeds)
   - 13 guests reached → all "+" buttons disabled, amber note appears
   - "Continue" still works at 13 (unchanged from before)
+
+---
+
+## Pass 18 — De-stick booking bar, mobile sticky summary, tighter radius, display font on home cards
+
+### Booking bar no longer sticky / floating
+
+The `position: sticky` on the top guest+date bar (`top-[5.6rem] sm:top-[6.35rem] lg:top-[6.8rem]`) made it follow the viewport while scrolling, which was visually busy and felt empty when not interacting with it. The user wanted it to scroll with the page like a normal section.
+
+**Fix:**
+- Removed `sticky top-...` and `z-40` — bar is now a normal block at the top of the booking flow.
+- Dropped the `bg-white/96 backdrop-blur-lg` and the heavy `shadow-[0_16px_34px_rgba(15,42,58,0.10)]` (those were styling needed to feel "lifted" above other content while scrolling). Now uses a flat `shadow-sm` instead.
+- Added a small `YOUR STAY` kicker label on the left (visible on `sm:` and up) so the bar reads as an intentional section header, not a stray container.
+- The price block on the right now has a `LIVE TOTAL` kicker above it for the same reason — visual context without adding chrome.
+- Reduced borders from `border-2` to `border` to match the lighter look.
+
+### Mobile-only sticky summary bar
+
+The right-side Booking Summary card has always been `hidden lg:block` — meaning **mobile users had no visible price/state** while scrolling through the booking flow. Big UX gap.
+
+**Fix:** added a fixed-bottom bar that's visible only on mobile/tablet (`lg:hidden`) and only when guests + dates are set and the user is past the confirm step:
+
+```tsx
+{!noGuests && !noDates && step < 6 && (
+  <>
+    <div className="h-24 lg:hidden" aria-hidden />  {/* spacer */}
+    <div className="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-stone-200 ... lg:hidden">
+      ...nights/guests subtitle, live total, Continue button...
+    </div>
+  </>
+)}
+```
+
+The bar shows: `13 NIGHTS · 3 GUESTS` (small caps subtitle), live total in large display font, and a Continue button on the right that uses the same `canProceed(step)` validation as the desktop button. A 24-px spacer reserves space at the bottom of the page so content doesn't end up hidden behind the bar.
+
+### Border radius — toned down to 12 px on the booking flow
+
+User flagged the design as "overly rounded". Tailwind's `rounded-2xl` (16px), `rounded-3xl` (24px), and the custom values like `rounded-[1.7rem]` (27 px) and `rounded-[2rem]` (32 px) were stacked on every container.
+
+**Targeted fix in `src/pages/BookNow.tsx` and `src/components/CustomCalendar.tsx`** (the booking flow surfaces specifically — left other pages alone for now):
+- `rounded-2xl` → `rounded-xl` (16 → 12 px)
+- `rounded-3xl` → `rounded-xl` (24 → 12 px)
+- `rounded-[2rem]` → `rounded-xl` (32 → 12 px)
+- `rounded-[1.7rem]` → `rounded-xl` (27 → 12 px)
+- `rounded-[1.6rem]` → `rounded-xl` (26 → 12 px)
+- Pills (`rounded-full`) and small icon buttons left unchanged — those should stay round.
+
+Result: the whole booking flow reads as one consistent design language — `rounded-xl` everywhere for cards/panels/buttons, `rounded-full` for pills, no more competing radius scales.
+
+The rest of the site (Home, Packages, Experiences, Rooms, etc.) was *not* touched in this pass. If the user wants the same treatment site-wide, it's a quick follow-up — same `sed` pattern, just point at more files.
+
+### Home card titles — Mochiy Pop One display font
+
+The home page "What makes it easy" cards (Daily Surf Sessions, Sunset Yoga, Paradise Valley & Dunes, etc.) had their titles rendering in the default Inter sans-serif. User wanted them in **Mochiy Pop One** — the same display font used in the big section titles like "Choose The Stay".
+
+**Fix:** added `font-display` to the `<h3>` className:
+```tsx
+<h3 className="card-title font-display font-semibold text-charcoal mb-3 sm:mb-4">{item.title}</h3>
+```
+
+`font-display` resolves to `font-family: 'Mochiy Pop One', sans-serif;` (defined in `src/index.css`). The cards now visually echo the big titles above them, tying the home page together.
+
+### Verified
+- ✅ `npx tsc --noEmit` passes
+- ✅ `npx vite build` succeeds (2173 modules, 667 KB → 190 KB gzipped)
+- ✅ Confirmed 0 remaining occurrences of `rounded-2xl/3xl/[2rem]/[1.7rem]/[1.6rem]` in BookNow + CustomCalendar
+- ✅ Mobile bar uses same `canProceed(step)` gate as desktop button (no risk of inconsistent button states)

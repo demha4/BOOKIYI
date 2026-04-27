@@ -108,7 +108,7 @@ export default function CustomCalendar({ checkIn, checkOut, onSelect }: CustomCa
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-sand-dark/20 p-4 sm:p-6">
+    <div className="bg-white rounded-xl border border-sand-dark/20 p-4 sm:p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <button

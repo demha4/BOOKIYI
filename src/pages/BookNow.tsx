@@ -236,7 +236,7 @@ function GuestPicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
 
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: -8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.95 }}
-      className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-stone-200 p-5 w-72 z-[100]">
+      className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-2xl border border-stone-200 p-5 w-72 z-[100]">
       <p className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-4">Select guests</p>
       <div className="space-y-4">
         {rows.map((r) => {
@@ -332,7 +332,7 @@ function DatePicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
 
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: -8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.95 }}
-      className="absolute top-full right-0 md:left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-stone-200 p-5 w-[340px] z-[100]">
+      className="absolute top-full right-0 md:left-0 mt-2 bg-white rounded-xl shadow-2xl border border-stone-200 p-5 w-[340px] z-[100]">
       <div className="flex flex-wrap gap-2 mb-4">
         {quickNights.map((n) => (
           <button key={n} onClick={() => setQuickNights(n)}
@@ -466,7 +466,7 @@ function PaymentOptionCard({
 }) {
   return (
     <button onClick={onClick}
-      className={`w-full text-left border-2 rounded-2xl p-5 transition-all ${
+      className={`w-full text-left border-2 rounded-xl p-5 transition-all ${
         selected ? "border-ocean bg-ocean/5 shadow-md shadow-ocean/10" : "border-stone-200 hover:border-stone-300 bg-white"
       }`}>
       <div className="flex items-start gap-4">
@@ -710,83 +710,87 @@ export default function BookNow() {
           </div>
         )}
 
-        {/* STICKY TOP BAR */}
-        <div className="sticky top-[5.6rem] sm:top-[6.35rem] lg:top-[6.8rem] z-40 mb-8">
+        {/* TOP BAR — guests + dates + live price */}
+        <div className="mb-8">
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-            className="bg-white/96 backdrop-blur-lg rounded-[1.7rem] shadow-[0_16px_34px_rgba(15,42,58,0.10)] border border-stone-200 p-4 sm:p-5 flex items-center gap-3 sm:gap-4 flex-wrap">
+            className="bg-white rounded-xl shadow-sm border border-stone-200 p-4 sm:p-5">
+            <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+              <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider hidden sm:inline">Your stay</span>
 
-            {/* Guest Picker */}
-            <div className="relative">
-              <button onClick={() => { setGuestPickerOpen(!guestPickerOpen); setDatePickerOpen(false); }}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 transition-all text-sm font-medium ${
-                  guestPickerOpen ? "border-ocean bg-ocean/5 text-ocean" :
-                  totalPersons > 0 ? "border-ocean/30 bg-ocean/5 text-ocean" : "border-stone-300 text-stone-600 hover:border-ocean"
-                }`}>
-                <Users size={18} />
-                <span className="font-semibold">{totalPersons > 0 ? `Guests: ${totalPersons}` : "Add Guests"}</span>
-                {totalPersons > 0 && (
-                  <button onClick={(e) => { e.stopPropagation(); setGuestCounts(0, 0, 0); }}
-                    className="ml-1 hover:text-red-500"><X size={14} /></button>
-                )}
-                <ChevronDown size={14} className={`transition-transform ${guestPickerOpen ? "rotate-180" : ""}`} />
-              </button>
-              <AnimatePresence>
-                {guestPickerOpen && <GuestPicker isOpen={guestPickerOpen} onClose={closeGuestPicker} />}
-              </AnimatePresence>
-            </div>
-
-            {/* Guest type mini pills */}
-            {totalPersons > 0 && (
-              <div className="hidden md:flex items-center gap-1.5">
-                {booking.maleCount > 0 && (
-                  <span className="text-[11px] px-2 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-semibold flex items-center gap-1">
-                    <User size={10} /> {booking.maleCount}M
-                  </span>
-                )}
-                {booking.femaleCount > 0 && (
-                  <span className="text-[11px] px-2 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-600 font-semibold flex items-center gap-1">
-                    <User size={10} /> {booking.femaleCount}F
-                  </span>
-                )}
-                {booking.coupleCount > 0 && (
-                  <span className="text-[11px] px-2 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 font-semibold flex items-center gap-1">
-                    <Heart size={10} /> {booking.coupleCount}C
-                  </span>
-                )}
+              {/* Guest Picker */}
+              <div className="relative">
+                <button onClick={() => { setGuestPickerOpen(!guestPickerOpen); setDatePickerOpen(false); }}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all text-sm font-medium ${
+                    guestPickerOpen ? "border-ocean bg-ocean/5 text-ocean" :
+                    totalPersons > 0 ? "border-ocean/30 bg-ocean/5 text-ocean" : "border-stone-300 text-stone-600 hover:border-ocean"
+                  }`}>
+                  <Users size={18} />
+                  <span className="font-semibold">{totalPersons > 0 ? `Guests: ${totalPersons}` : "Add Guests"}</span>
+                  {totalPersons > 0 && (
+                    <button onClick={(e) => { e.stopPropagation(); setGuestCounts(0, 0, 0); }}
+                      className="ml-1 hover:text-red-500"><X size={14} /></button>
+                  )}
+                  <ChevronDown size={14} className={`transition-transform ${guestPickerOpen ? "rotate-180" : ""}`} />
+                </button>
+                <AnimatePresence>
+                  {guestPickerOpen && <GuestPicker isOpen={guestPickerOpen} onClose={closeGuestPicker} />}
+                </AnimatePresence>
               </div>
-            )}
 
-            <div className="hidden md:block w-px h-8 bg-stone-200" />
+              {/* Guest type mini pills */}
+              {totalPersons > 0 && (
+                <div className="hidden md:flex items-center gap-1.5">
+                  {booking.maleCount > 0 && (
+                    <span className="text-[11px] px-2 py-1 rounded-md bg-blue-50 border border-blue-200 text-blue-700 font-semibold flex items-center gap-1">
+                      <User size={10} /> {booking.maleCount}M
+                    </span>
+                  )}
+                  {booking.femaleCount > 0 && (
+                    <span className="text-[11px] px-2 py-1 rounded-md bg-rose-50 border border-rose-200 text-rose-600 font-semibold flex items-center gap-1">
+                      <User size={10} /> {booking.femaleCount}F
+                    </span>
+                  )}
+                  {booking.coupleCount > 0 && (
+                    <span className="text-[11px] px-2 py-1 rounded-md bg-amber-50 border border-amber-200 text-amber-700 font-semibold flex items-center gap-1">
+                      <Heart size={10} /> {booking.coupleCount}C
+                    </span>
+                  )}
+                </div>
+              )}
 
-            {/* Date Picker */}
-            <div className="relative">
-              <button onClick={() => { setDatePickerOpen(!datePickerOpen); setGuestPickerOpen(false); }}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 transition-all text-sm font-medium ${
-                  datePickerOpen ? "border-ocean bg-ocean/5 text-ocean" :
-                  nights > 0 ? "border-ocean/30 bg-ocean/5 text-ocean" : "border-stone-300 text-stone-600 hover:border-ocean"
-                }`}>
-                <Calendar size={18} />
-                <span className="font-semibold">{nights > 0 ? `${fmtDate(booking.checkIn)} — ${nights}n` : "Select Dates"}</span>
-                <ChevronDown size={14} className={`transition-transform ${datePickerOpen ? "rotate-180" : ""}`} />
-              </button>
-              <AnimatePresence>
-                {datePickerOpen && <DatePicker isOpen={datePickerOpen} onClose={closeDatePicker} />}
-              </AnimatePresence>
-            </div>
+              <div className="hidden md:block w-px h-8 bg-stone-200" />
 
-            {price.total > 0 && (
-              <div className="ml-auto text-right hidden md:block">
-                <p className="text-xl font-display font-bold text-ocean">€{price.total}</p>
-                {nights > 0 && <p className="text-[10px] text-stone-400">≈ €{Math.round(price.total / nights)}/night</p>}
+              {/* Date Picker */}
+              <div className="relative">
+                <button onClick={() => { setDatePickerOpen(!datePickerOpen); setGuestPickerOpen(false); }}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all text-sm font-medium ${
+                    datePickerOpen ? "border-ocean bg-ocean/5 text-ocean" :
+                    nights > 0 ? "border-ocean/30 bg-ocean/5 text-ocean" : "border-stone-300 text-stone-600 hover:border-ocean"
+                  }`}>
+                  <Calendar size={18} />
+                  <span className="font-semibold">{nights > 0 ? `${fmtDate(booking.checkIn)} — ${nights}n` : "Select Dates"}</span>
+                  <ChevronDown size={14} className={`transition-transform ${datePickerOpen ? "rotate-180" : ""}`} />
+                </button>
+                <AnimatePresence>
+                  {datePickerOpen && <DatePicker isOpen={datePickerOpen} onClose={closeDatePicker} />}
+                </AnimatePresence>
               </div>
-            )}
+
+              {price.total > 0 && (
+                <div className="ml-auto text-right hidden md:block">
+                  <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">Live total</p>
+                  <p className="text-xl font-display font-bold text-ocean leading-tight">€{price.total}</p>
+                  {nights > 0 && <p className="text-[10px] text-stone-400">≈ €{Math.round(price.total / nights)}/night</p>}
+                </div>
+              )}
+            </div>
           </motion.div>
         </div>
 
         {/* ALERT: need setup */}
         {(noGuests || noDates) && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-3">
+            className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
             <AlertCircle size={20} className="text-amber-500 mt-0.5 shrink-0" />
             <div>
               <p className="font-semibold text-amber-800 text-sm">
@@ -836,7 +840,7 @@ export default function BookNow() {
                   {/* ── STEP 1: PACKAGE ── */}
                   {step === 1 && (
                     <div className="space-y-4">
-                      <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-100">
+                      <div className="bg-white rounded-xl p-6 md:p-8 shadow-sm border border-stone-100">
                         <h2 className="text-xl font-display font-bold text-stone-800 mb-2 flex items-center gap-2">
                           <Package className="text-ocean" size={22} /> Choose your experience
                         </h2>
@@ -844,7 +848,7 @@ export default function BookNow() {
 
                         {/* Room Only */}
                         <motion.button onClick={() => setPackage(null)}
-                          className={`w-full text-left border-2 rounded-2xl p-5 mb-4 transition-all ${
+                          className={`w-full text-left border-2 rounded-xl p-5 mb-4 transition-all ${
                             booking.packageId === null ? "border-ocean bg-ocean/5 shadow-md shadow-ocean/10" : "border-stone-200 hover:border-stone-300"
                           }`}>
                           <div className="flex items-center gap-4">
@@ -879,7 +883,7 @@ export default function BookNow() {
                               : pkg.priceFrom * nights * totalPersons;
                             return (
                               <motion.button key={pkg.id} layout onClick={() => setPackage(isSelected ? null : pkg.id)}
-                                className={`w-full text-left border-2 rounded-2xl overflow-hidden transition-all ${
+                                className={`w-full text-left border-2 rounded-xl overflow-hidden transition-all ${
                                   isSelected ? "border-ocean shadow-md shadow-ocean/10" : "border-stone-200 hover:border-stone-300"
                                 }`}>
                                 <div className="flex flex-col md:flex-row">
@@ -946,7 +950,7 @@ export default function BookNow() {
 
                   {/* ── STEP 2: ROOMS ── */}
                   {step === 2 && (
-                    <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-100">
+                    <div className="bg-white rounded-xl p-6 md:p-8 shadow-sm border border-stone-100">
                       <h2 className="text-xl font-display font-bold text-stone-800 mb-2 flex items-center gap-2">
                         <Bed className="text-ocean" size={22} /> Assign guests to rooms
                       </h2>
@@ -996,7 +1000,7 @@ export default function BookNow() {
                         // > 0 = real availability
                         return live && ((live.available ?? 0) > 0 || live.available === -1);
                       }).length === 0 && booking.guests.length > 0 && (
-                        <div className="text-center py-12 bg-stone-50 rounded-2xl border-2 border-dashed border-stone-200">
+                        <div className="text-center py-12 bg-stone-50 rounded-xl border-2 border-dashed border-stone-200">
                           <AlertCircle className="mx-auto text-amber-500 mb-3" size={48} strokeWidth={1.5} />
                           <h3 className="text-lg font-bold text-stone-800 mb-2">No rooms available for these dates</h3>
                           <p className="text-stone-500 text-sm mb-4">Please try different dates or contact us directly.</p>
@@ -1008,7 +1012,7 @@ export default function BookNow() {
                       )}
 
                       {!liveLoading && liveError && (
-                        <div className="text-center py-8 bg-amber-50 rounded-2xl border border-amber-200">
+                        <div className="text-center py-8 bg-amber-50 rounded-xl border border-amber-200">
                           <AlertTriangle className="mx-auto text-amber-600 mb-2" size={36} strokeWidth={1.5} />
                           <p className="text-stone-600 text-sm">Could not load live availability — {liveError}</p>
                         </div>
@@ -1029,7 +1033,7 @@ export default function BookNow() {
 
                           return (
                             <motion.div key={room.id} layout
-                              className={`border-2 rounded-2xl transition-all ${
+                              className={`border-2 rounded-xl transition-all ${
                                 hasGuests ? "border-ocean shadow-md shadow-ocean/10" : "border-stone-200 hover:border-stone-300"
                               }`}>
                               <div className="flex flex-col md:flex-row">
@@ -1106,7 +1110,7 @@ export default function BookNow() {
 
                   {/* ── STEP 3: ADD-ONS ── */}
                   {step === 3 && (
-                    <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-100">
+                    <div className="bg-white rounded-xl p-6 md:p-8 shadow-sm border border-stone-100">
                       <h2 className="text-xl font-display font-bold text-stone-800 mb-2 flex items-center gap-2">
                         <Sparkles className="text-ocean" size={22} /> Add extras to your trip
                       </h2>
@@ -1200,7 +1204,7 @@ export default function BookNow() {
 
                   {/* ── STEP 4: DETAILS ── */}
                   {step === 4 && (
-                    <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-100">
+                    <div className="bg-white rounded-xl p-6 md:p-8 shadow-sm border border-stone-100">
                       <h2 className="text-xl font-display font-bold text-stone-800 mb-2 flex items-center gap-2">
                         <FileText className="text-ocean" size={22} /> Your Details
                       </h2>
@@ -1259,7 +1263,7 @@ export default function BookNow() {
 
                   {/* ── STEP 5: PAYMENT ── */}
                   {step === 5 && (
-                    <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-100">
+                    <div className="bg-white rounded-xl p-6 md:p-8 shadow-sm border border-stone-100">
                       <h2 className="text-xl font-display font-bold text-stone-800 mb-2 flex items-center gap-2">
                         <CreditCard className="text-ocean" size={22} /> Choose Payment Option
                       </h2>
@@ -1280,7 +1284,7 @@ export default function BookNow() {
 
                         {booking.paymentChoice === "deposit" && (
                           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                            className="bg-stone-50 border border-stone-200 rounded-2xl p-5">
+                            className="bg-stone-50 border border-stone-200 rounded-xl p-5">
                             <div className="flex items-center gap-2 mb-4">
                               <Building2 size={18} className="text-ocean" />
                               <span className="font-bold text-stone-800 text-sm">Bank Transfer Details</span>
@@ -1343,7 +1347,7 @@ export default function BookNow() {
                   {/* ── STEP 6: CONFIRM ── */}
                   {step === 6 && (
                     <div className="space-y-4">
-                      <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-100">
+                      <div className="bg-white rounded-xl p-6 md:p-8 shadow-sm border border-stone-100">
                         <h2 className="text-xl font-display font-bold text-stone-800 mb-6 flex items-center gap-2">
                           <Check className="text-green-500" size={22} /> Booking Summary
                         </h2>
@@ -1483,7 +1487,7 @@ export default function BookNow() {
                       </div>
 
                       {/* Contact */}
-                      <div className="bg-white rounded-2xl p-5 shadow-sm border border-stone-100">
+                      <div className="bg-white rounded-xl p-5 shadow-sm border border-stone-100">
                         <h3 className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-3">Contact Details</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                           <div className="flex items-center gap-2 text-stone-600"><User size={14} className="text-ocean" /> {booking.contactName}</div>
@@ -1497,7 +1501,7 @@ export default function BookNow() {
                       {/* Submit result */}
                       {submitResult?.success ? (
                         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                          className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-200 rounded-3xl p-6 sm:p-8 text-center">
+                          className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-200 rounded-xl p-6 sm:p-8 text-center">
                           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500 flex items-center justify-center shadow-lg shadow-green-500/30">
                             <CheckCircle2 size={36} className="text-white" />
                           </div>
@@ -1513,7 +1517,7 @@ export default function BookNow() {
                           </p>
 
                           {submitResult.bookingIds && submitResult.bookingIds.length > 0 && (
-                            <div className="bg-white rounded-2xl p-4 mb-5 inline-block">
+                            <div className="bg-white rounded-xl p-4 mb-5 inline-block">
                               <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">Booking Reference</div>
                               <div className="font-mono font-bold text-ocean text-lg flex items-center gap-2 justify-center">
                                 {submitResult.bookingIds.map((id) => (
@@ -1526,7 +1530,7 @@ export default function BookNow() {
                           )}
 
                           {booking.paymentChoice === "deposit" && (
-                            <div className="bg-white border border-stone-200 rounded-2xl p-4 mb-5 text-left">
+                            <div className="bg-white border border-stone-200 rounded-xl p-4 mb-5 text-left">
                               <p className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                                 <Building2 size={12} /> Bank Transfer Instructions
                               </p>
@@ -1549,14 +1553,14 @@ export default function BookNow() {
                           )}
 
                           <a href="/"
-                            className="inline-flex items-center justify-center gap-2 py-3.5 px-8 bg-white text-stone-700 border-2 border-stone-200 rounded-2xl font-bold text-sm hover:bg-stone-50 transition-all">
+                            className="inline-flex items-center justify-center gap-2 py-3.5 px-8 bg-white text-stone-700 border-2 border-stone-200 rounded-xl font-bold text-sm hover:bg-stone-50 transition-all">
                             Back to Home
                           </a>
                         </motion.div>
                       ) : (
                         <>
                           {submitResult && !submitResult.success && (
-                            <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-4 flex gap-3 items-start">
+                            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 flex gap-3 items-start">
                               <AlertCircle size={20} className="text-red-600 shrink-0 mt-0.5" />
                               <div className="text-sm">
                                 <p className="font-semibold text-red-900 mb-1">Booking failed — please try again</p>
@@ -1568,7 +1572,7 @@ export default function BookNow() {
                           )}
 
                           <button onClick={handleConfirmBooking} disabled={submitting}
-                            className={`w-full flex items-center justify-center gap-2 py-5 rounded-2xl font-bold text-base transition-all shadow-lg ${
+                            className={`w-full flex items-center justify-center gap-2 py-5 rounded-xl font-bold text-base transition-all shadow-lg ${
                               submitting ? "bg-stone-300 text-stone-500 cursor-not-allowed shadow-none"
                               : "bg-gradient-to-r from-ocean to-ocean-dark text-white hover:shadow-ocean/30 hover:scale-[1.01]"
                             }`}>
@@ -1624,7 +1628,7 @@ export default function BookNow() {
 
             {/* SIDEBAR */}
             <div className="hidden lg:block w-80 shrink-0">
-              <div className="sticky top-44 bg-white rounded-2xl p-5 shadow-sm border border-stone-100">
+              <div className="sticky top-44 bg-white rounded-xl p-5 shadow-sm border border-stone-100">
                 <h3 className="font-display font-bold text-stone-800 mb-4 text-sm">Booking Summary</h3>
 
                 {nights > 0 && (
@@ -1711,7 +1715,7 @@ export default function BookNow() {
                   <button
                     onClick={goNext}
                     disabled={!canProceed(step)}
-                    className={`mt-5 w-full flex items-center justify-center gap-2 rounded-2xl py-4 text-sm font-bold transition-all ${
+                    className={`mt-5 w-full flex items-center justify-center gap-2 rounded-xl py-4 text-sm font-bold transition-all ${
                       canProceed(step)
                         ? "bg-ocean text-white hover:bg-ocean-dark shadow-lg shadow-ocean/20"
                         : "bg-stone-200 text-stone-400 cursor-not-allowed"
@@ -1725,6 +1729,41 @@ export default function BookNow() {
           </div>
         )}
       </div>
+
+      {/* Mobile summary bar — always visible while booking on small screens.
+          Hides on desktop (lg+) where the right-side sidebar takes over. */}
+      {!noGuests && !noDates && step < 6 && (
+        <>
+          {/* Spacer so content is not hidden under the fixed bar */}
+          <div className="h-24 lg:hidden" aria-hidden="true" />
+          <div className="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-stone-200 px-4 py-3 lg:hidden shadow-[0_-8px_24px_rgba(15,42,58,0.08)]">
+            <div className="flex items-center justify-between gap-3 max-w-[1240px] mx-auto">
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider leading-tight">
+                  {nights > 0 ? `${nights} night${nights !== 1 ? "s" : ""} · ${totalPersons} guest${totalPersons !== 1 ? "s" : ""}` : "Select dates"}
+                </p>
+                <p className="text-xl font-display font-bold text-ocean leading-tight truncate">
+                  {price.total > 0 ? `€${price.total}` : "—"}
+                  {nights > 0 && price.total > 0 && (
+                    <span className="text-xs font-medium text-stone-400 ml-1.5">≈ €{Math.round(price.total / nights)}/n</span>
+                  )}
+                </p>
+              </div>
+              <button
+                onClick={goNext}
+                disabled={!canProceed(step)}
+                className={`shrink-0 flex items-center justify-center gap-1.5 rounded-xl px-5 py-3 text-sm font-bold transition-all ${
+                  canProceed(step)
+                    ? "bg-ocean text-white hover:bg-ocean-dark shadow-md shadow-ocean/20 active:scale-95"
+                    : "bg-stone-200 text-stone-400 cursor-not-allowed"
+                }`}
+              >
+                Continue <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

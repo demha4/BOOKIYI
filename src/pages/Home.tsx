@@ -185,7 +185,7 @@ export default function Home() {
                 <div className="rounded-[1.35rem] bg-slate-100 flex items-center justify-center mb-6 sm:mb-8 w-[70px] h-[70px] sm:w-[76px] sm:h-[76px]">
                   {item.icon}
                 </div>
-                <h3 className="card-title font-semibold text-charcoal mb-3 sm:mb-4">{item.title}</h3>
+                <h3 className="card-title font-display font-semibold text-charcoal mb-3 sm:mb-4">{item.title}</h3>
                 <p className="card-copy text-stone">{item.text}</p>
               </motion.div>
             ))}
