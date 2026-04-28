@@ -70,12 +70,10 @@ export function useLiveRoomPrices(): LiveRoomPrices {
 
   for (const room of rooms) {
     const live = data[room.beds24RoomId];
-    const rawPrice =
+    const price =
       live?.avgNightly && live.avgNightly > 0
         ? Math.round(live.avgNightly)
-        : 0;
-    // Never show a live price lower than the known static rate
-    const price = rawPrice > 0 ? Math.max(rawPrice, room.price) : room.price;
+        : room.price;
 
     byRoomId[room.beds24RoomId] = price;
     byId[room.id] = price;
