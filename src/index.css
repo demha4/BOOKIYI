@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Inter', sans-serif;
-  --font-serif: 'Mochiy Pop One', sans-serif;
-  --font-script: 'Caveat', cursive;
+  --font-sans: 'Lora', serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-script: 'Kalam', cursive;
   /* ── Cool-blue primary scale (inspired by Tennis Club + Travel Agency refs) ── */
   --color-primary-50: #F0F7FF;
   --color-primary-100: #DBEAFE;
@@ -40,7 +40,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Lora', serif;
   color: var(--color-charcoal);
   background-color: var(--color-cream);
   overflow-x: hidden;
@@ -54,19 +54,19 @@ body {
 }
 
 .font-serif {
-  font-family: 'Mochiy Pop One', sans-serif;
+  font-family: 'Playfair Display', serif;
 }
 
 .font-script {
-  font-family: 'Caveat', cursive;
+  font-family: 'Kalam', cursive;
 }
 
 .font-display {
-  font-family: 'Mochiy Pop One', sans-serif;
+  font-family: 'Playfair Display', serif;
 }
 
 .display-title {
-  font-family: 'Mochiy Pop One', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: clamp(2rem, 5vw, 3.8rem);
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -85,7 +85,7 @@ body {
 }
 
 .section-title {
-  font-family: 'Mochiy Pop One', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: clamp(1.8rem, 3.8vw, 2.8rem);
   line-height: 1.15;
   letter-spacing: -0.02em;
@@ -93,9 +93,9 @@ body {
 }
 
 .script-accent {
-  font-family: 'Caveat', cursive;
-  font-size: clamp(2.4rem, 5vw, 4.4rem);
-  line-height: 0.92;
+  font-family: 'Kalam', cursive;
+  font-size: clamp(2rem, 4.5vw, 3.8rem);
+  line-height: 0.95;
 }
 
 .section-copy {
