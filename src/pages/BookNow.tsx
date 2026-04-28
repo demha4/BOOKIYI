@@ -124,7 +124,8 @@ function usePriceBreakdown(liveData: Record<string, { avgNightly?: number; total
       const room = rooms.find((r) => r.id === roomId);
       if (room) {
         const live = liveData[room.beds24RoomId];
-        const unitPrice = live?.avgNightly && live.avgNightly > 0 ? live.avgNightly : room.price;
+        const rawLivePrice = live?.avgNightly && live.avgNightly > 0 ? live.avgNightly : 0;
+        const unitPrice = rawLivePrice > 0 ? Math.max(rawLivePrice, room.price) : room.price;
         const subtotal = room.type === "dorm"
           ? unitPrice * nights * guestIds.length
           : unitPrice * nights;
@@ -1017,12 +1018,16 @@ export default function BookNow() {
                           const assignedHere = booking.guests.filter((g) => g.roomId === room.id);
                           const hasGuests = assignedHere.length > 0;
                           const live = liveData[room.beds24RoomId];
-                          const livePrice = live?.avgNightly && live.avgNightly > 0 ? live.avgNightly : room.price;
+                          const rawLivePrice = live?.avgNightly && live.avgNightly > 0 ? live.avgNightly : 0;
+                          // Beds24 V2 offers endpoint can return per-stay totals that,
+                          // when divided by nights, drop below the true nightly rate
+                          // (especially for dorms). Use the static price as a floor.
+                          const livePrice = rawLivePrice > 0 ? Math.max(rawLivePrice, room.price) : room.price;
                           const liveAvail = live?.available ?? 0;
                           const hasLiveData = isLive && live && typeof liveAvail === "number";
 
                           if (!hasLiveData && !hasGuests) return null;
-                          if (hasLiveData && liveAvail === 0 && !hasGuests) return null;
+                          if (hasLiveData && liveAvail <= 0 && !hasGuests) return null;
 
                           return (
                             <motion.div key={room.id} layout
