@@ -162,7 +162,7 @@ export const rooms: RoomType[] = [
     name: "Economy Double Room",
     type: "private",
     genderPolicy: "any",
-    price: 55,
+    price: 45,
     priceUnit: "night",
     image: "/images/private-room.jpg",
     description: "Our quiet corner. One queen bed, one good window, and the kind of room that works for couples or solo travelers who want privacy.",
