@@ -1,14 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { ChevronRight, Home } from "lucide-react";
 
-/**
- * Visual breadcrumbs + inline JSON-LD following Google Search Central guidelines.
- * https://developers.google.com/search/docs/appearance/structured-data/breadcrumb
- *
- * Usage: <Breadcrumbs items={[{ label: "Rooms", href: "/rooms" }]} />
- * The "Home" crumb is always prepended automatically.
- */
-
 interface BreadcrumbItem {
   label: string;
   href?: string;
@@ -16,16 +8,14 @@ interface BreadcrumbItem {
 
 const SITE_URL = "https://www.tamountsurfhouse.com";
 
-export default function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
+export default function Breadcrumbs({ items, variant = "default" }: { items: BreadcrumbItem[]; variant?: "default" | "hero" }) {
   const location = useLocation();
 
-  // Build the full chain: Home → ...items → current (last item, no link)
   const chain: BreadcrumbItem[] = [
     { label: "Home", href: "/" },
     ...items,
   ];
 
-  // JSON-LD BreadcrumbList per Google's spec
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -37,6 +27,8 @@ export default function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
     })),
   };
 
+  const isHero = variant === "hero";
+
   return (
     <>
       <script
@@ -45,24 +37,33 @@ export default function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
       />
       <nav
         aria-label="Breadcrumb"
-        className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-2"
+        className={isHero
+          ? "relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2"
+          : "max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-2"
+        }
       >
-        <ol className="flex items-center gap-1.5 text-xs text-stone-400 flex-wrap">
+        <ol className={`flex items-center justify-${isHero ? "center" : "start"} gap-1.5 text-xs flex-wrap ${
+          isHero ? "text-white/50" : "text-stone-400"
+        }`}>
           {chain.map((item, i) => {
             const isLast = i === chain.length - 1;
             return (
               <li key={i} className="flex items-center gap-1.5">
                 {i > 0 && (
-                  <ChevronRight size={12} className="text-stone-300 shrink-0" />
+                  <ChevronRight size={12} className={isHero ? "text-white/30 shrink-0" : "text-stone-300 shrink-0"} />
                 )}
                 {isLast ? (
-                  <span className="text-stone-600 font-medium truncate max-w-[200px]">
+                  <span className={`font-medium truncate max-w-[200px] ${
+                    isHero ? "text-white/80" : "text-stone-600"
+                  }`}>
                     {item.label}
                   </span>
                 ) : item.href ? (
                   <Link
                     to={item.href}
-                    className="hover:text-ocean transition-colors flex items-center gap-1"
+                    className={`transition-colors flex items-center gap-1 ${
+                      isHero ? "hover:text-white/80" : "hover:text-ocean"
+                    }`}
                   >
                     {i === 0 && <Home size={12} />}
                     <span>{item.label}</span>

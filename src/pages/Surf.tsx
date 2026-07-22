@@ -42,16 +42,16 @@ const rentals = [
 export default function Surf() {
   return (
     <div className="bg-cream">
-      <Breadcrumbs items={[{ label: "Surf", href: "/surf" }]} />
       <SEO
         title="Surf Lessons & Spots"
         description="Surf lessons from €30, board rental from €7/day, and local spot guidance. Beginner to advanced coaching at Anza, Taghazout, and Tamraght breaks."
         ogImage="/images/surf-lesson.jpg"
       />
-      <section className="relative pt-6 pb-24 sm:pb-28 overflow-hidden bg-charcoal text-white">
+      <section className="relative pt-28 sm:pt-32 pb-24 sm:pb-28 overflow-hidden bg-charcoal text-white">
         <div className="absolute inset-0">
           <img src="/images/hero-surf.jpg" alt="surfing near anza and taghazout" className="w-full h-full object-cover opacity-35" />
         </div>
+        <Breadcrumbs items={[{ label: "Surf" }]} variant="hero" />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="kicker text-blue-300 mb-5">
             Surf in Anza & Taghazout

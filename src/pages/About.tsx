@@ -56,17 +56,17 @@ const values = [
 export default function About() {
   return (
     <div className="bg-cream">
-      <Breadcrumbs items={[{ label: "About" }]} />
       <SEO
         title="Our Story"
         description="Tamount means home. Built by Abdelwahd, a local surfer who grew up in Anza. A small surf house with a big welcome, rooftop sunsets, and honest hospitality."
         ogImage="/images/hostel-living.jpg"
       />
-      <section className="relative pt-6 pb-24 sm:pb-28 overflow-hidden text-white">
+      <section className="relative pt-28 sm:pt-32 pb-24 sm:pb-28 overflow-hidden text-white">
         <div className="absolute inset-0">
           <img src="/images/hostel-living.jpg" alt="interior at tamount surf house" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-charcoal/70" />
         </div>
+        <Breadcrumbs items={[{ label: "About" }]} variant="hero" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="kicker text-blue-300 mb-5">
             Our story
