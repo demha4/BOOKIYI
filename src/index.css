@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Lora', serif;
-  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Geomini', sans serif;
+  --font-serif: 'Geomini', sans serif;
   --font-script: 'Kalam', cursive;
   /* ── Cool-blue primary scale ── */
   --color-primary-50: #F0F7FF;
