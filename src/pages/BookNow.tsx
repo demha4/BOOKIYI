@@ -7,11 +7,11 @@ import {
   Waves, Sun, Plane, Dumbbell, Sparkles,
   User, Mail, Phone, FileText, Heart, X,
   ToggleLeft, ToggleRight, ChevronDown, AlertCircle, CheckCircle2,
-  Copy, Loader2, Building2, Banknote, Timer, UserCheck,
+  Copy, Loader2, Building2, Banknote, Timer, UserCheck, MessageCircle,
 } from "lucide-react";
 import { useBooking, type GuestType, type GuestProfile } from "../contexts/BookingContext";
 import CustomCalendar from "../components/CustomCalendar";
-import { rooms, packages } from "../data/content";
+import { rooms, packages, siteInfo } from "../data/content";
 import { submitBookingToBeds24 } from "../services/beds24";
 import { useLiveAvailability } from "../hooks/useLiveAvailability";
 import { LiveSyncBanner } from "../components/LiveSyncIndicator";
@@ -331,8 +331,11 @@ function DatePicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
   };
 
   return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: -8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.95 }}
-      className="absolute top-full right-0 md:left-0 mt-2 bg-white rounded-xl shadow-2xl border border-stone-200 p-5 w-[340px] z-[100]">
+    <>
+      <div className="fixed inset-0 bg-black/30 z-[199] md:hidden" onClick={onClose} />
+      <motion.div ref={ref} initial={{ opacity: 0, y: -8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.95 }}
+      className="fixed inset-x-3 top-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl border border-stone-200 p-5 z-[200] md:translate-y-0 md:absolute md:inset-x-auto md:top-full md:left-0 md:mt-2 md:w-[340px]"
+      style={{ maxHeight: "80vh", overflowY: "auto" }}>
       <p className="text-[11px] font-bold text-stone-400 uppercase tracking-wider mb-3">How long?</p>
       <div className="flex flex-wrap gap-2 mb-4">
         {quickNights.map((n) => (
@@ -357,6 +360,7 @@ function DatePicker({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
         Done
       </button>
     </motion.div>
+    </>
   );
 }
 
@@ -438,6 +442,87 @@ function GuestChipsAssignment({
         <p className="text-[11px] text-amber-600 mt-2 flex items-center gap-1">
           <AlertCircle size={11} /> {roomName} is full
         </p>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PAYMENT OPTION CARD
+   ═══════════════════════════════════════════════════════════════ */
+function CopyField({ label, value, copyable = false }: { label: string; value: string; copyable?: boolean }) {
+  const [copied, setCopied] = React.useState(false);
+  const handleCopy = () => {
+    navigator.clipboard?.writeText(value);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <span className="text-stone-500 text-xs shrink-0">{label}</span>
+      <div className="flex items-center gap-1.5">
+        <span className="font-mono font-semibold text-stone-800 text-xs text-right">{value}</span>
+        {copyable && (
+          <button onClick={handleCopy} className="text-stone-300 hover:text-ocean transition-colors shrink-0" title="Copy">
+            {copied ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function BankDetailsCard({ depositAmount, contactName, bookingRef, showTimingNotice = false }: {
+  depositAmount: number;
+  contactName: string;
+  bookingRef?: string;
+  showTimingNotice?: boolean;
+}) {
+  const reference = bookingRef
+    ? `${contactName} - ${bookingRef}`
+    : `${BANK_DETAILS.reference} — ${contactName || "Your name"}`;
+  return (
+    <div className="bg-white border border-stone-200 rounded-xl p-5 text-left">
+      <div className="flex items-center gap-2 mb-4">
+        <Building2 size={18} className="text-ocean" />
+        <span className="font-bold text-stone-800 text-sm">Bank Transfer Details</span>
+      </div>
+      <div className="space-y-2 text-sm">
+        <CopyField label="Bank" value={BANK_DETAILS.bankName} />
+        <CopyField label="Account name" value={BANK_DETAILS.accountName} />
+        <CopyField label="IBAN" value={BANK_DETAILS.iban} copyable />
+        <CopyField label="SWIFT/BIC" value={BANK_DETAILS.swift} copyable />
+        <CopyField label="Amount" value={`€${depositAmount}`} copyable />
+        <CopyField label="Reference" value={reference} copyable />
+      </div>
+      <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+        <p className="text-xs text-amber-800 flex items-start gap-1.5">
+          <AlertCircle size={12} className="mt-0.5 shrink-0" />
+          Use your name as the payment reference. Once we receive the transfer, we'll confirm your booking by email or WhatsApp.
+        </p>
+      </div>
+      {showTimingNotice && (
+        <>
+          <div className="mt-4 p-3 bg-ocean/5 border border-ocean/15 rounded-xl">
+            <p className="text-xs text-stone-600 flex items-start gap-1.5">
+              <Timer size={12} className="text-ocean mt-0.5 shrink-0" />
+              <span><strong className="text-stone-800">Please send the transfer within 3 hours</strong> to secure your room. If we don't receive it in time, we may need to open the dates for other guests.</span>
+            </p>
+          </div>
+          <div className="mt-3 p-3 bg-stone-50 border border-stone-200 rounded-xl">
+            <p className="text-xs text-stone-600 mb-2.5 font-medium">Having trouble with the transfer? We'll figure it out together.</p>
+            <div className="flex flex-col sm:flex-row items-center gap-2">
+              <a href={`https://wa.me/${siteInfo.whatsapp}`} target="_blank" rel="noopener noreferrer"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-green-500 text-white rounded-full text-xs font-medium hover:bg-green-600 transition-colors">
+                <MessageCircle size={14} /> WhatsApp
+              </a>
+              <a href={`mailto:${siteInfo.email}`}
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-white border border-stone-200 text-stone-700 rounded-full text-xs font-medium hover:bg-stone-50 transition-colors">
+                <Mail size={14} /> {siteInfo.email}
+              </a>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
@@ -871,6 +956,15 @@ export default function BookNow() {
                         <div className="space-y-4">
                           {packages.map((pkg) => {
                             const isSelected = booking.packageId === pkg.id;
+                            const liveCheapest = pkg.id === "bed-and-breakfast" && isLive
+                              ? Math.min(...rooms.filter(r => {
+                                  const ld = liveData[r.beds24RoomId];
+                                  return ld && ld.avgNightly && ld.avgNightly > 0;
+                                }).map(r => Math.round(liveData[r.beds24RoomId].avgNightly!)))
+                              : 0;
+                            const displayPrice = pkg.id === "bed-and-breakfast" && liveCheapest > 0 && isFinite(liveCheapest)
+                              ? liveCheapest
+                              : pkg.priceFrom;
                             const pkgPrice = pkg.priceUnit === "total"
                               ? pkg.priceFrom * totalPersons
                               : pkg.priceFrom * nights * totalPersons;
@@ -897,7 +991,7 @@ export default function BookNow() {
                                         <p className="text-xs text-stone-500">{pkg.duration} · {pkg.tagline}</p>
                                       </div>
                                       <div className="text-right shrink-0 ml-3">
-                                        <p className="text-xl font-bold text-ocean">€{pkg.priceFrom}</p>
+                                        <p className="text-xl font-bold text-ocean">€{displayPrice}</p>
                                         <p className="text-[10px] text-stone-400 uppercase">
                                           / {pkg.priceUnit === "total" ? "person" : "person / night"}
                                         </p>
@@ -1017,7 +1111,6 @@ export default function BookNow() {
                           const assignedHere = booking.guests.filter((g) => g.roomId === room.id);
                           const hasGuests = assignedHere.length > 0;
                           const live = liveData[room.beds24RoomId];
-                          // Use the live Beds24 price directly; fall back to static only when API hasn't responded
                           const livePrice = live?.avgNightly && live.avgNightly > 0 ? live.avgNightly : room.price;
                           const liveAvail = live?.available ?? 0;
                           const hasLiveData = isLive && live && typeof liveAvail === "number";
@@ -1268,42 +1361,17 @@ export default function BookNow() {
                           selected={booking.paymentChoice === "deposit"}
                           onClick={() => setBooking({ paymentChoice: "deposit" })}
                           icon={<Banknote size={22} />}
-                          title="Pay 30% Deposit Now"
+                          title="Secure with a Deposit"
                           badge="Confirmed instantly"
                           badgeColor="bg-green-100 text-green-700"
                         >
-                          <p className="mb-2">A <strong className="text-stone-700">€{price.depositAmount}</strong> deposit locks in your room. The dates are blocked for you the moment we receive it — no risk of someone else booking over you.</p>
-                          <p className="text-xs text-stone-400">Remaining €{price.total - price.depositAmount} payable on arrival. Deposit is refundable up to 7 days before check-in.</p>
+                          <p className="mb-2">Pay <strong className="text-stone-700">€{price.depositAmount}</strong> now (30%) and your room is guaranteed — no waiting, no wondering. The rest you pay in cash when you arrive (EUR or MAD).</p>
+                          <p className="text-xs text-stone-400">Free cancellation up to 48 hours before check-in. Deposit is by bank transfer.</p>
                         </PaymentOptionCard>
 
                         {booking.paymentChoice === "deposit" && (
-                          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                            className="bg-stone-50 border border-stone-200 rounded-xl p-5">
-                            <div className="flex items-center gap-2 mb-4">
-                              <Building2 size={18} className="text-ocean" />
-                              <span className="font-bold text-stone-800 text-sm">Bank Transfer Details</span>
-                            </div>
-                            <div className="space-y-2 text-sm">
-                              {[
-                                ["Bank", BANK_DETAILS.bankName],
-                                ["Account name", BANK_DETAILS.accountName],
-                                ["IBAN", BANK_DETAILS.iban],
-                                ["SWIFT/BIC", BANK_DETAILS.swift],
-                                ["Amount", `€${price.depositAmount}`],
-                                ["Reference", `${BANK_DETAILS.reference} — ${booking.contactName || "Your name"}`],
-                              ].map(([label, value]) => (
-                                <div key={label} className="flex items-start justify-between gap-4">
-                                  <span className="text-stone-500 text-xs shrink-0">{label}</span>
-                                  <span className="font-mono font-semibold text-stone-800 text-xs text-right">{value}</span>
-                                </div>
-                              ))}
-                            </div>
-                            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                              <p className="text-xs text-amber-800 flex items-start gap-1.5">
-                                <AlertCircle size={12} className="mt-0.5 shrink-0" />
-                                Use your name as the payment reference. Once we receive the transfer, we'll get back to you within 24 hours to confirm your booking.
-                              </p>
-                            </div>
+                          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+                            <BankDetailsCard depositAmount={price.depositAmount} contactName={booking.contactName || "Your name"} />
                           </motion.div>
                         )}
 
@@ -1311,30 +1379,48 @@ export default function BookNow() {
                           selected={booking.paymentChoice === "arrival"}
                           onClick={() => setBooking({ paymentChoice: "arrival" })}
                           icon={<Clock size={22} />}
-                          title="Pay on Arrival"
-                          badge="Request only"
-                          badgeColor="bg-amber-100 text-amber-700"
+                          title="Book Now, Pay on Arrival"
+                          badge="We confirm shortly"
+                          badgeColor="bg-ocean/10 text-ocean"
                         >
-                          <p>No deposit, no guarantee. Your dates stay <strong className="text-stone-700">open</strong> — if someone else books with a deposit before we reply, the room may be gone.</p>
-                          <p className="text-xs text-stone-400 mt-1">We reply within 24 hours either way. Full amount paid in cash on arrival.</p>
+                          <p className="mb-2">No upfront payment — we'll confirm your booking shortly via email or WhatsApp. Once confirmed, your room is held and ready. You pay the full amount in cash when you arrive (EUR or MAD). All taxes included.</p>
+                          {price.total <= 100 && (
+                            <p className="text-xs text-ocean font-medium mb-2">For stays under €100, this is the easiest option — no transfer fees, no hassle.</p>
+                          )}
+                          <p className="text-xs text-stone-400">Free cancellation up to 7 days before check-in. Please let us know your expected arrival time so we can welcome you.</p>
                         </PaymentOptionCard>
                       </div>
 
                       {booking.paymentChoice && (
                         <div className="mt-6 p-4 bg-stone-50 border border-stone-200 rounded-xl">
                           <div className="flex items-center gap-2 mb-2">
-                            <CheckCircle2 size={16} className={booking.paymentChoice === "deposit" ? "text-green-500" : "text-amber-500"} />
+                            <CheckCircle2 size={16} className="text-green-500" />
                             <span className="font-semibold text-stone-800 text-sm">
-                              {booking.paymentChoice === "deposit" ? "Your room will be GUARANTEED" : "Your booking will be a REQUEST"}
+                              {booking.paymentChoice === "deposit" ? "Your room will be guaranteed" : "Your room will be confirmed shortly"}
                             </span>
                           </div>
                           <p className="text-xs text-stone-500">
                             {booking.paymentChoice === "deposit"
-                              ? "Once we receive your deposit, the room is yours — fully blocked off for your dates. We'll send a confirmation by email within 24 hours."
-                              : "Without a deposit we can't hold the room. We review every request, but a guest paying a deposit can take it before we reply. We'll be in touch within 24 hours either way."}
+                              ? "Once we receive your deposit, the room is yours — fully held for your dates. We'll send a confirmation by email or WhatsApp."
+                              : "We'll review your booking and confirm shortly via email or WhatsApp. Once confirmed, your room is held and waiting for you."}
                           </p>
                         </div>
                       )}
+
+                      {/* Contact block */}
+                      <div className="mt-6 p-4 bg-ocean/5 border border-ocean/15 rounded-xl text-center">
+                        <p className="text-sm font-semibold text-stone-700 mb-3">Questions before you book? We're here for you.</p>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                          <a href={`https://wa.me/${siteInfo.whatsapp}`} target="_blank" rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-full text-sm font-medium hover:bg-green-600 transition-colors">
+                            <MessageCircle size={16} /> WhatsApp
+                          </a>
+                          <a href={`mailto:${siteInfo.email}`}
+                            className="flex items-center gap-2 px-4 py-2 bg-white border border-stone-200 text-stone-700 rounded-full text-sm font-medium hover:bg-stone-50 transition-colors">
+                            <Mail size={16} /> {siteInfo.email}
+                          </a>
+                        </div>
+                      </div>
                     </div>
                   )}
 
@@ -1495,23 +1581,22 @@ export default function BookNow() {
                       {/* Submit result */}
                       {submitResult?.success ? (
                         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                          className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-200 rounded-xl p-6 sm:p-8 text-center">
-                          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500 flex items-center justify-center shadow-lg shadow-green-500/30">
-                            <CheckCircle2 size={36} className="text-white" />
+                          className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-200 rounded-xl p-6 sm:p-8">
+                          <div className="text-center mb-6">
+                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500 flex items-center justify-center shadow-lg shadow-green-500/30">
+                              <CheckCircle2 size={36} className="text-white" />
+                            </div>
+                            <h3 className="font-display text-2xl font-bold text-stone-800 mb-2">Booking submitted!</h3>
+                            <p className="text-stone-600 max-w-md mx-auto">
+                              Thanks {booking.contactName.split(" ")[0]}!{" "}
+                              {booking.paymentChoice === "deposit"
+                                ? "We're holding your room while we wait for your deposit. Complete the bank transfer below to secure your dates."
+                                : "We'll confirm your booking shortly via email or WhatsApp. Once confirmed, your room is held and ready."}
+                            </p>
                           </div>
-                          <h3 className="font-display text-2xl font-bold text-stone-800 mb-2">
-                            {booking.paymentChoice === "deposit" ? "Your room is being secured!" : "Request received!"}
-                          </h3>
-                          <p className="text-stone-600 max-w-md mx-auto mb-5">
-                            Thanks {booking.contactName.split(" ")[0]}!{" "}
-                            {booking.paymentChoice === "deposit"
-                              ? "Complete the bank transfer using the details below — once it lands, your dates are locked in. We'll be in touch within 24 hours to confirm everything."
-                              : "We've received your request and will get back to you within 24 hours."
-                            }
-                          </p>
 
                           {submitResult.bookingIds && submitResult.bookingIds.length > 0 && (
-                            <div className="bg-white rounded-xl p-4 mb-5 inline-block">
+                            <div className="bg-white rounded-xl p-4 mb-5 text-center">
                               <div className="text-xs text-stone-500 uppercase tracking-wider mb-1">Booking Reference</div>
                               <div className="font-mono font-bold text-ocean text-lg flex items-center gap-2 justify-center">
                                 {submitResult.bookingIds.map((id) => (
@@ -1524,32 +1609,44 @@ export default function BookNow() {
                           )}
 
                           {booking.paymentChoice === "deposit" && (
-                            <div className="bg-white border border-stone-200 rounded-xl p-4 mb-5 text-left">
-                              <p className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                                <Building2 size={12} /> Bank Transfer Instructions
-                              </p>
-                              <div className="space-y-1.5 text-sm">
-                                {[
-                                  ["Bank", BANK_DETAILS.bankName],
-                                  ["Account", BANK_DETAILS.accountName],
-                                  ["IBAN", BANK_DETAILS.iban],
-                                  ["SWIFT", BANK_DETAILS.swift],
-                                  ["Amount", `€${price.depositAmount}`],
-                                  ["Reference", `${booking.contactName} - ${submitResult.bookingIds?.[0] || "booking"}`],
-                                ].map(([label, value]) => (
-                                  <div key={label} className="flex justify-between gap-4">
-                                    <span className="text-stone-400 text-xs shrink-0">{label}</span>
-                                    <span className="font-mono font-semibold text-stone-800 text-xs text-right">{value}</span>
-                                  </div>
-                                ))}
+                            <div className="mb-5">
+                              <BankDetailsCard
+                                depositAmount={price.depositAmount}
+                                contactName={booking.contactName}
+                                bookingRef={submitResult.bookingIds?.[0] || "booking"}
+                                showTimingNotice
+                              />
+                            </div>
+                          )}
+
+                          {booking.paymentChoice === "arrival" && (
+                            <div className="mb-5 p-4 bg-white border border-stone-200 rounded-xl">
+                              <p className="text-sm text-stone-600 mb-3">Questions about your stay? We're here for you.</p>
+                              <div className="flex flex-col sm:flex-row items-center gap-2">
+                                <a href={`https://wa.me/${siteInfo.whatsapp}`} target="_blank" rel="noopener noreferrer"
+                                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-green-500 text-white rounded-full text-sm font-medium hover:bg-green-600 transition-colors">
+                                  <MessageCircle size={16} /> WhatsApp
+                                </a>
+                                <a href={`mailto:${siteInfo.email}`}
+                                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-white border border-stone-200 text-stone-700 rounded-full text-sm font-medium hover:bg-stone-50 transition-colors">
+                                  <Mail size={16} /> {siteInfo.email}
+                                </a>
                               </div>
                             </div>
                           )}
 
-                          <a href="/"
-                            className="inline-flex items-center justify-center gap-2 py-3.5 px-8 bg-white text-stone-700 border-2 border-stone-200 rounded-xl font-bold text-sm hover:bg-stone-50 transition-all">
-                            Back to Home
-                          </a>
+                          <p className="text-xs text-stone-400 text-center mb-5">
+                            {booking.paymentChoice === "deposit"
+                              ? "You'll receive a confirmation by email or WhatsApp once we see the transfer."
+                              : "You'll receive a confirmation by email or WhatsApp shortly."}
+                          </p>
+
+                          <div className="text-center">
+                            <a href="/"
+                              className="inline-flex items-center justify-center gap-2 py-3.5 px-8 bg-white text-stone-700 border-2 border-stone-200 rounded-xl font-bold text-sm hover:bg-stone-50 transition-all">
+                              Back to Home
+                            </a>
+                          </div>
                         </motion.div>
                       ) : (
                         <>
