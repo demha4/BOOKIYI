@@ -1,3 +1,4 @@
+import Breadcrumbs from "../components/Breadcrumbs";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
@@ -20,7 +21,12 @@ export default function Gallery() {
   };
 
   return (
+<<<<<<< HEAD
     <div className="pt-32 sm:pt-36 bg-cream">
+=======
+    <div className="bg-cream">
+      <Breadcrumbs items={[{ label: "Gallery" }]} />
+>>>>>>> a6e4719 (Bismillah)
       <SEO
         title="Photo Gallery"
         description="See the atmosphere at Tamount Surf House before you arrive. Rooftop sunsets, surf sessions, rooms, and the Anza beach lifestyle."

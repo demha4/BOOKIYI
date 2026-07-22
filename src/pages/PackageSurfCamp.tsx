@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import Breadcrumbs from "../components/Breadcrumbs";
+>>>>>>> a6e4719 (Bismillah)
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, MessageCircle, Clock, LogIn, LogOut } from "lucide-react";
@@ -46,7 +50,12 @@ export default function PackageSurfCamp() {
   const exampleTotal = examplePack + exampleDorm;
 
   return (
+<<<<<<< HEAD
     <div className="pt-32 sm:pt-36 bg-cream">
+=======
+    <div className="bg-cream">
+      <Breadcrumbs items={[{ label: "Packages", href: "/packages" }, { label: "Surf Camp" }]} />
+>>>>>>> a6e4719 (Bismillah)
       <SEO
         title="Surf Camp Pack"
         description="Surf services + meals from €45/day per person, billed on top of your room. Daily lessons, board + wetsuit, breakfast + dinner, transport, video analysis. Minimum stay: 7 nights."

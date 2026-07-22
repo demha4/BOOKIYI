@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import Breadcrumbs from "../components/Breadcrumbs";
+>>>>>>> a6e4719 (Bismillah)
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -62,13 +66,21 @@ export default function Rooms() {
 
   return (
     <div className="bg-cream">
+<<<<<<< HEAD
+=======
+      <Breadcrumbs items={[{ label: "Rooms", href: "/rooms" }]} />
+>>>>>>> a6e4719 (Bismillah)
       <SEO
         title="Rooms & Accommodation"
         description={`Three rooms at Tamount Surf House: 8-bed dorm from €${liveData["645890"]?.avgNightly ? Math.round(liveData["645890"].avgNightly) : 20}/night, triple room from €${liveData["645892"]?.avgNightly ? Math.round(liveData["645892"].avgNightly) : 50}, double room from €${liveData["645891"]?.avgNightly ? Math.round(liveData["645891"].avgNightly) : 55}. All include breakfast, WiFi, and rooftop access.`}
         ogImage="/images/dorm-room.jpg"
         ogType="product"
       />
+<<<<<<< HEAD
       <section className="relative pt-32 pb-20 sm:pt-36 sm:pb-24 text-center">
+=======
+      <section className="relative pb-20 sm:pb-24 pt-6 text-center">
+>>>>>>> a6e4719 (Bismillah)
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="kicker text-ocean mb-5">
             Rooms at Tamount Surf House

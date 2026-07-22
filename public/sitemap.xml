@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
+<<<<<<< HEAD
     <loc>https://tamountsurfhouse.com/</loc>
     <lastmod>2025-01-15</lastmod>
     <changefreq>weekly</changefreq>
@@ -58,10 +59,87 @@
   <url>
     <loc>https://tamountsurfhouse.com/packages/bed-and-breakfast</loc>
     <lastmod>2025-01-15</lastmod>
+=======
+    <loc>https://www.tamountsurfhouse.com/</loc>
+    <lastmod>2026-07-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://www.tamountsurfhouse.com/images/hero-surf.jpg</image:loc>
+      <image:title>Surfing at Anza Beach, Agadir</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.tamountsurfhouse.com/images/rooftop-view.jpg</image:loc>
+      <image:title>Rooftop terrace at Tamount Surf House</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.tamountsurfhouse.com/rooms</loc>
+    <lastmod>2026-07-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.tamountsurfhouse.com/images/dorm-room.jpg</image:loc>
+      <image:title>8-bed mixed dormitory room</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.tamountsurfhouse.com/images/private-room.jpg</image:loc>
+      <image:title>Economy double room</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.tamountsurfhouse.com/images/triple-room.jpg</image:loc>
+      <image:title>Triple room with rooftop access</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.tamountsurfhouse.com/surf</loc>
+    <lastmod>2026-07-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.tamountsurfhouse.com/images/surf-lesson.jpg</image:loc>
+      <image:title>Surf lessons at Anza Beach</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.tamountsurfhouse.com/experiences</loc>
+    <lastmod>2026-07-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.tamountsurfhouse.com/images/sand-dunes.jpg</image:loc>
+      <image:title>Sand dunes day trip from Agadir</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.tamountsurfhouse.com/packages</loc>
+    <lastmod>2026-07-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.tamountsurfhouse.com/images/surf-camp.jpg</image:loc>
+      <image:title>Surf camp package at Tamount</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.tamountsurfhouse.com/packages/bed-and-breakfast</loc>
+    <lastmod>2026-07-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.tamountsurfhouse.com/images/breakfast.jpg</image:loc>
+      <image:title>Moroccan breakfast at Tamount</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.tamountsurfhouse.com/packages/surf-camp</loc>
+    <lastmod>2026-07-22</lastmod>
+>>>>>>> a6e4719 (Bismillah)
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+<<<<<<< HEAD
     <loc>https://tamountsurfhouse.com/packages/surf-camp</loc>
     <lastmod>2025-01-15</lastmod>
     <changefreq>monthly</changefreq>
@@ -80,36 +158,75 @@
   <url>
     <loc>https://tamountsurfhouse.com/gallery</loc>
     <lastmod>2025-01-15</lastmod>
+=======
+    <loc>https://www.tamountsurfhouse.com/about</loc>
+    <lastmod>2026-07-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://www.tamountsurfhouse.com/images/hostel-living.jpg</image:loc>
+      <image:title>Inside Tamount Surf House</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.tamountsurfhouse.com/gallery</loc>
+    <lastmod>2026-07-22</lastmod>
+>>>>>>> a6e4719 (Bismillah)
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
+<<<<<<< HEAD
     <loc>https://tamountsurfhouse.com/contact</loc>
     <lastmod>2025-01-15</lastmod>
+=======
+    <loc>https://www.tamountsurfhouse.com/contact</loc>
+    <lastmod>2026-07-22</lastmod>
+>>>>>>> a6e4719 (Bismillah)
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
+<<<<<<< HEAD
     <loc>https://tamountsurfhouse.com/faq</loc>
     <lastmod>2025-01-15</lastmod>
+=======
+    <loc>https://www.tamountsurfhouse.com/faq</loc>
+    <lastmod>2026-07-22</lastmod>
+>>>>>>> a6e4719 (Bismillah)
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
+<<<<<<< HEAD
     <loc>https://tamountsurfhouse.com/book</loc>
     <lastmod>2025-01-15</lastmod>
+=======
+    <loc>https://www.tamountsurfhouse.com/book</loc>
+    <lastmod>2026-07-22</lastmod>
+>>>>>>> a6e4719 (Bismillah)
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
+<<<<<<< HEAD
     <loc>https://tamountsurfhouse.com/privacy</loc>
     <lastmod>2026-04-25</lastmod>
+=======
+    <loc>https://www.tamountsurfhouse.com/privacy</loc>
+    <lastmod>2026-07-22</lastmod>
+>>>>>>> a6e4719 (Bismillah)
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
+<<<<<<< HEAD
     <loc>https://tamountsurfhouse.com/terms</loc>
     <lastmod>2026-04-25</lastmod>
+=======
+    <loc>https://www.tamountsurfhouse.com/terms</loc>
+    <lastmod>2026-07-22</lastmod>
+>>>>>>> a6e4719 (Bismillah)
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

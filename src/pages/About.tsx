@@ -1,3 +1,4 @@
+import Breadcrumbs from "../components/Breadcrumbs";
 import { motion } from "framer-motion";
 import { Heart, Globe, Shield, Leaf, Paintbrush, Home, Waves, Coffee } from "lucide-react";
 import SEO from "../components/SEO";
@@ -55,12 +56,20 @@ const values = [
 export default function About() {
   return (
     <div className="bg-cream">
+<<<<<<< HEAD
+=======
+      <Breadcrumbs items={[{ label: "About" }]} />
+>>>>>>> a6e4719 (Bismillah)
       <SEO
         title="Our Story"
         description="Tamount means home. Built by Abdelwahd, a local surfer who grew up in Anza. A small surf house with a big welcome, rooftop sunsets, and honest hospitality."
         ogImage="/images/hostel-living.jpg"
       />
+<<<<<<< HEAD
       <section className="relative pt-28 pb-24 sm:pt-32 sm:pb-28 overflow-hidden text-white">
+=======
+      <section className="relative pt-6 pb-24 sm:pb-28 overflow-hidden text-white">
+>>>>>>> a6e4719 (Bismillah)
         <div className="absolute inset-0">
           <img src="/images/hostel-living.jpg" alt="interior at tamount surf house" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-charcoal/70" />

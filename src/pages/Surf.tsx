@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import Breadcrumbs from "../components/Breadcrumbs";
+>>>>>>> a6e4719 (Bismillah)
 import { motion } from "framer-motion";
 import { Waves, Shield, Bus, Thermometer, Clock3 } from "lucide-react";
 import SEO from "../components/SEO";
@@ -41,12 +45,20 @@ const rentals = [
 export default function Surf() {
   return (
     <div className="bg-cream">
+<<<<<<< HEAD
+=======
+      <Breadcrumbs items={[{ label: "Surf", href: "/surf" }]} />
+>>>>>>> a6e4719 (Bismillah)
       <SEO
         title="Surf Lessons & Spots"
         description="Surf lessons from €30, board rental from €7/day, and local spot guidance. Beginner to advanced coaching at Anza, Taghazout, and Tamraght breaks."
         ogImage="/images/surf-lesson.jpg"
       />
+<<<<<<< HEAD
       <section className="relative pt-28 pb-24 sm:pt-32 sm:pb-28 overflow-hidden bg-charcoal text-white">
+=======
+      <section className="relative pt-6 pb-24 sm:pb-28 overflow-hidden bg-charcoal text-white">
+>>>>>>> a6e4719 (Bismillah)
         <div className="absolute inset-0">
           <img src="/images/hero-surf.jpg" alt="surfing near anza and taghazout" className="w-full h-full object-cover opacity-35" />
         </div>

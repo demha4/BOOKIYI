@@ -1,0 +1,21 @@
+{
+  "name": "Tamount Surf House",
+  "short_name": "Tamount",
+  "description": "Small, family-run surf hostel in Anza Beach, Agadir. Dorm beds, private rooms, rooftop terrace, surf lessons, and local trips.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#F7FAFC",
+  "theme_color": "#59B1E3",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

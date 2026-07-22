@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import Breadcrumbs from "../components/Breadcrumbs";
+>>>>>>> a6e4719 (Bismillah)
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, MessageCircle, Clock, LogIn, LogOut } from "lucide-react";
@@ -40,7 +44,12 @@ export default function PackageBedAndBreakfast() {
   const cheapestPrivate = Math.min(byId["rooftop-triple"] ?? 50, byId["double-room"] ?? 55);
 
   return (
+<<<<<<< HEAD
     <div className="pt-32 sm:pt-36 bg-cream">
+=======
+    <div className="bg-cream">
+      <Breadcrumbs items={[{ label: "Packages", href: "/packages" }, { label: "Bed & Breakfast" }]} />
+>>>>>>> a6e4719 (Bismillah)
       <SEO
         title="Bed & Breakfast"
         description={`Flexible B&B from €${cheapest}/night. Choose your room, enjoy Moroccan breakfast daily, rooftop access, and book activities as you go. Minimum stay: 1 night.`}

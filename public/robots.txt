@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 
+<<<<<<< HEAD
 # Sitemap location
 Sitemap: https://tamountsurfhouse.com/sitemap.xml
 
@@ -10,3 +11,8 @@ Crawl-delay: 1
 # Block admin/booking backend paths if they exist
 Disallow: /api/
 Disallow: /admin/
+=======
+Sitemap: https://www.tamountsurfhouse.com/sitemap.xml
+
+Disallow: /api/
+>>>>>>> a6e4719 (Bismillah)

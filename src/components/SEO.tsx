@@ -8,7 +8,11 @@ interface SEOProps {
   ogType?: "website" | "article" | "product";
 }
 
+<<<<<<< HEAD
 const SITE_URL = "https://tamountsurfhouse.com";
+=======
+const SITE_URL = "https://www.tamountsurfhouse.com";
+>>>>>>> a6e4719 (Bismillah)
 const DEFAULT_OG_IMAGE = "/images/hero-surf.jpg";
 
 export default function SEO({
@@ -72,7 +76,11 @@ export default function SEO({
       if (defaultDesc) {
         defaultDesc.setAttribute(
           "content",
+<<<<<<< HEAD
           "Tamount Surf House is a small, family-run surf hostel in Anza Beach, Agadir. Dorm beds and private rooms from €20/night, rooftop terrace, surf lessons, and local trips."
+=======
+          "Small, family-run surf hostel in Anza Beach, Agadir, Morocco. Dorm beds and private rooms with breakfast, rooftop terrace, surf lessons, and local experiences. Book direct and save."
+>>>>>>> a6e4719 (Bismillah)
         );
       }
     };

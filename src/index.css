@@ -1,10 +1,17 @@
 @import "tailwindcss";
 
 @theme {
+<<<<<<< HEAD
   --font-sans: 'Inter', sans-serif;
   --font-serif: 'Mochiy Pop One', sans-serif;
   --font-script: 'Caveat', cursive;
   /* ── Cool-blue primary scale (inspired by Tennis Club + Travel Agency refs) ── */
+=======
+  --font-sans: 'Lora', serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-script: 'Kalam', cursive;
+  /* ── Cool-blue primary scale ── */
+>>>>>>> a6e4719 (Bismillah)
   --color-primary-50: #F0F7FF;
   --color-primary-100: #DBEAFE;
   --color-primary-200: #BFDBFE;
@@ -20,6 +27,7 @@
   --color-ocean-dark: #1A8FD6;
   --color-ocean-light: #7CC8F5;
   --color-blue-accent: #60A5FA;
+<<<<<<< HEAD
   /* ── Neutrals — cool instead of warm ── */
   --color-cream: #F7FAFC;
   --color-charcoal: #0F1A2D;
@@ -31,6 +39,19 @@
   --color-sand-light: #F0F7FF;
   --color-sand-dark: #D4E3F0;
   /* ── Accent — kept warm amber for CTAs/prices where warmth helps ── */
+=======
+  /* ── Neutrals — refined cool tones ── */
+  --color-cream: #FAFBFD;
+  --color-charcoal: #0F1A2D;
+  --color-stone: #64748B;
+  --color-soft-gray: #F1F5F9;
+  --color-border: #E2E8F0;
+  /* ── Sand tones ── */
+  --color-sand: #E8F0F8;
+  --color-sand-light: #F0F7FF;
+  --color-sand-dark: #D4E3F0;
+  /* ── Accent ── */
+>>>>>>> a6e4719 (Bismillah)
   --color-accent: #F59E0B;
   --color-sunset: #F97316;
 }
@@ -40,19 +61,29 @@ html {
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Lora', serif;
   color: var(--color-charcoal);
   background-color: var(--color-cream);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+<<<<<<< HEAD
 /* Normalize all large content/card zones to one system width */
+=======
+/* ── System width normalization ── */
+>>>>>>> a6e4719 (Bismillah)
 .max-w-5xl,
 .max-w-6xl,
 .max-w-7xl {
   max-width: 1240px !important;
 }
 
+<<<<<<< HEAD
+=======
+/* ── Font family overrides ── */
+>>>>>>> a6e4719 (Bismillah)
 .font-serif {
   font-family: 'Mochiy Pop One', sans-serif;
 }
@@ -275,6 +306,233 @@ body {
   }
 }
 
+.font-script {
+  font-family: 'Kalam', cursive;
+}
+
+.font-display {
+  font-family: 'Playfair Display', serif;
+}
+
+/* ── Typography scale ── */
+.display-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+  font-weight: 700;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.7rem, 3.6vw, 2.6rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  font-weight: 700;
+}
+
+.section-copy {
+  font-family: 'Lora', serif;
+  font-size: clamp(1rem, 1.15vw, 1.08rem);
+  line-height: 1.8;
+  text-wrap: pretty;
+}
+
+.kicker {
+  font-family: 'Lora', serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.script-accent {
+  font-family: 'Kalam', cursive;
+  font-size: clamp(2rem, 4.5vw, 3.8rem);
+  line-height: 0.95;
+}
+
+.container-narrow {
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+.container-wide {
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+/* ── Card system — refined ── */
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.15rem, 1.4vw, 1.35rem);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+.card-copy {
+  font-family: 'Lora', serif;
+  font-size: clamp(0.95rem, 1.02vw, 1.02rem);
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+
+.card-shell {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 1px 3px rgba(15, 42, 58, 0.04), 0 4px 16px rgba(15, 42, 58, 0.03);
+}
+
+.card-shell:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 40px -10px rgba(15, 42, 58, 0.12);
+}
+
+.card-soft {
+  background: var(--color-soft-gray);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 2rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.card-soft:hover {
+  box-shadow: 0 6px 24px rgba(15, 42, 58, 0.06);
+}
+
+/* ── Tag pills ── */
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-family: 'Lora', serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.tag-pill-blue {
+  background: #DBEAFE;
+  color: #1D4ED8;
+}
+
+.tag-pill-cream {
+  background: var(--color-soft-gray);
+  color: var(--color-stone);
+}
+
+.tag-pill-accent {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.tag-pill-green {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.tag-pill-coral {
+  background: #FFF3F0;
+  color: #C44D4D;
+}
+
+/* ── Reviews track ── */
+.reviews-track-wrapper {
+  overflow: hidden;
+  margin-top: 2rem;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+.reviews-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  animation: scroll-reviews 60s linear infinite;
+}
+
+.reviews-track:hover {
+  animation-play-state: paused;
+}
+
+.review-card {
+  flex-shrink: 0;
+  width: 360px;
+}
+
+/* ── Gallery grid ── */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.gallery-item {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.04);
+}
+
+.gallery-item:nth-child(5n) {
+  grid-column: span 2;
+}
+
+@media (max-width: 1024px) {
+  .gallery-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .gallery-item:nth-child(5n) {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .review-card {
+    width: 300px;
+  }
+}
+
+@media (max-width: 520px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Animations ── */
+@keyframes scroll-reviews {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reviews-track {
+    animation: none;
+  }
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
@@ -289,6 +547,7 @@ body {
   100% { transform: translateX(-50%); }
 }
 
+/* ── Utilities ── */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
@@ -299,10 +558,22 @@ body {
 
 .image-hover-zoom {
   overflow: hidden;
+  border-radius: 16px;
 }
 .image-hover-zoom img {
   transition: transform 0.5s ease;
 }
 .image-hover-zoom:hover img {
+<<<<<<< HEAD
   transform: scale(1.05);
 }
+=======
+  transform: scale(1.04);
+}
+
+/* ── Selection highlight ── */
+::selection {
+  background: rgba(46, 178, 255, 0.15);
+  color: var(--color-charcoal);
+}
+>>>>>>> a6e4719 (Bismillah)

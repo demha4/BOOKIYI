@@ -131,7 +131,11 @@ export const rooms: RoomType[] = [
     name: "Bed in 8-Bed Mixed Dormitory Room",
     type: "dorm",
     genderPolicy: "mixed",
+<<<<<<< HEAD
     price: 20,
+=======
+    price: 15,
+>>>>>>> a6e4719 (Bismillah)
     priceUnit: "night",
     image: "/images/dorm-room.jpg",
     description: "The social heart of the house. Sturdy bunks with privacy curtains, lockers for your stuff, and usually new friends by morning.",
@@ -209,7 +213,11 @@ export const packages = [
     tagline: "Stay as long as you want.",
     duration: "Flexible — minimum 1 night",
     minNights: 1,
+<<<<<<< HEAD
     priceFrom: 20,
+=======
+    priceFrom: 15,
+>>>>>>> a6e4719 (Bismillah)
     priceUnit: "perNight",
     image: "/images/private-room.jpg",
     description: "The flexible option. Pick your room, stay as long as you want, and start every morning with a proper Moroccan breakfast on the rooftop. You handle your own days. We are here when you need local tips, transport, or a lesson booked on the fly.",
