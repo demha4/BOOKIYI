@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 import Breadcrumbs from "../components/Breadcrumbs";
->>>>>>> a6e4719 (Bismillah)
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { faqs } from "../data/content";
@@ -11,12 +8,8 @@ export default function Faq() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-<<<<<<< HEAD
-    <div className="pt-32 sm:pt-36 bg-cream">
-=======
     <div className="bg-cream">
       <Breadcrumbs items={[{ label: "FAQ" }]} />
->>>>>>> a6e4719 (Bismillah)
       <SEO
         title="FAQ"
         description="Answers to common questions about booking, surf lessons, airport transfers, food, what to pack, and staying at Tamount Surf House in Anza, Agadir."

@@ -1,17 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-<<<<<<< HEAD
-  --font-sans: 'Inter', sans-serif;
-  --font-serif: 'Mochiy Pop One', sans-serif;
-  --font-script: 'Caveat', cursive;
-  /* ── Cool-blue primary scale (inspired by Tennis Club + Travel Agency refs) ── */
-=======
   --font-sans: 'Lora', serif;
   --font-serif: 'Playfair Display', serif;
   --font-script: 'Kalam', cursive;
   /* ── Cool-blue primary scale ── */
->>>>>>> a6e4719 (Bismillah)
   --color-primary-50: #F0F7FF;
   --color-primary-100: #DBEAFE;
   --color-primary-200: #BFDBFE;
@@ -27,19 +20,6 @@
   --color-ocean-dark: #1A8FD6;
   --color-ocean-light: #7CC8F5;
   --color-blue-accent: #60A5FA;
-<<<<<<< HEAD
-  /* ── Neutrals — cool instead of warm ── */
-  --color-cream: #F7FAFC;
-  --color-charcoal: #0F1A2D;
-  --color-stone: #64748B;
-  --color-soft-gray: #EDF2F7;
-  --color-border: #E2E8F0;
-  /* ── Sand tones repurposed as cool tints ── */
-  --color-sand: #E8F0F8;
-  --color-sand-light: #F0F7FF;
-  --color-sand-dark: #D4E3F0;
-  /* ── Accent — kept warm amber for CTAs/prices where warmth helps ── */
-=======
   /* ── Neutrals — refined cool tones ── */
   --color-cream: #FAFBFD;
   --color-charcoal: #0F1A2D;
@@ -51,7 +31,6 @@
   --color-sand-light: #F0F7FF;
   --color-sand-dark: #D4E3F0;
   /* ── Accent ── */
->>>>>>> a6e4719 (Bismillah)
   --color-accent: #F59E0B;
   --color-sunset: #F97316;
 }
@@ -69,241 +48,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-<<<<<<< HEAD
-/* Normalize all large content/card zones to one system width */
-=======
 /* ── System width normalization ── */
->>>>>>> a6e4719 (Bismillah)
 .max-w-5xl,
 .max-w-6xl,
 .max-w-7xl {
   max-width: 1240px !important;
 }
 
-<<<<<<< HEAD
-=======
 /* ── Font family overrides ── */
->>>>>>> a6e4719 (Bismillah)
 .font-serif {
-  font-family: 'Mochiy Pop One', sans-serif;
-}
-
-.font-script {
-  font-family: 'Caveat', cursive;
-}
-
-.font-display {
-  font-family: 'Mochiy Pop One', sans-serif;
-}
-
-.display-title {
-  font-family: 'Mochiy Pop One', sans-serif;
-  font-size: clamp(2rem, 5vw, 3.8rem);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-}
-
-.container-narrow {
-  max-width: 720px;
-  margin-inline: auto;
-}
-
-.container-wide {
-  max-width: 1240px;
-  margin-inline: auto;
-  padding-inline: 1.5rem;
-}
-
-.section-title {
-  font-family: 'Mochiy Pop One', sans-serif;
-  font-size: clamp(1.8rem, 3.8vw, 2.8rem);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-}
-
-.script-accent {
-  font-family: 'Caveat', cursive;
-  font-size: clamp(2.4rem, 5vw, 4.4rem);
-  line-height: 0.92;
-}
-
-.section-copy {
-  font-size: clamp(1rem, 1.2vw, 1.1rem);
-  line-height: 1.75;
-  text-wrap: pretty;
-}
-
-.card-title {
-  font-size: clamp(1.15rem, 1.4vw, 1.35rem);
-  line-height: 1.35;
-  letter-spacing: -0.01em;
-  font-weight: 600;
-}
-
-.card-copy {
-  font-size: clamp(0.98rem, 1.05vw, 1.06rem);
-  line-height: 1.72;
-  text-wrap: pretty;
-}
-
-.kicker {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.card-shell {
-  background: #fff;
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  box-shadow: 0 2px 12px rgba(15, 42, 58, 0.05);
-}
-
-.card-shell:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px -8px rgba(15, 42, 58, 0.10);
-}
-
-.card-soft {
-  background: var(--color-soft-gray);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 2rem;
-  transition: box-shadow 0.25s ease;
-}
-
-.card-soft:hover {
-  box-shadow: 0 6px 20px rgba(15, 42, 58, 0.06);
-}
-
-.tag-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.35rem 0.85rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-.tag-pill-blue {
-  background: #DBEAFE;
-  color: #1D4ED8;
-}
-
-.tag-pill-cream {
-  background: var(--color-soft-gray);
-  color: var(--color-stone);
-}
-
-.tag-pill-accent {
-  background: #FEF3C7;
-  color: #92400E;
-}
-
-.tag-pill-green {
-  background: #E8F5E9;
-  color: #2E7D32;
-}
-
-.tag-pill-coral {
-  background: #FFF3F0;
-  color: #C44D4D;
-}
-
-.reviews-track-wrapper {
-  overflow: hidden;
-  margin-top: 2rem;
-  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-}
-
-.reviews-track {
-  display: flex;
-  gap: 1.5rem;
-  width: max-content;
-  animation: scroll-reviews 60s linear infinite;
-}
-
-.reviews-track:hover {
-  animation-play-state: paused;
-}
-
-.review-card {
-  flex-shrink: 0;
-  width: 360px;
-}
-
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-.gallery-item {
-  position: relative;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: 12px;
-}
-
-.gallery-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-.gallery-item:hover img {
-  transform: scale(1.05);
-}
-
-.gallery-item:nth-child(5n) {
-  grid-column: span 2;
-}
-
-@media (max-width: 1024px) {
-  .gallery-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .gallery-item:nth-child(5n) {
-    grid-column: span 1;
-  }
-}
-
-@media (max-width: 768px) {
-  .gallery-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 520px) {
-  .gallery-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@keyframes scroll-reviews {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-@media (max-width: 768px) {
-  .review-card {
-    width: 300px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .reviews-track {
-    animation: none;
-  }
+  font-family: 'Playfair Display', serif;
 }
 
 .font-script {
@@ -564,10 +318,6 @@ body {
   transition: transform 0.5s ease;
 }
 .image-hover-zoom:hover img {
-<<<<<<< HEAD
-  transform: scale(1.05);
-}
-=======
   transform: scale(1.04);
 }
 
@@ -576,4 +326,3 @@ body {
   background: rgba(46, 178, 255, 0.15);
   color: var(--color-charcoal);
 }
->>>>>>> a6e4719 (Bismillah)

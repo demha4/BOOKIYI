@@ -1,6 +1,4 @@
 {
-<<<<<<< HEAD
-=======
   "headers": [
     {
       "source": "/(.*)",
@@ -18,7 +16,6 @@
       "permanent": true
     }
   ],
->>>>>>> a6e4719 (Bismillah)
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -29,8 +26,4 @@
       "destination": "/index.html"
     }
   ]
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> a6e4719 (Bismillah)

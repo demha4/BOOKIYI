@@ -41,12 +41,8 @@ export default function Packages() {
 ];
 
   return (
-<<<<<<< HEAD
-    <div className="pt-32 sm:pt-36 bg-cream">
-=======
     <div className="bg-cream">
       <Breadcrumbs items={[{ label: "Packages", href: "/packages" }]} />
->>>>>>> a6e4719 (Bismillah)
       <SEO
         title="Surf Packages"
         description={`Two ways to stay: Bed & Breakfast from €${cheapest}/night or Surf Camp Pack from €45/day. Flexible booking, no hidden fees, direct WhatsApp support.`}

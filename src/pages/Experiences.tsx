@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 import Breadcrumbs from "../components/Breadcrumbs";
->>>>>>> a6e4719 (Bismillah)
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -125,12 +122,8 @@ export default function Experiences() {
   const [selectedExperience, setSelectedExperience] = useState<typeof experiences[0] | null>(null);
 
   return (
-<<<<<<< HEAD
-    <div className="pt-32 sm:pt-36 bg-cream">
-=======
     <div className="bg-cream">
       <Breadcrumbs items={[{ label: "Experiences", href: "/experiences" }]} />
->>>>>>> a6e4719 (Bismillah)
       <SEO
         title="Local Experiences & Trips"
         description="Paradise Valley, Sand Dunes, Surf Lessons, Hammam, Yoga and more — local trips and activities from Tamount Surf House in Anza, Agadir."

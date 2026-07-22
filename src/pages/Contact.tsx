@@ -26,12 +26,8 @@ export default function Contact() {
   };
 
   return (
-<<<<<<< HEAD
-    <div className="pt-32 sm:pt-36 bg-cream">
-=======
     <div className="bg-cream">
       <Breadcrumbs items={[{ label: "Contact" }]} />
->>>>>>> a6e4719 (Bismillah)
       <SEO
         title="Contact Us"
         description={`WhatsApp ${siteInfo.phone} or email ${siteInfo.email}. Fast replies for booking questions, surf conditions, and local tips.`}
