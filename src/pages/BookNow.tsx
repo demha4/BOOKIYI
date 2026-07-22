@@ -124,8 +124,7 @@ function usePriceBreakdown(liveData: Record<string, { avgNightly?: number; total
       const room = rooms.find((r) => r.id === roomId);
       if (room) {
         const live = liveData[room.beds24RoomId];
-        const rawLivePrice = live?.avgNightly && live.avgNightly > 0 ? live.avgNightly : 0;
-        const unitPrice = rawLivePrice > 0 ? Math.max(rawLivePrice, room.price) : room.price;
+        const unitPrice = live?.avgNightly && live.avgNightly > 0 ? live.avgNightly : room.price;
         const subtotal = room.type === "dorm"
           ? unitPrice * nights * guestIds.length
           : unitPrice * nights;
@@ -502,7 +501,7 @@ export default function BookNow() {
     clearAllRoomAssignments, clearAddOns, nights, totalPersons } = ctx;
 
   const { liveData, loading: liveLoading, error: liveError, isLive, lastUpdated, refresh: refreshAvailability } =
-    useLiveAvailability(booking.checkIn, booking.checkOut, totalPersons || 1, 30000);
+    useLiveAvailability(booking.checkIn, booking.checkOut, totalPersons || 1, 120000);
 
   const price = usePriceBreakdown(liveData);
 
@@ -872,6 +871,16 @@ export default function BookNow() {
                         <div className="space-y-4">
                           {packages.map((pkg) => {
                             const isSelected = booking.packageId === pkg.id;
+                            // For B&B, show the live cheapest room price; for other packages keep priceFrom
+                            const liveCheapest = pkg.id === "bed-and-breakfast" && isLive
+                              ? Math.min(...rooms.filter(r => {
+                                  const ld = liveData[r.beds24RoomId];
+                                  return ld && ld.avgNightly && ld.avgNightly > 0;
+                                }).map(r => Math.round(liveData[r.beds24RoomId].avgNightly!)))
+                              : 0;
+                            const displayPrice = pkg.id === "bed-and-breakfast" && liveCheapest > 0 && isFinite(liveCheapest)
+                              ? liveCheapest
+                              : pkg.priceFrom;
                             const pkgPrice = pkg.priceUnit === "total"
                               ? pkg.priceFrom * totalPersons
                               : pkg.priceFrom * nights * totalPersons;
@@ -898,7 +907,7 @@ export default function BookNow() {
                                         <p className="text-xs text-stone-500">{pkg.duration} · {pkg.tagline}</p>
                                       </div>
                                       <div className="text-right shrink-0 ml-3">
-                                        <p className="text-xl font-bold text-ocean">€{pkg.priceFrom}</p>
+                                        <p className="text-xl font-bold text-ocean">€{displayPrice}</p>
                                         <p className="text-[10px] text-stone-400 uppercase">
                                           / {pkg.priceUnit === "total" ? "person" : "person / night"}
                                         </p>
@@ -1018,11 +1027,8 @@ export default function BookNow() {
                           const assignedHere = booking.guests.filter((g) => g.roomId === room.id);
                           const hasGuests = assignedHere.length > 0;
                           const live = liveData[room.beds24RoomId];
-                          const rawLivePrice = live?.avgNightly && live.avgNightly > 0 ? live.avgNightly : 0;
-                          // Beds24 V2 offers endpoint can return per-stay totals that,
-                          // when divided by nights, drop below the true nightly rate
-                          // (especially for dorms). Use the static price as a floor.
-                          const livePrice = rawLivePrice > 0 ? Math.max(rawLivePrice, room.price) : room.price;
+                          // Use the live Beds24 price directly; fall back to static only when API hasn't responded
+                          const livePrice = live?.avgNightly && live.avgNightly > 0 ? live.avgNightly : room.price;
                           const liveAvail = live?.available ?? 0;
                           const hasLiveData = isLive && live && typeof liveAvail === "number";
 
