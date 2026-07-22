@@ -1641,7 +1641,14 @@ export default function BookNow() {
                               : "You'll receive a confirmation by email or WhatsApp shortly."}
                           </p>
 
-                          <div className="text-center">
+                          <div className="text-center flex flex-col sm:flex-row items-center justify-center gap-3">
+                            {booking.paymentChoice === "deposit" && (
+                              <a href={`https://wa.me/${siteInfo.whatsapp}?text=${encodeURIComponent(`Hi! I just booked (ref: ${submitResult?.bookingIds?.[0] || "pending"}) and I'm sending the €${price.depositAmount} deposit now. — ${booking.contactName}`)}`}
+                                target="_blank" rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center gap-2 py-3.5 px-8 bg-green-500 text-white rounded-xl font-bold text-sm hover:bg-green-600 transition-all shadow-lg shadow-green-500/20">
+                                <Check size={18} /> I'll Send the Deposit <MessageCircle size={16} />
+                              </a>
+                            )}
                             <a href="/"
                               className="inline-flex items-center justify-center gap-2 py-3.5 px-8 bg-white text-stone-700 border-2 border-stone-200 rounded-xl font-bold text-sm hover:bg-stone-50 transition-all">
                               Back to Home
