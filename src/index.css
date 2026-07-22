@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Geomini', sans-serif;
-  --font-serif: 'Geomini', sans-serif;
+  --font-sans: 'Sora', sans-serif;
+  --font-serif: 'Sora', sans-serif;
   --font-script: 'Kalam', cursive;
   /* ── Cool-blue primary scale ── */
   --color-primary-50: #F0F7FF;
@@ -40,7 +40,7 @@ html {
 }
 
 body {
-  font-family: 'Geomini', sans-serif;
+  font-family: 'Sora', sans-serif;
   color: var(--color-charcoal);
   background-color: var(--color-cream);
   overflow-x: hidden;
@@ -57,7 +57,7 @@ body {
 
 /* ── Font family overrides ── */
 .font-serif {
-  font-family: 'Geomini', sans-serif;
+  font-family: 'Sora', sans-serif;
 }
 
 .font-script {
@@ -65,12 +65,12 @@ body {
 }
 
 .font-display {
-  font-family: 'Geomini', sans-serif;
+  font-family: 'Sora', sans-serif;
 }
 
 /* ── Typography scale ── */
 .display-title {
-  font-family: 'Geomini', sans-serif;
+  font-family: 'Sora', sans-serif;
   font-size: clamp(2rem, 5vw, 3.4rem);
   line-height: 1.08;
   letter-spacing: -0.03em;
@@ -79,7 +79,7 @@ body {
 }
 
 .section-title {
-  font-family: 'Geomini', sans-serif;
+  font-family: 'Sora', sans-serif;
   font-size: clamp(1.65rem, 3.4vw, 2.5rem);
   line-height: 1.12;
   letter-spacing: -0.025em;
@@ -88,14 +88,14 @@ body {
 }
 
 .section-copy {
-  font-family: 'Geomini', sans-serif;
+  font-family: 'Sora', sans-serif;
   font-size: clamp(1rem, 1.15vw, 1.08rem);
   line-height: 1.8;
   text-wrap: pretty;
 }
 
 .kicker {
-  font-family: 'Geomini', sans-serif;
+  font-family: 'Sora', sans-serif;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.2em;
@@ -121,7 +121,7 @@ body {
 
 /* ── Card system — refined ── */
 .card-title {
-  font-family: 'Geomini', sans-serif;
+  font-family: 'Sora', sans-serif;
   font-size: clamp(1.15rem, 1.4vw, 1.35rem);
   line-height: 1.3;
   letter-spacing: -0.01em;
@@ -129,7 +129,7 @@ body {
 }
 
 .card-copy {
-  font-family: 'Geomini', sans-serif;
+  font-family: 'Sora', sans-serif;
   font-size: clamp(0.95rem, 1.02vw, 1.02rem);
   line-height: 1.75;
   text-wrap: pretty;
@@ -167,7 +167,7 @@ body {
   align-items: center;
   padding: 0.3rem 0.8rem;
   border-radius: 999px;
-  font-family: 'Geomini', sans-serif;
+  font-family: 'Sora', sans-serif;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.02em;
